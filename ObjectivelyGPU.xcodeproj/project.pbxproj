@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
-		AA000000000000000001B001 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000001R001 /* Objectively.framework */; };
 		2A17F0E01E5CC25A431FFBAD /* CommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = E71C479F7B60345FDDA44201 /* CommandBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		034285033FECAB2D6BD6AE5B /* ComputePass.h in Headers */ = {isa = PBXBuildFile; fileRef = 09B8DD26CDB7926D89445C91 /* ComputePass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36FBB92ACB08F2078D50C84D /* CommandBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 6C38B23048C269B804E75F03 /* CommandBuffer.c */; };
@@ -22,6 +21,7 @@
 		DF73824CC25298378B451056 /* CopyPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 59334BDAED542AB6DE565EDD /* CopyPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F73340493879CD8034F99D51 /* ComputePass.c in Sources */ = {isa = PBXBuildFile; fileRef = ED8024CA4186E352C1EC4CA1 /* ComputePass.c */; };
 		FF30FF2D56F9E4EA3C492CBB /* RenderPass.c in Sources */ = {isa = PBXBuildFile; fileRef = 669BE73362E651792735CB1C /* RenderPass.c */; };
+		CEA0030000000000000000F1 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,7 +32,6 @@
 		59334BDAED542AB6DE565EDD /* CopyPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CopyPass.h; sourceTree = "<group>"; };
 		6251F22589273797656C269E /* ObjectivelyGPU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ObjectivelyGPU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA000000000000000000EE01 /* SDL3.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL3.xcframework; path = Frameworks/SDL3.xcframework; sourceTree = "<group>"; };
-		AA000000000000000001F001 /* Objectively.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Objectively.xcodeproj; path = ../Objectively/Objectively.xcodeproj; sourceTree = "<group>"; };
 		669BE73362E651792735CB1C /* RenderPass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderPass.c; sourceTree = "<group>"; };
 		6C38B23048C269B804E75F03 /* CommandBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CommandBuffer.c; sourceTree = "<group>"; };
 		77315F9BC357C97B885E883C /* RenderDevice.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderDevice.c; sourceTree = "<group>"; };
@@ -47,34 +46,10 @@
 		E71C479F7B60345FDDA44201 /* CommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandBuffer.h; sourceTree = "<group>"; };
 		ED8024CA4186E352C1EC4CA1 /* ComputePass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComputePass.c; sourceTree = "<group>"; };
 		FDEE3DD81E43E5CFE68E9519 /* Renderer.frag.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Renderer.frag.hlsl; sourceTree = "<group>"; };
+		CEA0030000000000000000F0 /* Objectively.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Objectively.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXContainerItemProxy section */
-		AA000000000000000001C001 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AA000000000000000001F001 /* Objectively.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CE76D9681C48218E0096DD31;
-			remoteInfo = Objectively;
-		};
-		AA000000000000000001C002 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AA000000000000000001F001 /* Objectively.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CE76D9671C48218E0096DD31;
-			remoteInfo = Objectively;
-		};
-/* End PBXContainerItemProxy section */
 
-/* Begin PBXReferenceProxy section */
-		AA000000000000000001R001 /* Objectively.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Objectively.framework;
-			remoteRef = AA000000000000000001C001 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		DE1439ACCFCEB73E6F9981A5 /* Frameworks */ = {
@@ -82,7 +57,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */,
-				AA000000000000000001B001 /* Objectively.framework in Frameworks */,
+				CEA0030000000000000000F1 /* Objectively.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,7 +67,6 @@
 		8C4FDD7B635240BD562EBB49 = {
 			isa = PBXGroup;
 			children = (
-				AA000000000000000001F001 /* Objectively.xcodeproj */,
 				AA000000000000000000DD01 /* Frameworks */,
 				B23D89B2D2DF3745A003AEB1 /* Products */,
 				904A6003E847F129BD1EE63E /* Sources */,
@@ -107,17 +81,9 @@
 			isa = PBXGroup;
 			children = (
 				AA000000000000000000EE01 /* SDL3.xcframework */,
-				AA000000000000000001R001 /* Objectively.framework */,
+				CEA0030000000000000000F0 /* Objectively.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		AA000000000000000001P001 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				AA000000000000000001R001 /* Objectively.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		904A6003E847F129BD1EE63E /* Sources */ = {
@@ -198,7 +164,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				AA000000000000000001T001 /* PBXTargetDependency */,
 			);
 			name = ObjectivelyGPU;
 			productName = ObjectivelyGPU;
@@ -231,12 +196,6 @@
 			mainGroup = 8C4FDD7B635240BD562EBB49;
 			productRefGroup = B23D89B2D2DF3745A003AEB1 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = AA000000000000000001P001 /* Products */;
-					ProjectRef = AA000000000000000001F001 /* Objectively.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				EA25F2CECA5EE87704453CE2 /* ObjectivelyGPU */,
@@ -259,13 +218,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		AA000000000000000001T001 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Objectively;
-			targetProxy = AA000000000000000001C002 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		02E8EA186897855DF59BB780 /* Release */ = {
