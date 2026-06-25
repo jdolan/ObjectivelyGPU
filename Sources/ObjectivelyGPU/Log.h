@@ -1,0 +1,74 @@
+/*
+ * ObjectivelyGPU: Object oriented MVC framework for OpenGL, SDL3 and GNU C.
+ * Copyright (C) 2014 Jay Dolan <jay@jaydolan.com>
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ * claim that you wrote the original software. If you use this software
+ * in a product, an acknowledgment in the product documentation would be
+ * appreciated but is not required.
+ *
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ * misrepresented as being the original software.
+ *
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
+
+#pragma once
+
+#include <stdlib.h>
+
+#include <SDL3/SDL_log.h>
+
+/**
+ * @file
+ * @brief View logging facilities via `SDL_Log`.
+ */
+
+#define LOG_CATEGORY_GPU (SDL_LOG_CATEGORY_CUSTOM + 70)
+
+#define GPU_LogSetPriority(priority) SDL_SetLogPriority(LOG_CATEGORY_GPU, priority)
+
+#define GPU_LogEnabled(priority) \
+  (SDL_GetLogPriority(LOG_CATEGORY_GPU) <= priority)
+
+#define GPU_LogMessage(priority, fmt, ...) \
+  SDL_LogMessage(LOG_CATEGORY_GPU, priority, "%s::%s "fmt, _Class()->def.name, __func__, ## __VA_ARGS__)
+
+#define GPU_LogVerbose(fmt, ...) \
+  SDL_LogVerbose(LOG_CATEGORY_GPU, "%s::%s: "fmt, _Class()->def.name, __func__, ## __VA_ARGS__)
+
+#define GPU_LogDebug(fmt, ...) \
+  SDL_LogDebug(LOG_CATEGORY_GPU, "%s::%s: "fmt, _Class()->def.name, __func__, ## __VA_ARGS__)
+
+#define GPU_LogInfo(fmt, ...) \
+  SDL_LogInfo(LOG_CATEGORY_GPU, "%s::%s: "fmt, _Class()->def.name, __func__, ## __VA_ARGS__)
+
+#define GPU_LogWarn(fmt, ...) \
+  SDL_LogWarn(LOG_CATEGORY_GPU, "%s::%s: "fmt, _Class()->def.name, __func__, ## __VA_ARGS__)
+
+#define GPU_LogError(fmt, ...) \
+  SDL_LogError(LOG_CATEGORY_GPU, "%s::%s: "fmt, _Class()->def.name, __func__, ## __VA_ARGS__)
+
+#define GPU_LogCritical(fmt, ...) \
+  SDL_LogCritical(LOG_CATEGORY_GPU, "%s::%s: "fmt, _Class()->def.name, __func__, ## __VA_ARGS__)
+
+/**
+ * @brief Asserts that @a cond is true, logging the SDL error and exiting on failure.
+ * @details Unlike assert(3), this macro is never compiled out. Use it to guard
+ * SDL_gpu operations where failure is unrecoverable (bad device, OOM, wrong
+ * thread, unsupported format, etc.).
+ */
+#define GPU_Assert(cond, fmt, ...) do { \
+  if (!(cond)) { \
+    GPU_LogCritical(fmt ": %s", ## __VA_ARGS__, SDL_GetError()); \
+    exit(EXIT_FAILURE); \
+  } \
+} while (0)
