@@ -1,6 +1,6 @@
 # ObjectivelyGPU
 
-## Object oriented framework for modern cross-platform graphics with SDL and GNU C
+## Object oriented framework for modern cross-platform graphics with SDL3 and GNU C
 
 ObjectivelyGL is a cross-platform graphics framework for [SDL3](https://wiki.libsdl.org/SDL3/CategoryGPU). It is built on [Objectively](https://github.com/jdolan/Objectively), written in GNU C, and requires gcc or clang.
 
