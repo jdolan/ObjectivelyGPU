@@ -25,6 +25,7 @@
 
 #include <stdlib.h>
 
+#include <SDL3/SDL_assert.h>
 #include <SDL3/SDL_gpu.h>
 #include <SDL3/SDL_log.h>
 
@@ -67,6 +68,7 @@ struct SDL_Size {
 #define GPU_Assert(cond, fmt, ...) do { \
   if (!(cond)) { \
     SDL_LogCritical(SDL_LOG_CATEGORY_GPU, "%s::%s: " fmt ": %s", _Class()->def.name, __func__, ## __VA_ARGS__, SDL_GetError()); \
+    SDL_TriggerBreakpoint(); \
     exit(EXIT_FAILURE); \
   } \
 } while (0)

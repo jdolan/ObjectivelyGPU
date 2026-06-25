@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
+		AA000000000000000000FF02 /* Objectively.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE02 /* Objectively.xcframework */; };
 		2A17F0E01E5CC25A431FFBAD /* CommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = E71C479F7B60345FDDA44201 /* CommandBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		034285033FECAB2D6BD6AE5B /* ComputePass.h in Headers */ = {isa = PBXBuildFile; fileRef = 09B8DD26CDB7926D89445C91 /* ComputePass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36FBB92ACB08F2078D50C84D /* CommandBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 6C38B23048C269B804E75F03 /* CommandBuffer.c */; };
@@ -29,6 +31,8 @@
 		38F069D0DBE26C7E00B5B5EE /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
 		59334BDAED542AB6DE565EDD /* CopyPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CopyPass.h; sourceTree = "<group>"; };
 		6251F22589273797656C269E /* ObjectivelyGPU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ObjectivelyGPU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA000000000000000000EE01 /* SDL3.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL3.xcframework; path = Frameworks/SDL3.xcframework; sourceTree = "<group>"; };
+		AA000000000000000000EE02 /* Objectively.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Objectively.xcframework; path = Frameworks/Objectively.xcframework; sourceTree = "<group>"; };
 		669BE73362E651792735CB1C /* RenderPass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderPass.c; sourceTree = "<group>"; };
 		6C38B23048C269B804E75F03 /* CommandBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CommandBuffer.c; sourceTree = "<group>"; };
 		77315F9BC357C97B885E883C /* RenderDevice.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderDevice.c; sourceTree = "<group>"; };
@@ -50,6 +54,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */,
+				AA000000000000000000FF02 /* Objectively.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +65,7 @@
 		8C4FDD7B635240BD562EBB49 = {
 			isa = PBXGroup;
 			children = (
+				AA000000000000000000DD01 /* Frameworks */,
 				B23D89B2D2DF3745A003AEB1 /* Products */,
 				904A6003E847F129BD1EE63E /* Sources */,
 				CEEAAFF72FED833A00FFEBE6 /* COPYING */,
@@ -66,6 +73,15 @@
 				CEEAAFFA2FED833A00FFEBE6 /* README.md */,
 				CEEAAFFD2FED83E400FFEBE6 /* configure.ac */,
 			);
+			sourceTree = "<group>";
+		};
+		AA000000000000000000DD01 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000EE01 /* SDL3.xcframework */,
+				AA000000000000000000EE02 /* Objectively.xcframework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		904A6003E847F129BD1EE63E /* Sources */ = {
@@ -227,15 +243,6 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/lib,
-					/opt/homebrew/lib,
-				);
-				OTHER_LDFLAGS = (
-					"-lObjectively",
-					"-lSDL3",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.jdolan.ObjectivelyGPU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -268,15 +275,6 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/lib,
-					/opt/homebrew/lib,
-				);
-				OTHER_LDFLAGS = (
-					"-lObjectively",
-					"-lSDL3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.jdolan.ObjectivelyGPU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
