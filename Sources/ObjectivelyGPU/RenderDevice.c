@@ -69,17 +69,6 @@ static bool acquireSwapchainTexture(const RenderDevice *self, CommandBuffer *cmd
 }
 
 /**
- * @fn void RenderDevice::addDrawable(RenderDevice *self, Drawable *drawable)
- * @memberof RenderDevice
- */
-static void addDrawable(RenderDevice *self, Drawable *drawable) {
-
-  assert(drawable);
-
-  $(self->drawables, add, (ident) &drawable);
-}
-
-/**
  * @fn SDL_GPUBuffer *RenderDevice::createBuffer(const RenderDevice *self, const SDL_GPUBufferCreateInfo *info)
  * @memberof RenderDevice
  */
@@ -233,8 +222,6 @@ static RenderDevice *init(RenderDevice *self) {
   if (self) {
     self->clear = true;
     self->clearColor = (SDL_FColor) { 0.f, 0.f, 0.f, 1.f };
-    self->drawables = $(alloc(Vector), initWithSize, sizeof(Drawable *));
-    assert(self->drawables);
 
     const SDL_GPUShaderFormat formats =
       SDL_GPU_SHADERFORMAT_MSL |
@@ -421,20 +408,6 @@ static void releaseTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffe
 }
 
 /**
- * @fn void RenderDevice::removeDrawable(RenderDevice *self, Drawable *drawable)
- * @memberof RenderDevice
- */
-static void removeDrawable(RenderDevice *self, Drawable *drawable) {
-
-  for (size_t i = 0; i < self->drawables->count; i++) {
-    if (*VectorElement(self->drawables, Drawable *, i) == drawable) {
-      $(self->drawables, removeAt, i);
-      return;
-    }
-  }
-}
-
-/**
  * @fn bool RenderDevice::setAllowedFramesInFlight(const RenderDevice *self, Uint32 allowed)
  * @memberof RenderDevice
  */
@@ -489,12 +462,6 @@ static void setWindow(RenderDevice *self, SDL_Window *window) {
   }
 
   if (self->window) {
-    for (size_t i = 0; i < self->drawables->count; i++) {
-      Drawable *draw = *VectorElement(self->drawables, Drawable *, i);
-      if (draw->deviceWillReset) {
-        draw->deviceWillReset(draw->data);
-      }
-    }
     SDL_ReleaseWindowFromGPUDevice(self->device, self->window);
   }
 
@@ -503,12 +470,6 @@ static void setWindow(RenderDevice *self, SDL_Window *window) {
   if (window) {
     const bool claimed = SDL_ClaimWindowForGPUDevice(self->device, window);
     GPU_Assert(claimed, "SDL_ClaimWindowForGPUDevice");
-    for (size_t i = 0; i < self->drawables->count; i++) {
-      Drawable *draw = *VectorElement(self->drawables, Drawable *, i);
-      if (draw->deviceDidReset) {
-        draw->deviceDidReset(self->device, draw->data);
-      }
-    }
   }
 }
 
@@ -632,13 +593,6 @@ static void dealloc(Object *self) {
 
   RenderDevice *this = (RenderDevice *) self;
 
-  for (size_t i = 0; i < this->drawables->count; i++) {
-    Drawable *draw = *VectorElement(this->drawables, Drawable *, i);
-    if (draw->deviceWillReset) {
-      draw->deviceWillReset(draw->data);
-    }
-  }
-
   if (this->window && this->device) {
     SDL_ReleaseWindowFromGPUDevice(this->device, this->window);
   }
@@ -646,8 +600,6 @@ static void dealloc(Object *self) {
   if (this->device) {
     SDL_DestroyGPUDevice(this->device);
   }
-
-  release(this->drawables);
 
   super(Object, self, dealloc);
 }
@@ -663,7 +615,6 @@ static void initialize(Class *clazz) {
 
   ((RenderDeviceInterface *) clazz->interface)->acquireCommandBuffer = acquireCommandBuffer;
   ((RenderDeviceInterface *) clazz->interface)->acquireSwapchainTexture = acquireSwapchainTexture;
-  ((RenderDeviceInterface *) clazz->interface)->addDrawable = addDrawable;
   ((RenderDeviceInterface *) clazz->interface)->createBuffer = createBuffer;
   ((RenderDeviceInterface *) clazz->interface)->createComputePipeline = createComputePipeline;
   ((RenderDeviceInterface *) clazz->interface)->createGraphicsPipeline = createGraphicsPipeline;
@@ -685,7 +636,6 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->releaseShader = releaseShader;
   ((RenderDeviceInterface *) clazz->interface)->releaseTexture = releaseTexture;
   ((RenderDeviceInterface *) clazz->interface)->releaseTransferBuffer = releaseTransferBuffer;
-  ((RenderDeviceInterface *) clazz->interface)->removeDrawable = removeDrawable;
   ((RenderDeviceInterface *) clazz->interface)->setAllowedFramesInFlight = setAllowedFramesInFlight;
   ((RenderDeviceInterface *) clazz->interface)->setBufferName = setBufferName;
   ((RenderDeviceInterface *) clazz->interface)->setSwapchainParameters = setSwapchainParameters;

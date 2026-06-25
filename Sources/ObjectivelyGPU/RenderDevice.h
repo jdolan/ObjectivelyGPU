@@ -28,7 +28,6 @@
 #include <SDL3/SDL_gpu.h>
 
 #include <Objectively/Object.h>
-#include <Objectively/Vector.h>
 
 #include <ObjectivelyGPU/CommandBuffer.h>
 #include <ObjectivelyGPU/Types.h>
@@ -39,59 +38,7 @@
  */
 
 typedef struct CommandBuffer CommandBuffer;
-typedef struct CopyPass CopyPass;
-typedef struct RenderPass RenderPass;
 typedef struct RenderDevice RenderDevice;
-
-/**
- * @brief A GPU-renderable unit with optional transfer and submit callbacks.
- *
- * Drawables participate in the RenderDevice's frame loop. Assign only the
- * callbacks you need; NULL callbacks are silently skipped.
- *
- * Typical use without subclassing:
- * @code
- *   $(device, addDrawable, &(Drawable) {
- *     .transfer = R_LoadLightgrid,
- *     .data = r_world_model,
- *   });
- * @endcode
- */
-struct Drawable {
-
-  /**
-   * @brief Called when the GPU device has been (re-)created. Allocate GPU resources here.
-   */
-  void (*deviceDidReset)(SDL_GPUDevice *device, ident data);
-
-  /**
-   * @brief Called just before the GPU device is destroyed. Release GPU resources here.
-   */
-  void (*deviceWillReset)(ident data);
-
-  /**
-   * @brief Called each frame during the render pass. Issue draw commands here.
-   */
-  void (*submit)(CommandBuffer *cmd, RenderPass *renderPass, ident data);
-
-  /**
-   * @brief Called when dirty during the copy pass. Upload CPU data to GPU buffers/textures here.
-   */
-  void (*transfer)(CopyPass *copyPass, ident data);
-
-  /**
-   * @brief When true, the RenderDevice calls transfer() this frame.
-   * Reset to false after transfer() returns.
-   */
-  bool isDirty;
-
-  /**
-   * @brief User data, passed to all callbacks.
-   */
-  ident data;
-};
-
-typedef struct Drawable Drawable;
 
 /**
  * @brief The Swapchain (render target) type.
@@ -116,12 +63,7 @@ typedef struct Swapchain Swapchain;
 typedef struct RenderDeviceInterface RenderDeviceInterface;
 
 /**
- * @brief Owns the `SDL_GPUDevice`, window, frame lifecycle, and Drawable management.
- *
- * RenderDevice is the GPU infrastructure base class. It creates and owns the
- * `SDL_GPUDevice`, manages the frame command buffer and swapchain, registers
- * Drawables for participation in the frame loop, and provides factory methods
- * for GPU resources.
+ * @brief Owns the `SDL_GPUDevice` and window, and provides factory methods for GPU resources.
  *
  * @extends Object
  */
@@ -159,12 +101,6 @@ struct RenderDevice {
    * @details Defaults to opaque black `{0, 0, 0, 1}`.
    */
   SDL_FColor clearColor;
-
-  /**
-   * @brief Registered Drawables participating in this device's frame loop.
-   * @private
-   */
-  Vector *drawables;
 };
 
 /**
@@ -179,7 +115,6 @@ struct RenderDeviceInterface {
 
   CommandBuffer *(*acquireCommandBuffer)(const RenderDevice *self);
   bool (*acquireSwapchainTexture)(const RenderDevice *self, CommandBuffer *cmd, Swapchain *swapchain);
-  void (*addDrawable)(RenderDevice *self, Drawable *drawable);
 
   SDL_GPUBuffer *(*createBuffer)(const RenderDevice *self, const SDL_GPUBufferCreateInfo *info);
   SDL_GPUComputePipeline *(*createComputePipeline)(const RenderDevice *self, const SDL_GPUComputePipelineCreateInfo *info);
@@ -226,8 +161,6 @@ struct RenderDeviceInterface {
   void (*releaseShader)(const RenderDevice *self, SDL_GPUShader *shader);
   void (*releaseTexture)(const RenderDevice *self, SDL_GPUTexture *texture);
   void (*releaseTransferBuffer)(const RenderDevice *self, SDL_GPUTransferBuffer *tbuf);
-
-  void (*removeDrawable)(RenderDevice *self, Drawable *drawable);
 
   bool (*setAllowedFramesInFlight)(const RenderDevice *self, Uint32 allowed);
   void (*setBufferName)(const RenderDevice *self, SDL_GPUBuffer *buffer, const char *name);
