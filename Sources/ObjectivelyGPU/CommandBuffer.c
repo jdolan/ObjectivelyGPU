@@ -22,7 +22,6 @@
  */
 
 #include <assert.h>
-
 #include "CommandBuffer.h"
 #include "ComputePass.h"
 #include "CopyPass.h"

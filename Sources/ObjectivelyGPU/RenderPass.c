@@ -22,7 +22,6 @@
  */
 
 #include <assert.h>
-
 #include "RenderPass.h"
 
 #define _Class _RenderPass
