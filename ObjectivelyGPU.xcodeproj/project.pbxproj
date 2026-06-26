@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
-		2A17F0E01E5CC25A431FFBAD /* CommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = E71C479F7B60345FDDA44201 /* CommandBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		034285033FECAB2D6BD6AE5B /* ComputePass.h in Headers */ = {isa = PBXBuildFile; fileRef = 09B8DD26CDB7926D89445C91 /* ComputePass.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2A17F0E01E5CC25A431FFBAD /* CommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = E71C479F7B60345FDDA44201 /* CommandBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36FBB92ACB08F2078D50C84D /* CommandBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 6C38B23048C269B804E75F03 /* CommandBuffer.c */; };
 		59897FC7BCC194032E971A9B /* RenderDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 9220C57BBAA3C951D8083799 /* RenderDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		683F683E23149C267D613EA0 /* RenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 206D63692B601BD90F377BF5 /* RenderPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -17,11 +16,10 @@
 		86E5132F5DCCB6B674151343 /* RenderDevice.c in Sources */ = {isa = PBXBuildFile; fileRef = 77315F9BC357C97B885E883C /* RenderDevice.c */; };
 		90C29A39257729BE8D4FDDF8 /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = 38F069D0DBE26C7E00B5B5EE /* Types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A09AD953AC672E0DE9D1E26D /* ObjectivelyGPU.h in Headers */ = {isa = PBXBuildFile; fileRef = C16D60B0E94469E649953EC5 /* ObjectivelyGPU.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
 		CCCB11DB70E4A962360A2119 /* CopyPass.c in Sources */ = {isa = PBXBuildFile; fileRef = C862954A9DD435C1FF7CD31D /* CopyPass.c */; };
-		DF73824CC25298378B451056 /* CopyPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 59334BDAED542AB6DE565EDD /* CopyPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F73340493879CD8034F99D51 /* ComputePass.c in Sources */ = {isa = PBXBuildFile; fileRef = ED8024CA4186E352C1EC4CA1 /* ComputePass.c */; };
-		FF30FF2D56F9E4EA3C492CBB /* RenderPass.c in Sources */ = {isa = PBXBuildFile; fileRef = 669BE73362E651792735CB1C /* RenderPass.c */; };
 		CEA0030000000000000000F1 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
+		DF73824CC25298378B451056 /* CopyPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 59334BDAED542AB6DE565EDD /* CopyPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EE00100000000000000000B1 /* Hello.c in Sources */ = {isa = PBXBuildFile; fileRef = EE00010000000000000000B1 /* Hello.c */; };
 		EE00110000000000000000B2 /* HelloCompute.c in Sources */ = {isa = PBXBuildFile; fileRef = EE00020000000000000000B2 /* HelloCompute.c */; };
 		EE00120000000000000000B3 /* ObjectivelyGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6251F22589273797656C269E /* ObjectivelyGPU.framework */; };
@@ -30,38 +28,17 @@
 		EE00150000000000000000B6 /* ObjectivelyGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6251F22589273797656C269E /* ObjectivelyGPU.framework */; };
 		EE00160000000000000000B7 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
 		EE00170000000000000000B8 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
+		F73340493879CD8034F99D51 /* ComputePass.c in Sources */ = {isa = PBXBuildFile; fileRef = ED8024CA4186E352C1EC4CA1 /* ComputePass.c */; };
+		FF30FF2D56F9E4EA3C492CBB /* RenderPass.c in Sources */ = {isa = PBXBuildFile; fileRef = 669BE73362E651792735CB1C /* RenderPass.c */; };
+		EI00100000000000000000B1 /* Hello-iOS.c in Sources */ = {isa = PBXBuildFile; fileRef = EI00010000000000000000B1 /* Hello-iOS.c */; };
+		EI00200000000000000000B2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EI00030000000000000000B3 /* LaunchScreen.storyboard */; };
+		EI00300000000000000000B3 /* ObjectivelyGPU.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EI00050000000000000000B5 /* ObjectivelyGPU.xcframework */; };
+		EI00400000000000000000B4 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
+		EI00500000000000000000B5 /* Objectively.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EI00060000000000000000B6 /* Objectively.xcframework */; };
+		EI00600000000000000000B6 /* ObjectivelyGPU.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EI00050000000000000000B5 /* ObjectivelyGPU.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EI00700000000000000000B7 /* SDL3.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EI00800000000000000000B8 /* Objectively.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EI00060000000000000000B6 /* Objectively.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
-
-/* Begin PBXFileReference section */
-		09B8DD26CDB7926D89445C91 /* ComputePass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComputePass.h; sourceTree = "<group>"; };
-		206D63692B601BD90F377BF5 /* RenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderPass.h; sourceTree = "<group>"; };
-		338EC7DCAE74C1B8C397D189 /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
-		38F069D0DBE26C7E00B5B5EE /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
-		59334BDAED542AB6DE565EDD /* CopyPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CopyPass.h; sourceTree = "<group>"; };
-		6251F22589273797656C269E /* ObjectivelyGPU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ObjectivelyGPU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA000000000000000000EE01 /* SDL3.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL3.xcframework; path = Frameworks/SDL3.xcframework; sourceTree = "<group>"; };
-		669BE73362E651792735CB1C /* RenderPass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderPass.c; sourceTree = "<group>"; };
-		6C38B23048C269B804E75F03 /* CommandBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CommandBuffer.c; sourceTree = "<group>"; };
-		77315F9BC357C97B885E883C /* RenderDevice.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderDevice.c; sourceTree = "<group>"; };
-		9220C57BBAA3C951D8083799 /* RenderDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderDevice.h; sourceTree = "<group>"; };
-		C16D60B0E94469E649953EC5 /* ObjectivelyGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectivelyGPU.h; sourceTree = "<group>"; };
-		C510361664FA37CEC93731E8 /* Renderer.vert.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Renderer.vert.hlsl; sourceTree = "<group>"; };
-		C862954A9DD435C1FF7CD31D /* CopyPass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CopyPass.c; sourceTree = "<group>"; };
-		CEEAAFF72FED833A00FFEBE6 /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
-		CEEAAFF82FED833A00FFEBE6 /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
-		CEEAAFFA2FED833A00FFEBE6 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		CEEAAFFD2FED83E400FFEBE6 /* configure.ac */ = {isa = PBXFileReference; lastKnownFileType = text; path = configure.ac; sourceTree = "<group>"; };
-		E71C479F7B60345FDDA44201 /* CommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandBuffer.h; sourceTree = "<group>"; };
-		ED8024CA4186E352C1EC4CA1 /* ComputePass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComputePass.c; sourceTree = "<group>"; };
-		FDEE3DD81E43E5CFE68E9519 /* Renderer.frag.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Renderer.frag.hlsl; sourceTree = "<group>"; };
-		CEA0030000000000000000F0 /* Objectively.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Objectively.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE00010000000000000000B1 /* Hello.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Hello.c; sourceTree = "<group>"; };
-		EE00020000000000000000B2 /* HelloCompute.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HelloCompute.c; sourceTree = "<group>"; };
-		EE00030000000000000000B3 /* ObjectivelyGPU-Hello */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ObjectivelyGPU-Hello"; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE00040000000000000000B4 /* ObjectivelyGPU-HelloCompute */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ObjectivelyGPU-HelloCompute"; sourceTree = BUILT_PRODUCTS_DIR; };
-/* End PBXFileReference section */
-
-
 
 /* Begin PBXContainerItemProxy section */
 		EE00700000000000000000B1 /* PBXContainerItemProxy */ = {
@@ -79,6 +56,41 @@
 			remoteInfo = ObjectivelyGPU;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		09B8DD26CDB7926D89445C91 /* ComputePass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComputePass.h; sourceTree = "<group>"; };
+		206D63692B601BD90F377BF5 /* RenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderPass.h; sourceTree = "<group>"; };
+		338EC7DCAE74C1B8C397D189 /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
+		38F069D0DBE26C7E00B5B5EE /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		59334BDAED542AB6DE565EDD /* CopyPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CopyPass.h; sourceTree = "<group>"; };
+		6251F22589273797656C269E /* ObjectivelyGPU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ObjectivelyGPU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		669BE73362E651792735CB1C /* RenderPass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderPass.c; sourceTree = "<group>"; };
+		6C38B23048C269B804E75F03 /* CommandBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CommandBuffer.c; sourceTree = "<group>"; };
+		77315F9BC357C97B885E883C /* RenderDevice.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderDevice.c; sourceTree = "<group>"; };
+		9220C57BBAA3C951D8083799 /* RenderDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderDevice.h; sourceTree = "<group>"; };
+		AA000000000000000000EE01 /* SDL3.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL3.xcframework; path = Frameworks/SDL3.xcframework; sourceTree = "<group>"; };
+		C16D60B0E94469E649953EC5 /* ObjectivelyGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectivelyGPU.h; sourceTree = "<group>"; };
+		C510361664FA37CEC93731E8 /* Renderer.vert.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Renderer.vert.hlsl; sourceTree = "<group>"; };
+		C862954A9DD435C1FF7CD31D /* CopyPass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CopyPass.c; sourceTree = "<group>"; };
+		CEA0030000000000000000F0 /* Objectively.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Objectively.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEEAAFF72FED833A00FFEBE6 /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		CEEAAFF82FED833A00FFEBE6 /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
+		CEEAAFFA2FED833A00FFEBE6 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		CEEAAFFD2FED83E400FFEBE6 /* configure.ac */ = {isa = PBXFileReference; lastKnownFileType = text; path = configure.ac; sourceTree = "<group>"; };
+		E71C479F7B60345FDDA44201 /* CommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandBuffer.h; sourceTree = "<group>"; };
+		ED8024CA4186E352C1EC4CA1 /* ComputePass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComputePass.c; sourceTree = "<group>"; };
+		EE00010000000000000000B1 /* Hello.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Hello.c; sourceTree = "<group>"; };
+		EE00020000000000000000B2 /* HelloCompute.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HelloCompute.c; sourceTree = "<group>"; };
+		EE00030000000000000000B3 /* ObjectivelyGPU-Hello */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ObjectivelyGPU-Hello"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE00040000000000000000B4 /* ObjectivelyGPU-HelloCompute */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ObjectivelyGPU-HelloCompute"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDEE3DD81E43E5CFE68E9519 /* Renderer.frag.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Renderer.frag.hlsl; sourceTree = "<group>"; };
+		EI00010000000000000000B1 /* Hello-iOS.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "Hello-iOS.c"; sourceTree = "<group>"; };
+		EI00020000000000000000B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EI00030000000000000000B3 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		EI00040000000000000000B4 /* ObjectivelyGPU-Hello-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ObjectivelyGPU-Hello-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EI00050000000000000000B5 /* ObjectivelyGPU.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ObjectivelyGPU.xcframework; path = Frameworks/ObjectivelyGPU.xcframework; sourceTree = "<group>"; };
+		EI00060000000000000000B6 /* Objectively.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Objectively.xcframework; path = Frameworks/Objectively.xcframework; sourceTree = "<group>"; };
+/* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		DE1439ACCFCEB73E6F9981A5 /* Frameworks */ = {
@@ -116,24 +128,15 @@
 		8C4FDD7B635240BD562EBB49 = {
 			isa = PBXGroup;
 			children = (
+				EE00200000000000000000B1 /* Examples */,
 				AA000000000000000000DD01 /* Frameworks */,
 				B23D89B2D2DF3745A003AEB1 /* Products */,
 				904A6003E847F129BD1EE63E /* Sources */,
-				EE00200000000000000000B1 /* Examples */,
 				CEEAAFF72FED833A00FFEBE6 /* COPYING */,
 				CEEAAFF82FED833A00FFEBE6 /* Makefile.am */,
 				CEEAAFFA2FED833A00FFEBE6 /* README.md */,
 				CEEAAFFD2FED83E400FFEBE6 /* configure.ac */,
 			);
-			sourceTree = "<group>";
-		};
-		AA000000000000000000DD01 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				AA000000000000000000EE01 /* SDL3.xcframework */,
-				CEA0030000000000000000F0 /* Objectively.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		904A6003E847F129BD1EE63E /* Sources */ = {
@@ -143,6 +146,17 @@
 				C16D60B0E94469E649953EC5 /* ObjectivelyGPU.h */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		AA000000000000000000DD01 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000EE01 /* SDL3.xcframework */,
+				EI00050000000000000000B5 /* ObjectivelyGPU.xcframework */,
+				EI00060000000000000000B6 /* Objectively.xcframework */,
+				CEA0030000000000000000F0 /* Objectively.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		AFF3775B279FC0FE4D348FBA /* ObjectivelyGPU */ = {
@@ -180,6 +194,7 @@
 				6251F22589273797656C269E /* ObjectivelyGPU.framework */,
 				EE00030000000000000000B3 /* ObjectivelyGPU-Hello */,
 				EE00040000000000000000B4 /* ObjectivelyGPU-HelloCompute */,
+				EI00040000000000000000B4 /* ObjectivelyGPU-Hello-iOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -187,10 +202,21 @@
 		EE00200000000000000000B1 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
+				EI00E00000000000000000B1 /* Hello-iOS */,
 				EE00010000000000000000B1 /* Hello.c */,
 				EE00020000000000000000B2 /* HelloCompute.c */,
 			);
 			path = Examples;
+			sourceTree = "<group>";
+		};
+		EI00E00000000000000000B1 /* Hello-iOS */ = {
+			isa = PBXGroup;
+			children = (
+				EI00010000000000000000B1 /* Hello-iOS.c */,
+				EI00020000000000000000B2 /* Info.plist */,
+				EI00030000000000000000B3 /* LaunchScreen.storyboard */,
+			);
+			path = "Hello-iOS";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -212,19 +238,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		EE00800000000000000000B1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = EA25F2CECA5EE87704453CE2 /* ObjectivelyGPU */;
-			targetProxy = EE00700000000000000000B1 /* PBXContainerItemProxy */;
-		};
-		EE00A00000000000000000B1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = EA25F2CECA5EE87704453CE2 /* ObjectivelyGPU */;
-			targetProxy = EE00900000000000000000B1 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXNativeTarget section */
 		EA25F2CECA5EE87704453CE2 /* ObjectivelyGPU */ = {
@@ -278,6 +291,24 @@
 			productReference = EE00040000000000000000B4 /* ObjectivelyGPU-HelloCompute */;
 			productType = "com.apple.product-type.tool";
 		};
+		EI00F00000000000000000B1 /* ObjectivelyGPU-Hello-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EI01200000000000000000B1 /* Build configuration list for PBXNativeTarget "ObjectivelyGPU-Hello-iOS" */;
+			buildPhases = (
+				EI00A00000000000000000B1 /* Sources */,
+				EI00B00000000000000000B1 /* Frameworks */,
+				EI00C00000000000000000B1 /* Resources */,
+				EI00D00000000000000000B1 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ObjectivelyGPU-Hello-iOS";
+			productName = "ObjectivelyGPU-Hello-iOS";
+			productReference = EI00040000000000000000B4 /* ObjectivelyGPU-Hello-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -309,6 +340,7 @@
 				EA25F2CECA5EE87704453CE2 /* ObjectivelyGPU */,
 				EE00B00000000000000000B1 /* ObjectivelyGPU-Hello */,
 				EE00C00000000000000000B1 /* ObjectivelyGPU-HelloCompute */,
+				EI00F00000000000000000B1 /* ObjectivelyGPU-Hello-iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -344,6 +376,59 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+		EI00A00000000000000000B1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EI00100000000000000000B1 /* Hello-iOS.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EI00B00000000000000000B1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EI00300000000000000000B3 /* ObjectivelyGPU.xcframework in Frameworks */,
+				EI00400000000000000000B4 /* SDL3.xcframework in Frameworks */,
+				EI00500000000000000000B5 /* Objectively.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EI00C00000000000000000B1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EI00200000000000000000B2 /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EI00D00000000000000000B1 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EI00600000000000000000B6 /* ObjectivelyGPU.xcframework in Embed Frameworks */,
+				EI00700000000000000000B7 /* SDL3.xcframework in Embed Frameworks */,
+				EI00800000000000000000B8 /* Objectively.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+
+
+/* Begin PBXTargetDependency section */
+		EE00800000000000000000B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EA25F2CECA5EE87704453CE2 /* ObjectivelyGPU */;
+			targetProxy = EE00700000000000000000B1 /* PBXContainerItemProxy */;
+		};
+		EE00A00000000000000000B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EA25F2CECA5EE87704453CE2 /* ObjectivelyGPU */;
+			targetProxy = EE00900000000000000000B1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		02E8EA186897855DF59BB780 /* Release */ = {
@@ -541,6 +626,68 @@
 			};
 			name = Release;
 		};
+		EI01000000000000000000B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = C5PXKE9CU5;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/Frameworks",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu23;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/Sources",
+					"$(SRCROOT)/Frameworks/SDL3.xcframework/ios-arm64/SDL3.framework/Headers",
+					"$(SRCROOT)/Frameworks/Objectively.xcframework/ios-arm64/Objectively.framework/Headers",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Examples/Hello-iOS/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.github.jdolan.ObjectivelyGPU-Hello-iOS";
+				PRODUCT_NAME = "ObjectivelyGPU-Hello-iOS";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EI01100000000000000000B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = C5PXKE9CU5;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/Frameworks",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu23;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/Sources",
+					"$(SRCROOT)/Frameworks/SDL3.xcframework/ios-arm64/SDL3.framework/Headers",
+					"$(SRCROOT)/Frameworks/Objectively.xcframework/ios-arm64/Objectively.framework/Headers",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Examples/Hello-iOS/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.github.jdolan.ObjectivelyGPU-Hello-iOS";
+				PRODUCT_NAME = "ObjectivelyGPU-Hello-iOS";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -576,6 +723,15 @@
 			buildConfigurations = (
 				EE00F00000000000000000B1 /* Debug */,
 				EE01000000000000000000B1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EI01200000000000000000B1 /* Build configuration list for PBXNativeTarget "ObjectivelyGPU-Hello-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EI01000000000000000000B1 /* Debug */,
+				EI01100000000000000000B2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
