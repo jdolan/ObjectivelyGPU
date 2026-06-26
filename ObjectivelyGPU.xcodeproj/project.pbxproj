@@ -175,13 +175,13 @@
 			isa = PBXGroup;
 			children = (
 				EE00200000000000000000B1 /* Examples */,
+				CE73E9F62FEEA53E0048BC24 /* Frameworks */,
 				B23D89B2D2DF3745A003AEB1 /* Products */,
 				904A6003E847F129BD1EE63E /* Sources */,
 				CEEAAFF72FED833A00FFEBE6 /* COPYING */,
 				CEEAAFF82FED833A00FFEBE6 /* Makefile.am */,
 				CEEAAFFA2FED833A00FFEBE6 /* README.md */,
 				CEEAAFFD2FED83E400FFEBE6 /* configure.ac */,
-				CE73E9F62FEEA53E0048BC24 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -234,7 +234,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CE73E9F62FEEA53E0048BC24 /* Recovered References */ = {
+		CE73E9F62FEEA53E0048BC24 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				AA000000000000000000EE01 /* SDL3.xcframework */,
@@ -242,7 +242,7 @@
 				EI00050000000000000000B5 /* ObjectivelyGPU.xcframework */,
 				EI00060000000000000000B6 /* Objectively.xcframework */,
 			);
-			name = "Recovered References";
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		EE00200000000000000000B1 /* Examples */ = {
@@ -563,11 +563,11 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu23;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				VALIDATE_PRODUCT = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Release;
 		};
@@ -586,11 +586,11 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Debug;
 		};
