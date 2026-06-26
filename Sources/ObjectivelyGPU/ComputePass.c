@@ -21,23 +21,35 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include <assert.h>
 
 #include "ComputePass.h"
 
 #define _Class _ComputePass
 
+#pragma mark - Object lifecycle
+
+/**
+ * @see Object::dealloc(Object *)
+ */
+static void dealloc(Object *self) {
+
+
+  ComputePass *this = (ComputePass *) self;
+  if (this->pass) {
+    SDL_EndGPUComputePass(this->pass);
+  }
+
+  super(Object, self, dealloc);
+}
+
 #pragma mark - ComputePass
 
 /**
- * @fn void ComputePass::bindComputePipeline(const ComputePass *self, SDL_GPUComputePipeline *pipeline)
+ * @fn void ComputePass::bindPipeline(const ComputePass *self, SDL_GPUComputePipeline *pipeline)
  * @memberof ComputePass
  */
-static void bindComputePipeline(const ComputePass *self, SDL_GPUComputePipeline *pipeline) {
+static void bindPipeline(const ComputePass *self, SDL_GPUComputePipeline *pipeline) {
 
-  assert(self);
-  assert(self->pass);
-  assert(pipeline);
 
   SDL_BindGPUComputePipeline(self->pass, pipeline);
 }
@@ -47,11 +59,6 @@ static void bindComputePipeline(const ComputePass *self, SDL_GPUComputePipeline 
  * @memberof ComputePass
  */
 static void bindSamplers(const ComputePass *self, Uint32 firstSlot, const SDL_GPUTextureSamplerBinding *bindings, Uint32 num) {
-
-  assert(self);
-  assert(self->pass);
-  assert(bindings || num == 0);
-
   SDL_BindGPUComputeSamplers(self->pass, firstSlot, bindings, num);
 }
 
@@ -60,11 +67,6 @@ static void bindSamplers(const ComputePass *self, Uint32 firstSlot, const SDL_GP
  * @memberof ComputePass
  */
 static void bindStorageBuffers(const ComputePass *self, Uint32 firstSlot, SDL_GPUBuffer *const *buffers, Uint32 num) {
-
-  assert(self);
-  assert(self->pass);
-  assert(buffers || num == 0);
-
   SDL_BindGPUComputeStorageBuffers(self->pass, firstSlot, buffers, num);
 }
 
@@ -74,9 +76,6 @@ static void bindStorageBuffers(const ComputePass *self, Uint32 firstSlot, SDL_GP
  */
 static void bindStorageTextures(const ComputePass *self, Uint32 firstSlot, SDL_GPUTexture *const *textures, Uint32 num) {
 
-  assert(self);
-  assert(self->pass);
-  assert(textures || num == 0);
 
   SDL_BindGPUComputeStorageTextures(self->pass, firstSlot, textures, num);
 }
@@ -87,9 +86,6 @@ static void bindStorageTextures(const ComputePass *self, Uint32 firstSlot, SDL_G
  */
 static void dispatchCompute(const ComputePass *self, Uint32 groupCountX, Uint32 groupCountY, Uint32 groupCountZ) {
 
-  assert(self);
-  assert(self->pass);
-
   SDL_DispatchGPUCompute(self->pass, groupCountX, groupCountY, groupCountZ);
 }
 
@@ -99,21 +95,15 @@ static void dispatchCompute(const ComputePass *self, Uint32 groupCountX, Uint32 
  */
 static void dispatchComputeIndirect(const ComputePass *self, SDL_GPUBuffer *buffer, Uint32 offset) {
 
-  assert(self);
-  assert(self->pass);
-  assert(buffer);
 
   SDL_DispatchGPUComputeIndirect(self->pass, buffer, offset);
 }
 
 /**
- * @fn ComputePass *ComputePass::initWithPass(ComputePass *self, SDL_GPUComputePass *pass)
+ * @fn ComputePass *ComputePass::init(ComputePass *self, SDL_GPUComputePass *pass)
  * @memberof ComputePass
  */
-static ComputePass *initWithPass(ComputePass *self, SDL_GPUComputePass *pass) {
-
-  assert(self);
-  assert(pass);
+static ComputePass *init(ComputePass *self, SDL_GPUComputePass *pass) {
 
   self = (ComputePass *) super(Object, self, init);
   if (self) {
@@ -121,23 +111,6 @@ static ComputePass *initWithPass(ComputePass *self, SDL_GPUComputePass *pass) {
   }
 
   return self;
-}
-
-#pragma mark - Object lifecycle
-
-/**
- * @see Object::dealloc(Object *)
- */
-static void dealloc(Object *self) {
-
-  assert(self);
-
-  ComputePass *this = (ComputePass *) self;
-  if (this->pass) {
-    SDL_EndGPUComputePass(this->pass);
-  }
-
-  super(Object, self, dealloc);
 }
 
 #pragma mark - Class lifecycle
@@ -149,13 +122,13 @@ static void initialize(Class *clazz) {
 
   ((ObjectInterface *) clazz->interface)->dealloc = dealloc;
 
-  ((ComputePassInterface *) clazz->interface)->bindComputePipeline = bindComputePipeline;
+  ((ComputePassInterface *) clazz->interface)->bindPipeline = bindPipeline;
   ((ComputePassInterface *) clazz->interface)->bindSamplers = bindSamplers;
   ((ComputePassInterface *) clazz->interface)->bindStorageBuffers = bindStorageBuffers;
   ((ComputePassInterface *) clazz->interface)->bindStorageTextures = bindStorageTextures;
   ((ComputePassInterface *) clazz->interface)->dispatchCompute = dispatchCompute;
   ((ComputePassInterface *) clazz->interface)->dispatchComputeIndirect = dispatchComputeIndirect;
-  ((ComputePassInterface *) clazz->interface)->initWithPass = initWithPass;
+  ((ComputePassInterface *) clazz->interface)->init = init;
 }
 
 /**

@@ -21,11 +21,25 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include <assert.h>
 
 #include "CopyPass.h"
 
 #define _Class _CopyPass
+
+#pragma mark - Object
+
+/**
+ * @see Object::dealloc(Object *)
+ */
+static void dealloc(Object *self) {
+
+  CopyPass *this = (CopyPass *) self;
+  if (this->pass) {
+    SDL_EndGPUCopyPass(this->pass);
+  }
+
+  super(Object, self, dealloc);
+}
 
 #pragma mark - CopyPass
 
@@ -35,10 +49,6 @@
  */
 static void copyBufferToBuffer(const CopyPass *self, const SDL_GPUBufferLocation *src, const SDL_GPUBufferLocation *dst, Uint32 size, bool cycle) {
 
-  assert(self);
-  assert(self->pass);
-  assert(src);
-  assert(dst);
 
   SDL_CopyGPUBufferToBuffer(self->pass, src, dst, size, cycle);
 }
@@ -49,10 +59,6 @@ static void copyBufferToBuffer(const CopyPass *self, const SDL_GPUBufferLocation
  */
 static void copyTextureToTexture(const CopyPass *self, const SDL_GPUTextureLocation *src, const SDL_GPUTextureLocation *dst, Uint32 w, Uint32 h, Uint32 d, bool cycle) {
 
-  assert(self);
-  assert(self->pass);
-  assert(src);
-  assert(dst);
 
   SDL_CopyGPUTextureToTexture(self->pass, src, dst, w, h, d, cycle);
 }
@@ -63,10 +69,6 @@ static void copyTextureToTexture(const CopyPass *self, const SDL_GPUTextureLocat
  */
 static void downloadBuffer(const CopyPass *self, const SDL_GPUBufferRegion *src, const SDL_GPUTransferBufferLocation *dst) {
 
-  assert(self);
-  assert(self->pass);
-  assert(src);
-  assert(dst);
 
   SDL_DownloadFromGPUBuffer(self->pass, src, dst);
 }
@@ -77,22 +79,15 @@ static void downloadBuffer(const CopyPass *self, const SDL_GPUBufferRegion *src,
  */
 static void downloadTexture(const CopyPass *self, const SDL_GPUTextureRegion *src, const SDL_GPUTextureTransferInfo *dst) {
 
-  assert(self);
-  assert(self->pass);
-  assert(src);
-  assert(dst);
 
   SDL_DownloadFromGPUTexture(self->pass, src, dst);
 }
 
 /**
- * @fn CopyPass *CopyPass::initWithPass(CopyPass *self, SDL_GPUCopyPass *pass)
+ * @fn CopyPass *CopyPass::init(CopyPass *self, SDL_GPUCopyPass *pass)
  * @memberof CopyPass
  */
-static CopyPass *initWithPass(CopyPass *self, SDL_GPUCopyPass *pass) {
-
-  assert(self);
-  assert(pass);
+static CopyPass *init(CopyPass *self, SDL_GPUCopyPass *pass) {
 
   self = (CopyPass *) super(Object, self, init);
   if (self) {
@@ -108,10 +103,6 @@ static CopyPass *initWithPass(CopyPass *self, SDL_GPUCopyPass *pass) {
  */
 static void uploadBuffer(const CopyPass *self, const SDL_GPUTransferBufferLocation *src, const SDL_GPUBufferRegion *dst, bool cycle) {
 
-  assert(self);
-  assert(self->pass);
-  assert(src);
-  assert(dst);
 
   SDL_UploadToGPUBuffer(self->pass, src, dst, cycle);
 }
@@ -122,29 +113,8 @@ static void uploadBuffer(const CopyPass *self, const SDL_GPUTransferBufferLocati
  */
 static void uploadTexture(const CopyPass *self, const SDL_GPUTextureTransferInfo *src, const SDL_GPUTextureRegion *dst, bool cycle) {
 
-  assert(self);
-  assert(self->pass);
-  assert(src);
-  assert(dst);
 
   SDL_UploadToGPUTexture(self->pass, src, dst, cycle);
-}
-
-#pragma mark - Object lifecycle
-
-/**
- * @see Object::dealloc(Object *)
- */
-static void dealloc(Object *self) {
-
-  assert(self);
-
-  CopyPass *this = (CopyPass *) self;
-  if (this->pass) {
-    SDL_EndGPUCopyPass(this->pass);
-  }
-
-  super(Object, self, dealloc);
 }
 
 #pragma mark - Class lifecycle
@@ -160,7 +130,7 @@ static void initialize(Class *clazz) {
   ((CopyPassInterface *) clazz->interface)->copyTextureToTexture = copyTextureToTexture;
   ((CopyPassInterface *) clazz->interface)->downloadBuffer = downloadBuffer;
   ((CopyPassInterface *) clazz->interface)->downloadTexture = downloadTexture;
-  ((CopyPassInterface *) clazz->interface)->initWithPass = initWithPass;
+  ((CopyPassInterface *) clazz->interface)->init = init;
   ((CopyPassInterface *) clazz->interface)->uploadBuffer = uploadBuffer;
   ((CopyPassInterface *) clazz->interface)->uploadTexture = uploadTexture;
 }

@@ -21,10 +21,24 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#include <assert.h>
 #include "RenderPass.h"
 
 #define _Class _RenderPass
+
+#pragma mark - Object
+
+/**
+ * @see Object::dealloc(Object *)
+ */
+static void dealloc(Object *self) {
+
+  RenderPass *this = (RenderPass *) self;
+  if (this->pass) {
+    SDL_EndGPURenderPass(this->pass);
+  }
+
+  super(Object, self, dealloc);
+}
 
 #pragma mark - RenderPass
 
@@ -34,9 +48,6 @@
  */
 static void bindFragmentSamplers(const RenderPass *self, Uint32 firstSlot, const SDL_GPUTextureSamplerBinding *bindings, Uint32 num) {
 
-  assert(self);
-  assert(self->pass);
-  assert(bindings || num == 0);
 
   SDL_BindGPUFragmentSamplers(self->pass, firstSlot, bindings, num);
 }
@@ -47,9 +58,6 @@ static void bindFragmentSamplers(const RenderPass *self, Uint32 firstSlot, const
  */
 static void bindFragmentStorageBuffers(const RenderPass *self, Uint32 firstSlot, SDL_GPUBuffer *const *buffers, Uint32 num) {
 
-  assert(self);
-  assert(self->pass);
-  assert(buffers || num == 0);
 
   SDL_BindGPUFragmentStorageBuffers(self->pass, firstSlot, buffers, num);
 }
@@ -60,24 +68,8 @@ static void bindFragmentStorageBuffers(const RenderPass *self, Uint32 firstSlot,
  */
 static void bindFragmentStorageTextures(const RenderPass *self, Uint32 firstSlot, SDL_GPUTexture *const *textures, Uint32 num) {
 
-  assert(self);
-  assert(self->pass);
-  assert(textures || num == 0);
 
   SDL_BindGPUFragmentStorageTextures(self->pass, firstSlot, textures, num);
-}
-
-/**
- * @fn void RenderPass::bindGraphicsPipeline(const RenderPass *self, SDL_GPUGraphicsPipeline *pipeline)
- * @memberof RenderPass
- */
-static void bindGraphicsPipeline(const RenderPass *self, SDL_GPUGraphicsPipeline *pipeline) {
-
-  assert(self);
-  assert(self->pass);
-  assert(pipeline);
-
-  SDL_BindGPUGraphicsPipeline(self->pass, pipeline);
 }
 
 /**
@@ -86,11 +78,19 @@ static void bindGraphicsPipeline(const RenderPass *self, SDL_GPUGraphicsPipeline
  */
 static void bindIndexBuffer(const RenderPass *self, const SDL_GPUBufferBinding *binding, SDL_GPUIndexElementSize indexElementSize) {
 
-  assert(self);
-  assert(self->pass);
-  assert(binding);
 
   SDL_BindGPUIndexBuffer(self->pass, binding, indexElementSize);
+}
+
+
+/**
+ * @fn void RenderPass::bindPipeline(const RenderPass *self, SDL_GPUGraphicsPipeline *pipeline)
+ * @memberof RenderPass
+ */
+static void bindPipeline(const RenderPass *self, SDL_GPUGraphicsPipeline *pipeline) {
+
+
+  SDL_BindGPUGraphicsPipeline(self->pass, pipeline);
 }
 
 /**
@@ -99,9 +99,6 @@ static void bindIndexBuffer(const RenderPass *self, const SDL_GPUBufferBinding *
  */
 static void bindVertexBuffers(const RenderPass *self, Uint32 firstSlot, const SDL_GPUBufferBinding *bindings, Uint32 num) {
 
-  assert(self);
-  assert(self->pass);
-  assert(bindings || num == 0);
 
   SDL_BindGPUVertexBuffers(self->pass, firstSlot, bindings, num);
 }
@@ -112,9 +109,6 @@ static void bindVertexBuffers(const RenderPass *self, Uint32 firstSlot, const SD
  */
 static void bindVertexSamplers(const RenderPass *self, Uint32 firstSlot, const SDL_GPUTextureSamplerBinding *bindings, Uint32 num) {
 
-  assert(self);
-  assert(self->pass);
-  assert(bindings || num == 0);
 
   SDL_BindGPUVertexSamplers(self->pass, firstSlot, bindings, num);
 }
@@ -125,9 +119,6 @@ static void bindVertexSamplers(const RenderPass *self, Uint32 firstSlot, const S
  */
 static void bindVertexStorageBuffers(const RenderPass *self, Uint32 firstSlot, SDL_GPUBuffer *const *buffers, Uint32 num) {
 
-  assert(self);
-  assert(self->pass);
-  assert(buffers || num == 0);
 
   SDL_BindGPUVertexStorageBuffers(self->pass, firstSlot, buffers, num);
 }
@@ -138,9 +129,6 @@ static void bindVertexStorageBuffers(const RenderPass *self, Uint32 firstSlot, S
  */
 static void bindVertexStorageTextures(const RenderPass *self, Uint32 firstSlot, SDL_GPUTexture *const *textures, Uint32 num) {
 
-  assert(self);
-  assert(self->pass);
-  assert(textures || num == 0);
 
   SDL_BindGPUVertexStorageTextures(self->pass, firstSlot, textures, num);
 }
@@ -151,9 +139,6 @@ static void bindVertexStorageTextures(const RenderPass *self, Uint32 firstSlot, 
  */
 static void drawIndexedPrimitives(const RenderPass *self, Uint32 numIndices, Uint32 numInstances, Uint32 firstIndex, Sint32 vertexOffset, Uint32 firstInstance) {
 
-  assert(self);
-  assert(self->pass);
-
   SDL_DrawGPUIndexedPrimitives(self->pass, numIndices, numInstances, firstIndex, vertexOffset, firstInstance);
 }
 
@@ -163,9 +148,6 @@ static void drawIndexedPrimitives(const RenderPass *self, Uint32 numIndices, Uin
  */
 static void drawIndexedPrimitivesIndirect(const RenderPass *self, SDL_GPUBuffer *buffer, Uint32 offset, Uint32 drawCount) {
 
-  assert(self);
-  assert(self->pass);
-  assert(buffer);
 
   SDL_DrawGPUIndexedPrimitivesIndirect(self->pass, buffer, offset, drawCount);
 }
@@ -176,9 +158,6 @@ static void drawIndexedPrimitivesIndirect(const RenderPass *self, SDL_GPUBuffer 
  */
 static void drawPrimitives(const RenderPass *self, Uint32 numVertices, Uint32 numInstances, Uint32 firstVertex, Uint32 firstInstance) {
 
-  assert(self);
-  assert(self->pass);
-
   SDL_DrawGPUPrimitives(self->pass, numVertices, numInstances, firstVertex, firstInstance);
 }
 
@@ -188,21 +167,15 @@ static void drawPrimitives(const RenderPass *self, Uint32 numVertices, Uint32 nu
  */
 static void drawPrimitivesIndirect(const RenderPass *self, SDL_GPUBuffer *buffer, Uint32 offset, Uint32 drawCount) {
 
-  assert(self);
-  assert(self->pass);
-  assert(buffer);
 
   SDL_DrawGPUPrimitivesIndirect(self->pass, buffer, offset, drawCount);
 }
 
 /**
- * @fn RenderPass *RenderPass::initWithPass(RenderPass *self, SDL_GPURenderPass *pass)
+ * @fn RenderPass *RenderPass::init(RenderPass *self, SDL_GPURenderPass *pass)
  * @memberof RenderPass
  */
-static RenderPass *initWithPass(RenderPass *self, SDL_GPURenderPass *pass) {
-
-  assert(self);
-  assert(pass);
+static RenderPass *init(RenderPass *self, SDL_GPURenderPass *pass) {
 
   self = (RenderPass *) super(Object, self, init);
   if (self) {
@@ -218,9 +191,6 @@ static RenderPass *initWithPass(RenderPass *self, SDL_GPURenderPass *pass) {
  */
 static void setBlendConstants(const RenderPass *self, SDL_FColor blendConstants) {
 
-  assert(self);
-  assert(self->pass);
-
   SDL_SetGPUBlendConstants(self->pass, blendConstants);
 }
 
@@ -230,9 +200,6 @@ static void setBlendConstants(const RenderPass *self, SDL_FColor blendConstants)
  */
 static void setScissor(const RenderPass *self, const SDL_Rect *scissor) {
 
-  assert(self);
-  assert(self->pass);
-  assert(scissor);
 
   SDL_SetGPUScissor(self->pass, scissor);
 }
@@ -243,9 +210,6 @@ static void setScissor(const RenderPass *self, const SDL_Rect *scissor) {
  */
 static void setStencilReference(const RenderPass *self, Uint8 reference) {
 
-  assert(self);
-  assert(self->pass);
-
   SDL_SetGPUStencilReference(self->pass, reference);
 }
 
@@ -255,28 +219,8 @@ static void setStencilReference(const RenderPass *self, Uint8 reference) {
  */
 static void setViewport(const RenderPass *self, const SDL_GPUViewport *viewport) {
 
-  assert(self);
-  assert(self->pass);
-  assert(viewport);
 
   SDL_SetGPUViewport(self->pass, viewport);
-}
-
-#pragma mark - Object lifecycle
-
-/**
- * @see Object::dealloc(Object *)
- */
-static void dealloc(Object *self) {
-
-  assert(self);
-
-  RenderPass *this = (RenderPass *) self;
-  if (this->pass) {
-    SDL_EndGPURenderPass(this->pass);
-  }
-
-  super(Object, self, dealloc);
 }
 
 #pragma mark - Class lifecycle
@@ -291,8 +235,8 @@ static void initialize(Class *clazz) {
   ((RenderPassInterface *) clazz->interface)->bindFragmentSamplers = bindFragmentSamplers;
   ((RenderPassInterface *) clazz->interface)->bindFragmentStorageBuffers = bindFragmentStorageBuffers;
   ((RenderPassInterface *) clazz->interface)->bindFragmentStorageTextures = bindFragmentStorageTextures;
-  ((RenderPassInterface *) clazz->interface)->bindGraphicsPipeline = bindGraphicsPipeline;
   ((RenderPassInterface *) clazz->interface)->bindIndexBuffer = bindIndexBuffer;
+  ((RenderPassInterface *) clazz->interface)->bindPipeline = bindPipeline;
   ((RenderPassInterface *) clazz->interface)->bindVertexBuffers = bindVertexBuffers;
   ((RenderPassInterface *) clazz->interface)->bindVertexSamplers = bindVertexSamplers;
   ((RenderPassInterface *) clazz->interface)->bindVertexStorageBuffers = bindVertexStorageBuffers;
@@ -301,7 +245,7 @@ static void initialize(Class *clazz) {
   ((RenderPassInterface *) clazz->interface)->drawIndexedPrimitivesIndirect = drawIndexedPrimitivesIndirect;
   ((RenderPassInterface *) clazz->interface)->drawPrimitives = drawPrimitives;
   ((RenderPassInterface *) clazz->interface)->drawPrimitivesIndirect = drawPrimitivesIndirect;
-  ((RenderPassInterface *) clazz->interface)->initWithPass = initWithPass;
+  ((RenderPassInterface *) clazz->interface)->init = init;
   ((RenderPassInterface *) clazz->interface)->setBlendConstants = setBlendConstants;
   ((RenderPassInterface *) clazz->interface)->setScissor = setScissor;
   ((RenderPassInterface *) clazz->interface)->setStencilReference = setStencilReference;
