@@ -180,7 +180,7 @@ Class *_Foo(void) {
 ```
 Sources/ObjectivelyGPU/           Core classes
   Types.h                         GPU_Assert, SDL_Size, MakeRect/Size/Point
-  RenderDevice.{h,c}              Owns SDL_GPUDevice, window, frame loop, Drawables
+  RenderDevice.{h,c}              Owns SDL_GPUDevice, window, and frame loop
   CommandBuffer.{h,c}             Wraps SDL_GPUCommandBuffer for one frame
   RenderPass.{h,c}                Wraps SDL_GPURenderPass (draw commands)
   CopyPass.{h,c}                  Wraps SDL_GPUCopyPass (CPU→GPU uploads)
@@ -218,22 +218,6 @@ The caller sets `stage`, `entrypoint`, and binding counts; `code`, `code_size`, 
 ### GPU Resource Lifetime
 
 All `SDL_GPU*` resources (buffers, textures, pipelines, samplers, shaders, transfer buffers, fences) are released through the corresponding `RenderDevice::release*` method, never through `release()`.
-
-### Drawable — Lightweight Frame Hooks
-
-Use `Drawable` (a plain C struct, not a class) to participate in the frame loop without subclassing `RenderDevice`:
-
-```c
-$(device, addDrawable, &(Drawable) {
-    .deviceDidReset  = myAllocGPUResources,
-    .deviceWillReset = myFreeGPUResources,
-    .transfer        = myUploadData,      // called when isDirty == true
-    .submit          = myDrawCommands,
-    .data            = myContext,
-});
-```
-
-Set `drawable->isDirty = true` to trigger `transfer()` on the next frame; it is reset to `false` automatically after `transfer()` returns.
 
 ---
 
