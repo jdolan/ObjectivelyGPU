@@ -28,16 +28,15 @@
 		EE00150000000000000000B6 /* ObjectivelyGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6251F22589273797656C269E /* ObjectivelyGPU.framework */; };
 		EE00160000000000000000B7 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
 		EE00170000000000000000B8 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
-		F73340493879CD8034F99D51 /* ComputePass.c in Sources */ = {isa = PBXBuildFile; fileRef = ED8024CA4186E352C1EC4CA1 /* ComputePass.c */; };
-		FF30FF2D56F9E4EA3C492CBB /* RenderPass.c in Sources */ = {isa = PBXBuildFile; fileRef = 669BE73362E651792735CB1C /* RenderPass.c */; };
 		EI00100000000000000000B1 /* Hello-iOS.c in Sources */ = {isa = PBXBuildFile; fileRef = EI00010000000000000000B1 /* Hello-iOS.c */; };
-		EI00200000000000000000B2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EI00030000000000000000B3 /* LaunchScreen.storyboard */; };
 		EI00300000000000000000B3 /* ObjectivelyGPU.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EI00050000000000000000B5 /* ObjectivelyGPU.xcframework */; };
 		EI00400000000000000000B4 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
 		EI00500000000000000000B5 /* Objectively.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EI00060000000000000000B6 /* Objectively.xcframework */; };
 		EI00600000000000000000B6 /* ObjectivelyGPU.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EI00050000000000000000B5 /* ObjectivelyGPU.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EI00700000000000000000B7 /* SDL3.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EI00800000000000000000B8 /* Objectively.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EI00060000000000000000B6 /* Objectively.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F73340493879CD8034F99D51 /* ComputePass.c in Sources */ = {isa = PBXBuildFile; fileRef = ED8024CA4186E352C1EC4CA1 /* ComputePass.c */; };
+		FF30FF2D56F9E4EA3C492CBB /* RenderPass.c in Sources */ = {isa = PBXBuildFile; fileRef = 669BE73362E651792735CB1C /* RenderPass.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +55,22 @@
 			remoteInfo = ObjectivelyGPU;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EI00D00000000000000000B1 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EI00600000000000000000B6 /* ObjectivelyGPU.xcframework in Embed Frameworks */,
+				EI00700000000000000000B7 /* SDL3.xcframework in Embed Frameworks */,
+				EI00800000000000000000B8 /* Objectively.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		09B8DD26CDB7926D89445C91 /* ComputePass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComputePass.h; sourceTree = "<group>"; };
@@ -83,13 +98,13 @@
 		EE00020000000000000000B2 /* HelloCompute.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HelloCompute.c; sourceTree = "<group>"; };
 		EE00030000000000000000B3 /* ObjectivelyGPU-Hello */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ObjectivelyGPU-Hello"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE00040000000000000000B4 /* ObjectivelyGPU-HelloCompute */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ObjectivelyGPU-HelloCompute"; sourceTree = BUILT_PRODUCTS_DIR; };
-		FDEE3DD81E43E5CFE68E9519 /* Renderer.frag.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Renderer.frag.hlsl; sourceTree = "<group>"; };
 		EI00010000000000000000B1 /* Hello-iOS.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "Hello-iOS.c"; sourceTree = "<group>"; };
 		EI00020000000000000000B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EI00030000000000000000B3 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EI00040000000000000000B4 /* ObjectivelyGPU-Hello-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ObjectivelyGPU-Hello-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EI00050000000000000000B5 /* ObjectivelyGPU.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ObjectivelyGPU.xcframework; path = Frameworks/ObjectivelyGPU.xcframework; sourceTree = "<group>"; };
 		EI00060000000000000000B6 /* Objectively.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Objectively.xcframework; path = Frameworks/Objectively.xcframework; sourceTree = "<group>"; };
+		FDEE3DD81E43E5CFE68E9519 /* Renderer.frag.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Renderer.frag.hlsl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,9 +121,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE00120000000000000000B3 /* ObjectivelyGPU.framework in Frameworks */,
-				EE00130000000000000000B4 /* SDL3.xcframework in Frameworks */,
 				EE00140000000000000000B5 /* Objectively.framework in Frameworks */,
+				EE00130000000000000000B4 /* SDL3.xcframework in Frameworks */,
+				EE00120000000000000000B3 /* ObjectivelyGPU.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,9 +131,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE00150000000000000000B6 /* ObjectivelyGPU.framework in Frameworks */,
-				EE00160000000000000000B7 /* SDL3.xcframework in Frameworks */,
 				EE00170000000000000000B8 /* Objectively.framework in Frameworks */,
+				EE00160000000000000000B7 /* SDL3.xcframework in Frameworks */,
+				EE00150000000000000000B6 /* ObjectivelyGPU.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EI00B00000000000000000B1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EI00300000000000000000B3 /* ObjectivelyGPU.xcframework in Frameworks */,
+				EI00400000000000000000B4 /* SDL3.xcframework in Frameworks */,
+				EI00500000000000000000B5 /* Objectively.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,13 +154,13 @@
 			isa = PBXGroup;
 			children = (
 				EE00200000000000000000B1 /* Examples */,
-				AA000000000000000000DD01 /* Frameworks */,
 				B23D89B2D2DF3745A003AEB1 /* Products */,
 				904A6003E847F129BD1EE63E /* Sources */,
 				CEEAAFF72FED833A00FFEBE6 /* COPYING */,
 				CEEAAFF82FED833A00FFEBE6 /* Makefile.am */,
 				CEEAAFFA2FED833A00FFEBE6 /* README.md */,
 				CEEAAFFD2FED83E400FFEBE6 /* configure.ac */,
+				CE73E9F62FEEA53E0048BC24 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -146,15 +171,6 @@
 				C16D60B0E94469E649953EC5 /* ObjectivelyGPU.h */,
 			);
 			path = Sources;
-			sourceTree = "<group>";
-		};
-		AA000000000000000000DD01 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				EI02000000000000000000B1 /* iOS xcframeworks */,
-				CEA0030000000000000000F0 /* Objectively.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		AFF3775B279FC0FE4D348FBA /* ObjectivelyGPU */ = {
@@ -197,6 +213,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		CE73E9F62FEEA53E0048BC24 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000EE01 /* SDL3.xcframework */,
+				CEA0030000000000000000F0 /* Objectively.framework */,
+				EI00050000000000000000B5 /* ObjectivelyGPU.xcframework */,
+				EI00060000000000000000B6 /* Objectively.xcframework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		EE00200000000000000000B1 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
@@ -215,14 +242,6 @@
 				EI00030000000000000000B3 /* LaunchScreen.storyboard */,
 			);
 			path = "Hello-iOS";
-			sourceTree = "<group>";
-		};
-		EI02000000000000000000B1 /* iOS xcframeworks */ = {
-			isa = PBXGroup;
-			children = (
-				EI02000000000000000000B1 /* iOS xcframeworks */,
-			);
-			name = "xcframeworks";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -351,6 +370,16 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		EI00C00000000000000000B1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		3B7DFB0747829707F437ED7F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -380,8 +409,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-/* End PBXSourcesBuildPhase section */
-
 		EI00A00000000000000000B1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -390,37 +417,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EI00B00000000000000000B1 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EI00300000000000000000B3 /* ObjectivelyGPU.xcframework in Frameworks */,
-				EI00400000000000000000B4 /* SDL3.xcframework in Frameworks */,
-				EI00500000000000000000B5 /* Objectively.xcframework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EI00C00000000000000000B1 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EI00D00000000000000000B1 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EI00600000000000000000B6 /* ObjectivelyGPU.xcframework in Embed Frameworks */,
-				EI00700000000000000000B7 /* SDL3.xcframework in Embed Frameworks */,
-				EI00800000000000000000B8 /* Objectively.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-
+/* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		EE00800000000000000000B1 /* PBXTargetDependency */ = {
