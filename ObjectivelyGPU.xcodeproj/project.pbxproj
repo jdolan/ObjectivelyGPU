@@ -271,6 +271,42 @@
 		};
 /* End PBXHeadersBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		EI03100000000000000000A1 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "exec \"$SRCROOT/scripts/build-xcframework.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXAggregateTarget section */
+		EI03000000000000000000A1 /* ObjectivelyGPU-xcframework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = EI03400000000000000000A1 /* Build configuration list for PBXAggregateTarget "ObjectivelyGPU-xcframework" */;
+			buildPhases = (
+				EI03100000000000000000A1 /* Run Script */,
+			);
+			dependencies = (
+			);
+			name = "ObjectivelyGPU-xcframework";
+			productName = "ObjectivelyGPU-xcframework";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXNativeTarget section */
 		EA25F2CECA5EE87704453CE2 /* ObjectivelyGPU */ = {
 			isa = PBXNativeTarget;
