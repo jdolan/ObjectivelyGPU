@@ -503,8 +503,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Sources",
-					/usr/local/include,
-					/opt/homebrew/include,
+					"$(WORKSPACE_PREFIX)/Objectively/Sources",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -536,8 +535,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Sources",
-					/usr/local/include,
-					/opt/homebrew/include,
+					"$(WORKSPACE_PREFIX)/Objectively/Sources",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -604,8 +602,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Sources",
-					/usr/local/include,
-					/opt/homebrew/include,
+					"$(WORKSPACE_PREFIX)/Objectively/Sources",
 				);
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -627,8 +624,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Sources",
-					/usr/local/include,
-					/opt/homebrew/include,
+					"$(WORKSPACE_PREFIX)/Objectively/Sources",
 				);
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -650,8 +646,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Sources",
-					/usr/local/include,
-					/opt/homebrew/include,
+					"$(WORKSPACE_PREFIX)/Objectively/Sources",
 				);
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -673,8 +668,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Sources",
-					/usr/local/include,
-					/opt/homebrew/include,
+					"$(WORKSPACE_PREFIX)/Objectively/Sources",
 				);
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
