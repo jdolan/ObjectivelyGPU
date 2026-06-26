@@ -1,0 +1,41 @@
+DOXYFILE_ENCODING      = UTF-8
+PROJECT_NAME           = "ObjectivelyGPU"
+PROJECT_NUMBER         =
+PROJECT_BRIEF          = "Object oriented GPU framework for SDL3 and GNU C"
+PROJECT_LOGO           =
+OUTPUT_DIRECTORY       = Documentation
+OUTPUT_LANGUAGE        = English
+OPTIMIZE_OUTPUT_FOR_C  = YES
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+GENERATE_TODOLIST      = YES
+GENERATE_TESTLIST      = YES
+GENERATE_BUGLIST       = YES
+GENERATE_DEPRECATEDLIST= YES
+INPUT                  = Documentation/index.md Sources
+INPUT_ENCODING         = UTF-8
+RECURSIVE              = YES
+EXCLUDE_SYMBOLS        = *Interface
+USE_MDFILE_AS_MAINPAGE = Documentation/index.md
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+HTML_HEADER            =
+HTML_FOOTER            =
+HTML_STYLESHEET        =
+HTML_EXTRA_STYLESHEET  = doxygen-awesome-css/doxygen-awesome.css \
+                         doxygen-awesome-css/doxygen-awesome-sidebar-only.css
+HTML_EXTRA_FILES       = doxygen-awesome-css/doxygen-awesome-fragment-copy-button.js \
+                         doxygen-awesome-css/doxygen-awesome-paragraph-link.js \
+                         doxygen-awesome-css/doxygen-awesome-interactive-toc.js
+HTML_COLORSTYLE        = LIGHT
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+TREEVIEW_WIDTH         = 250
+SEARCHENGINE           = YES
+GENERATE_LATEX         = NO
+GENERATE_MAN           = NO
+HAVE_DOT               = NO

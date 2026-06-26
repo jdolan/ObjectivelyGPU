@@ -113,6 +113,8 @@
 		CEEAAFF82FED833A00FFEBE6 /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CEEAAFFA2FED833A00FFEBE6 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		CEEAAFFD2FED83E400FFEBE6 /* configure.ac */ = {isa = PBXFileReference; lastKnownFileType = text; path = configure.ac; sourceTree = "<group>"; };
+		DOC00010000000000000001 /* index.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = index.md; sourceTree = "<group>"; };
+		DOC00020000000000000001 /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		E71C479F7B60345FDDA44201 /* CommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandBuffer.h; sourceTree = "<group>"; };
 		ED8024CA4186E352C1EC4CA1 /* ComputePass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComputePass.c; sourceTree = "<group>"; };
 		EE00010000000000000000B1 /* Hello.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Hello.c; sourceTree = "<group>"; };
@@ -182,7 +184,17 @@
 				CEEAAFF82FED833A00FFEBE6 /* Makefile.am */,
 				CEEAAFFA2FED833A00FFEBE6 /* README.md */,
 				CEEAAFFD2FED83E400FFEBE6 /* configure.ac */,
+				DOC00030000000000000001 /* Documentation */,
+				DOC00020000000000000001 /* Doxyfile */,
 			);
+			sourceTree = "<group>";
+		};
+		DOC00030000000000000001 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				DOC00010000000000000001 /* index.md */,
+			);
+			path = Documentation;
 			sourceTree = "<group>";
 		};
 		904A6003E847F129BD1EE63E /* Sources */ = {
