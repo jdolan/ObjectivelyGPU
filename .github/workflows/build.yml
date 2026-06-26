@@ -111,3 +111,38 @@ jobs:
         autoreconf -i
         ./configure
         make
+
+  build-windows:
+    runs-on: windows-latest
+
+    env:
+      BUILD_CONFIGURATION: Release
+
+    steps:
+    - name: Checkout Objectively
+      uses: actions/checkout@v6
+      with:
+        repository: jdolan/Objectively
+        path: Objectively
+
+    - name: Checkout ObjectivelyMVC
+      uses: actions/checkout@v6
+      with:
+        repository: jdolan/ObjectivelyMVC
+        path: ObjectivelyMVC
+
+    - name: Checkout ObjectivelyGPU
+      uses: actions/checkout@v6
+      with:
+        path: ObjectivelyGPU
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v3
+
+    - name: Build Objectively
+      working-directory: ${{ github.workspace }}/Objectively
+      run: msbuild /m /p:Configuration=${{ env.BUILD_CONFIGURATION }} /p:Platform=x64 Objectively.vs15/Objectively.sln
+
+    - name: Build ObjectivelyGPU
+      working-directory: ${{ github.workspace }}/ObjectivelyGPU
+      run: msbuild /m /p:Configuration=${{ env.BUILD_CONFIGURATION }} /p:Platform=x64 ObjectivelyGPU.vs15/ObjectivelyGPU.sln
