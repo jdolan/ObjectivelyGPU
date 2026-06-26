@@ -54,6 +54,13 @@
 			remoteGlobalIDString = EA25F2CECA5EE87704453CE2;
 			remoteInfo = ObjectivelyGPU;
 		};
+		EI04000000000000000000A1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EI03000000000000000000A1;
+			remoteInfo = "ObjectivelyGPU-xcframework";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -121,8 +128,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE00140000000000000000B5 /* Objectively.framework in Frameworks */,
 				EE00130000000000000000B4 /* SDL3.xcframework in Frameworks */,
+				EE00140000000000000000B5 /* Objectively.framework in Frameworks */,
 				EE00120000000000000000B3 /* ObjectivelyGPU.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -131,8 +138,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE00170000000000000000B8 /* Objectively.framework in Frameworks */,
 				EE00160000000000000000B7 /* SDL3.xcframework in Frameworks */,
+				EE00170000000000000000B8 /* Objectively.framework in Frameworks */,
 				EE00150000000000000000B6 /* ObjectivelyGPU.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -141,9 +148,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EI00300000000000000000B3 /* ObjectivelyGPU.xcframework in Frameworks */,
 				EI00400000000000000000B4 /* SDL3.xcframework in Frameworks */,
 				EI00500000000000000000B5 /* Objectively.xcframework in Frameworks */,
+				EI00300000000000000000B3 /* ObjectivelyGPU.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +335,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				EI04100000000000000000A1 /* PBXTargetDependency */,
 			);
 			name = "ObjectivelyGPU-Hello-iOS";
 			productName = "ObjectivelyGPU-Hello-iOS";
@@ -344,6 +352,9 @@
 				LastUpgradeCheck = 2650;
 				ORGANIZATIONNAME = "https://github.com/jdolan";
 				TargetAttributes = {
+				EI03000000000000000000A1 = {
+					CreatedOnToolsVersion = 16.0;
+				};
 					EA25F2CECA5EE87704453CE2 = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -366,6 +377,7 @@
 				EE00B00000000000000000B1 /* ObjectivelyGPU-Hello */,
 				EE00C00000000000000000B1 /* ObjectivelyGPU-HelloCompute */,
 				EI00F00000000000000000B1 /* ObjectivelyGPU-Hello-iOS */,
+							EI03000000000000000000A1 /* ObjectivelyGPU-xcframework */,
 			);
 		};
 /* End PBXProject section */
@@ -429,6 +441,11 @@
 			isa = PBXTargetDependency;
 			target = EA25F2CECA5EE87704453CE2 /* ObjectivelyGPU */;
 			targetProxy = EE00900000000000000000B1 /* PBXContainerItemProxy */;
+		};
+		EI04100000000000000000A1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EI03000000000000000000A1 /* ObjectivelyGPU-xcframework */;
+			targetProxy = EI04000000000000000000A1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -690,6 +707,20 @@
 			};
 			name = Release;
 		};
+		EI03200000000000000000A1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "ObjectivelyGPU-xcframework";
+			};
+			name = Debug;
+		};
+		EI03300000000000000000A2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "ObjectivelyGPU-xcframework";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -734,6 +765,15 @@
 			buildConfigurations = (
 				EI01000000000000000000B1 /* Debug */,
 				EI01100000000000000000B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EI03400000000000000000A1 /* Build configuration list for PBXAggregateTarget "ObjectivelyGPU-xcframework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EI03200000000000000000A1 /* Debug */,
+				EI03300000000000000000A2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

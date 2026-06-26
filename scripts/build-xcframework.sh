@@ -9,11 +9,6 @@
 # Usage:
 #   scripts/build-xcframework.sh
 #
-# Optional env vars:
-#   IOS_MIN     (default: 14.0)
-#   MACOS_MIN   (default: 12.0)
-#   FORCE       set to 1 to rebuild even if output already exists
-#
 set -e -o pipefail
 
 export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
@@ -27,11 +22,6 @@ OUTPUT="$FRAMEWORKS_DIR/$FRAMEWORK.xcframework"
 
 IOS_MIN="${IOS_MIN:-14.0}"
 MACOS_MIN="${MACOS_MIN:-12.0}"
-
-if [ -d "$OUTPUT" ] && [ "${FORCE:-0}" != "1" ]; then
-    echo "==> $FRAMEWORK.xcframework: cached (set FORCE=1 to rebuild)"
-    exit 0
-fi
 
 CLANG=$(xcrun --find clang)
 LIPO=$(xcrun --find lipo)
