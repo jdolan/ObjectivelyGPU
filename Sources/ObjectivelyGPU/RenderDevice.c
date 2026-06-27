@@ -326,6 +326,11 @@ static SDL_GPUComputePipeline *loadComputePipeline(const RenderDevice *self, con
       continue;
     }
 
+    if (!res->data || res->data->length == 0) {
+      release(res);
+      continue;
+    }
+
     SDL_GPUComputePipelineCreateInfo filled = *info;
     filled.code      = res->data->bytes;
     filled.code_size = res->data->length;
