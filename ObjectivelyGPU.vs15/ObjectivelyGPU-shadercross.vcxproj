@@ -87,8 +87,8 @@
     <CustomBuild Include="..\Examples\Shaders\HelloCompute.frag.hlsl">
       <Message>Compiling HelloCompute.frag.hlsl</Message>
       <Command>
-        shadercross %(FullPath) -s HLSL -d SPIRV -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.spv
-        shadercross %(FullPath) -s HLSL -d MSL   -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.msl
+        shadercross %(FullPath) -s HLSL -d SPIRV -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.spv &amp;&amp;
+        shadercross %(FullPath) -s HLSL -d MSL   -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.msl &amp;&amp;
         shadercross %(FullPath) -s HLSL -d DXIL  -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.dxil
       </Command>
       <Outputs>..\Examples\Shaders\HelloCompute.frag.spv;..\Examples\Shaders\HelloCompute.frag.msl;..\Examples\Shaders\HelloCompute.frag.dxil</Outputs>
