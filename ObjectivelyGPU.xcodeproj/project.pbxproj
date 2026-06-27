@@ -23,6 +23,7 @@
 			buildConfigurationList = SC00400000000000000000A0 /* Build configuration list for PBXAggregateTarget "ObjectivelyGPU-shadercross" */;
 			buildPhases = (
 				SC00100000000000000000A0 /* Compile Shaders */,
+				CECF83B32FEF75A400CB0CCA /* CopyFiles */,
 			);
 			dependencies = (
 			);
@@ -45,6 +46,22 @@
 		CCCB11DB70E4A962360A2119 /* CopyPass.c in Sources */ = {isa = PBXBuildFile; fileRef = C862954A9DD435C1FF7CD31D /* CopyPass.c */; };
 		CEA0030000000000000000F1 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
 		CECF83982FEF6A7200CB0CCA /* Mathlib.h in Headers */ = {isa = PBXBuildFile; fileRef = CECF83972FEF6A7200CB0CCA /* Mathlib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CECF83B52FEF765400CB0CCA /* Hello.frag.hlsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A42FEF712F00CB0CCA /* Hello.frag.hlsl */; };
+		CECF83B62FEF765400CB0CCA /* Hello.frag.msl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A52FEF712F00CB0CCA /* Hello.frag.msl */; };
+		CECF83B72FEF765400CB0CCA /* Hello.frag.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A62FEF712F00CB0CCA /* Hello.frag.spv */; };
+		CECF83B82FEF765400CB0CCA /* Hello.vert.hlsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A72FEF712F00CB0CCA /* Hello.vert.hlsl */; };
+		CECF83B92FEF765400CB0CCA /* Hello.vert.msl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A82FEF712F00CB0CCA /* Hello.vert.msl */; };
+		CECF83BA2FEF765400CB0CCA /* Hello.vert.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A92FEF712F00CB0CCA /* Hello.vert.spv */; };
+		CECF83BB2FEF765400CB0CCA /* HelloCompute.c in CopyFiles */ = {isa = PBXBuildFile; fileRef = EE00020000000000000000B2 /* HelloCompute.c */; };
+		CECF83BC2FEF765400CB0CCA /* HelloCompute.comp.hlsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AA2FEF712F00CB0CCA /* HelloCompute.comp.hlsl */; };
+		CECF83BD2FEF765400CB0CCA /* HelloCompute.comp.msl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AB2FEF712F00CB0CCA /* HelloCompute.comp.msl */; };
+		CECF83BE2FEF765400CB0CCA /* HelloCompute.comp.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AC2FEF712F00CB0CCA /* HelloCompute.comp.spv */; };
+		CECF83BF2FEF765400CB0CCA /* HelloCompute.frag.hlsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AD2FEF712F00CB0CCA /* HelloCompute.frag.hlsl */; };
+		CECF83C02FEF765400CB0CCA /* HelloCompute.frag.msl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AE2FEF712F00CB0CCA /* HelloCompute.frag.msl */; };
+		CECF83C12FEF765400CB0CCA /* HelloCompute.frag.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AF2FEF712F00CB0CCA /* HelloCompute.frag.spv */; };
+		CECF83C22FEF765400CB0CCA /* HelloCompute.vert.hlsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83B02FEF712F00CB0CCA /* HelloCompute.vert.hlsl */; };
+		CECF83C32FEF765400CB0CCA /* HelloCompute.vert.msl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83B12FEF712F00CB0CCA /* HelloCompute.vert.msl */; };
+		CECF83C42FEF765400CB0CCA /* HelloCompute.vert.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83B22FEF712F00CB0CCA /* HelloCompute.vert.spv */; };
 		DF73824CC25298378B451056 /* CopyPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 59334BDAED542AB6DE565EDD /* CopyPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EE00100000000000000000B1 /* Hello.c in Sources */ = {isa = PBXBuildFile; fileRef = EE00010000000000000000B1 /* Hello.c */; };
 		EE00110000000000000000B2 /* HelloCompute.c in Sources */ = {isa = PBXBuildFile; fileRef = EE00020000000000000000B2 /* HelloCompute.c */; };
@@ -90,6 +107,40 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		CECF83B32FEF75A400CB0CCA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CECF83B42FEF763B00CB0CCA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				CECF83B52FEF765400CB0CCA /* Hello.frag.hlsl in CopyFiles */,
+				CECF83B62FEF765400CB0CCA /* Hello.frag.msl in CopyFiles */,
+				CECF83B72FEF765400CB0CCA /* Hello.frag.spv in CopyFiles */,
+				CECF83B82FEF765400CB0CCA /* Hello.vert.hlsl in CopyFiles */,
+				CECF83B92FEF765400CB0CCA /* Hello.vert.msl in CopyFiles */,
+				CECF83BA2FEF765400CB0CCA /* Hello.vert.spv in CopyFiles */,
+				CECF83BB2FEF765400CB0CCA /* HelloCompute.c in CopyFiles */,
+				CECF83BC2FEF765400CB0CCA /* HelloCompute.comp.hlsl in CopyFiles */,
+				CECF83BD2FEF765400CB0CCA /* HelloCompute.comp.msl in CopyFiles */,
+				CECF83BE2FEF765400CB0CCA /* HelloCompute.comp.spv in CopyFiles */,
+				CECF83BF2FEF765400CB0CCA /* HelloCompute.frag.hlsl in CopyFiles */,
+				CECF83C02FEF765400CB0CCA /* HelloCompute.frag.msl in CopyFiles */,
+				CECF83C12FEF765400CB0CCA /* HelloCompute.frag.spv in CopyFiles */,
+				CECF83C22FEF765400CB0CCA /* HelloCompute.vert.hlsl in CopyFiles */,
+				CECF83C32FEF765400CB0CCA /* HelloCompute.vert.msl in CopyFiles */,
+				CECF83C42FEF765400CB0CCA /* HelloCompute.vert.spv in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EI00D00000000000000000B1 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -120,22 +171,26 @@
 		C16D60B0E94469E649953EC5 /* ObjectivelyGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectivelyGPU.h; sourceTree = "<group>"; };
 		C862954A9DD435C1FF7CD31D /* CopyPass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CopyPass.c; sourceTree = "<group>"; };
 		CEA0030000000000000000F0 /* Objectively.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Objectively.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CECF83912FEF634300CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.make; };
 		CECF83942FEF65EB00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83952FEF65FF00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83962FEF65FF00CB0CCA /* ObjectivelyGPU.pc.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ObjectivelyGPU.pc.in; sourceTree = "<group>"; };
 		CECF83972FEF6A7200CB0CCA /* Mathlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Mathlib.h; sourceTree = "<group>"; };
-		CECF83992FEF6B2400CB0CCA /* Hello.frag.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Hello.frag.msl; sourceTree = "<group>"; };
-		CECF839A2FEF6B2400CB0CCA /* Hello.frag.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hello.frag.spv; sourceTree = "<group>"; };
-		CECF839B2FEF6B2400CB0CCA /* Hello.vert.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Hello.vert.msl; sourceTree = "<group>"; };
-		CECF839C2FEF6B2400CB0CCA /* Hello.vert.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hello.vert.spv; sourceTree = "<group>"; };
-		CECF839D2FEF6B2400CB0CCA /* HelloCompute.comp.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.comp.msl; sourceTree = "<group>"; };
-		CECF839E2FEF6B2400CB0CCA /* HelloCompute.comp.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = HelloCompute.comp.spv; sourceTree = "<group>"; };
-		CECF839F2FEF6B2400CB0CCA /* HelloCompute.frag.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.frag.msl; sourceTree = "<group>"; };
-		CECF83A02FEF6B2400CB0CCA /* HelloCompute.frag.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = HelloCompute.frag.spv; sourceTree = "<group>"; };
-		CECF83A12FEF6B2400CB0CCA /* HelloCompute.vert.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.vert.msl; sourceTree = "<group>"; };
-		CECF83A22FEF6B2400CB0CCA /* HelloCompute.vert.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = HelloCompute.vert.spv; sourceTree = "<group>"; };
 		CECF83A32FEF6F5B00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
+		CECF83A42FEF712F00CB0CCA /* Hello.frag.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Hello.frag.hlsl; sourceTree = "<group>"; };
+		CECF83A52FEF712F00CB0CCA /* Hello.frag.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Hello.frag.msl; sourceTree = "<group>"; };
+		CECF83A62FEF712F00CB0CCA /* Hello.frag.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hello.frag.spv; sourceTree = "<group>"; };
+		CECF83A72FEF712F00CB0CCA /* Hello.vert.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Hello.vert.hlsl; sourceTree = "<group>"; };
+		CECF83A82FEF712F00CB0CCA /* Hello.vert.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Hello.vert.msl; sourceTree = "<group>"; };
+		CECF83A92FEF712F00CB0CCA /* Hello.vert.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hello.vert.spv; sourceTree = "<group>"; };
+		CECF83AA2FEF712F00CB0CCA /* HelloCompute.comp.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.comp.hlsl; sourceTree = "<group>"; };
+		CECF83AB2FEF712F00CB0CCA /* HelloCompute.comp.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.comp.msl; sourceTree = "<group>"; };
+		CECF83AC2FEF712F00CB0CCA /* HelloCompute.comp.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = HelloCompute.comp.spv; sourceTree = "<group>"; };
+		CECF83AD2FEF712F00CB0CCA /* HelloCompute.frag.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.frag.hlsl; sourceTree = "<group>"; };
+		CECF83AE2FEF712F00CB0CCA /* HelloCompute.frag.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.frag.msl; sourceTree = "<group>"; };
+		CECF83AF2FEF712F00CB0CCA /* HelloCompute.frag.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = HelloCompute.frag.spv; sourceTree = "<group>"; };
+		CECF83B02FEF712F00CB0CCA /* HelloCompute.vert.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.vert.hlsl; sourceTree = "<group>"; };
+		CECF83B12FEF712F00CB0CCA /* HelloCompute.vert.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.vert.msl; sourceTree = "<group>"; };
+		CECF83B22FEF712F00CB0CCA /* HelloCompute.vert.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = HelloCompute.vert.spv; sourceTree = "<group>"; };
 		CEEAAFF72FED833A00FFEBE6 /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		CEEAAFF82FED833A00FFEBE6 /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CEEAAFFA2FED833A00FFEBE6 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -154,11 +209,6 @@
 		EI00040000000000000000B4 /* ObjectivelyGPU-Hello-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ObjectivelyGPU-Hello-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EI00050000000000000000B5 /* ObjectivelyGPU.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ObjectivelyGPU.xcframework; path = Frameworks/ObjectivelyGPU.xcframework; sourceTree = "<group>"; };
 		EI00060000000000000000B6 /* Objectively.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Objectively.xcframework; path = Frameworks/Objectively.xcframework; sourceTree = "<group>"; };
-		SC00600000000000000000A0 /* Hello.vert.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Hello.vert.hlsl; sourceTree = "<group>"; };
-		SC00700000000000000000A0 /* Hello.frag.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Hello.frag.hlsl; sourceTree = "<group>"; };
-		SC00800000000000000000A0 /* HelloCompute.comp.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.comp.hlsl; sourceTree = "<group>"; };
-		SC00900000000000000000A0 /* HelloCompute.vert.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.vert.hlsl; sourceTree = "<group>"; };
-		SC00A00000000000000000A0 /* HelloCompute.frag.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.frag.hlsl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -286,9 +336,23 @@
 			isa = PBXGroup;
 			children = (
 				EI00E00000000000000000B1 /* Hello-iOS */,
-				SC00500000000000000000A0 /* Shaders */,
 				EE00010000000000000000B1 /* Hello.c */,
+				CECF83A42FEF712F00CB0CCA /* Hello.frag.hlsl */,
+				CECF83A52FEF712F00CB0CCA /* Hello.frag.msl */,
+				CECF83A62FEF712F00CB0CCA /* Hello.frag.spv */,
+				CECF83A72FEF712F00CB0CCA /* Hello.vert.hlsl */,
+				CECF83A82FEF712F00CB0CCA /* Hello.vert.msl */,
+				CECF83A92FEF712F00CB0CCA /* Hello.vert.spv */,
 				EE00020000000000000000B2 /* HelloCompute.c */,
+				CECF83AA2FEF712F00CB0CCA /* HelloCompute.comp.hlsl */,
+				CECF83AB2FEF712F00CB0CCA /* HelloCompute.comp.msl */,
+				CECF83AC2FEF712F00CB0CCA /* HelloCompute.comp.spv */,
+				CECF83AD2FEF712F00CB0CCA /* HelloCompute.frag.hlsl */,
+				CECF83AE2FEF712F00CB0CCA /* HelloCompute.frag.msl */,
+				CECF83AF2FEF712F00CB0CCA /* HelloCompute.frag.spv */,
+				CECF83B02FEF712F00CB0CCA /* HelloCompute.vert.hlsl */,
+				CECF83B12FEF712F00CB0CCA /* HelloCompute.vert.msl */,
+				CECF83B22FEF712F00CB0CCA /* HelloCompute.vert.spv */,
 				CECF83A32FEF6F5B00CB0CCA /* Makefile.am */,
 			);
 			path = Examples;
@@ -302,29 +366,6 @@
 				EI00030000000000000000B3 /* LaunchScreen.storyboard */,
 			);
 			path = "Hello-iOS";
-			sourceTree = "<group>";
-		};
-		SC00500000000000000000A0 /* Shaders */ = {
-			isa = PBXGroup;
-			children = (
-				SC00700000000000000000A0 /* Hello.frag.hlsl */,
-				CECF83992FEF6B2400CB0CCA /* Hello.frag.msl */,
-				CECF839A2FEF6B2400CB0CCA /* Hello.frag.spv */,
-				SC00600000000000000000A0 /* Hello.vert.hlsl */,
-				CECF839B2FEF6B2400CB0CCA /* Hello.vert.msl */,
-				CECF839C2FEF6B2400CB0CCA /* Hello.vert.spv */,
-				SC00800000000000000000A0 /* HelloCompute.comp.hlsl */,
-				CECF839D2FEF6B2400CB0CCA /* HelloCompute.comp.msl */,
-				CECF839E2FEF6B2400CB0CCA /* HelloCompute.comp.spv */,
-				SC00A00000000000000000A0 /* HelloCompute.frag.hlsl */,
-				CECF839F2FEF6B2400CB0CCA /* HelloCompute.frag.msl */,
-				CECF83A02FEF6B2400CB0CCA /* HelloCompute.frag.spv */,
-				SC00900000000000000000A0 /* HelloCompute.vert.hlsl */,
-				CECF83A12FEF6B2400CB0CCA /* HelloCompute.vert.msl */,
-				CECF83A22FEF6B2400CB0CCA /* HelloCompute.vert.spv */,
-				CECF83912FEF634300CB0CCA /* Makefile.am */,
-			);
-			path = Shaders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -372,6 +413,7 @@
 			buildPhases = (
 				EE00300000000000000000B1 /* Sources */,
 				EE00400000000000000000B1 /* Frameworks */,
+				CECF83B42FEF763B00CB0CCA /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -499,35 +541,35 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Examples/Shaders/Hello.vert.hlsl",
-				"$(SRCROOT)/Examples/Shaders/Hello.frag.hlsl",
-				"$(SRCROOT)/Examples/Shaders/HelloCompute.comp.hlsl",
-				"$(SRCROOT)/Examples/Shaders/HelloCompute.vert.hlsl",
-				"$(SRCROOT)/Examples/Shaders/HelloCompute.frag.hlsl",
+				"$(SRCROOT)/Examples/Hello.vert.hlsl",
+				"$(SRCROOT)/Examples/Hello.frag.hlsl",
+				"$(SRCROOT)/Examples/HelloCompute.comp.hlsl",
+				"$(SRCROOT)/Examples/HelloCompute.vert.hlsl",
+				"$(SRCROOT)/Examples/HelloCompute.frag.hlsl",
 			);
 			name = "Compile Shaders";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/Examples/Shaders/Hello.vert.msl",
-				"$(SRCROOT)/Examples/Shaders/Hello.vert.spv",
-				"$(SRCROOT)/Examples/Shaders/Hello.vert.dxil",
-				"$(SRCROOT)/Examples/Shaders/Hello.frag.msl",
-				"$(SRCROOT)/Examples/Shaders/Hello.frag.spv",
-				"$(SRCROOT)/Examples/Shaders/Hello.frag.dxil",
-				"$(SRCROOT)/Examples/Shaders/HelloCompute.comp.msl",
-				"$(SRCROOT)/Examples/Shaders/HelloCompute.comp.spv",
-				"$(SRCROOT)/Examples/Shaders/HelloCompute.comp.dxil",
-				"$(SRCROOT)/Examples/Shaders/HelloCompute.vert.msl",
-				"$(SRCROOT)/Examples/Shaders/HelloCompute.vert.spv",
-				"$(SRCROOT)/Examples/Shaders/HelloCompute.vert.dxil",
-				"$(SRCROOT)/Examples/Shaders/HelloCompute.frag.msl",
-				"$(SRCROOT)/Examples/Shaders/HelloCompute.frag.spv",
-				"$(SRCROOT)/Examples/Shaders/HelloCompute.frag.dxil",
+				"$(SRCROOT)/Examples/Hello.vert.msl",
+				"$(SRCROOT)/Examples/Hello.vert.spv",
+				"$(SRCROOT)/Examples/Hello.vert.dxil",
+				"$(SRCROOT)/Examples/Hello.frag.msl",
+				"$(SRCROOT)/Examples/Hello.frag.spv",
+				"$(SRCROOT)/Examples/Hello.frag.dxil",
+				"$(SRCROOT)/Examples/HelloCompute.comp.msl",
+				"$(SRCROOT)/Examples/HelloCompute.comp.spv",
+				"$(SRCROOT)/Examples/HelloCompute.comp.dxil",
+				"$(SRCROOT)/Examples/HelloCompute.vert.msl",
+				"$(SRCROOT)/Examples/HelloCompute.vert.spv",
+				"$(SRCROOT)/Examples/HelloCompute.vert.dxil",
+				"$(SRCROOT)/Examples/HelloCompute.frag.msl",
+				"$(SRCROOT)/Examples/HelloCompute.frag.spv",
+				"$(SRCROOT)/Examples/HelloCompute.frag.dxil",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nSHADERS=\"$SRCROOT/Examples/Shaders\"\ncompile() {\n  local name=$1 stage=$2 ep=$3\n  shadercross \"$SHADERS/${name}.hlsl\" -s HLSL -d SPIRV -t $stage -e $ep -o \"$SHADERS/${name}.spv\"\n  shadercross \"$SHADERS/${name}.hlsl\" -s HLSL -d MSL   -t $stage -e $ep -o \"$SHADERS/${name}.msl\"\n}\ncompile Hello.vert vertex vs_main\ncompile Hello.frag fragment fs_main\ncompile HelloCompute.comp compute cs_main\ncompile HelloCompute.vert vertex vs_main\ncompile HelloCompute.frag fragment fs_main\n";
+			shellScript = "set -e\ncompile() {\n  local name=$1 stage=$2 ep=$3\n  shadercross \"$SRCROOT/Examples/${name}.hlsl\" -s HLSL -d SPIRV -t $stage -e $ep -o \"$SRCROOT/Examples/${name}.spv\"\n  shadercross \"$SRCROOT/Examples/${name}.hlsl\" -s HLSL -d MSL   -t $stage -e $ep -o \"$SRCROOT/Examples/${name}.msl\"\n}\ncompile Hello.vert vertex vs_main\ncompile Hello.frag fragment fs_main\ncompile HelloCompute.comp compute cs_main\ncompile HelloCompute.vert vertex vs_main\ncompile HelloCompute.frag fragment fs_main\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

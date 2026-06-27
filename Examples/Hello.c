@@ -21,6 +21,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+#include <assert.h>
 #include <stdlib.h>
 
 #include <SDL3/SDL.h>
@@ -28,8 +29,8 @@
 #include <Objectively.h>
 #include <ObjectivelyGPU.h>
 
-#ifndef SHADERS
-# define SHADERS "."
+#ifndef EXAMPLES
+# define EXAMPLES "."
 #endif
 
 typedef struct {
@@ -52,29 +53,9 @@ static const VertexData vertex_data[] = {
 	{ -0.5f, -0.5f, -0.5f,  0, 1, 0 }, {  0.5f, -0.5f, -0.5f, 0, 0, 1 }, {  0.5f, -0.5f,  0.5f, 1, 0, 1 },
 };
 
-static void log_sdl_error(const char *what) {
-	SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "%s: %s", what, SDL_GetError());
-}
-
-static SDL_GPUTexture *create_depth_texture(const RenderDevice *renderDevice, SDL_Size size) {
-	if (size.w <= 0 || size.h <= 0) {
-		return NULL;
-	}
-
-	return $(renderDevice, createTexture, &(SDL_GPUTextureCreateInfo) {
-		.type = SDL_GPU_TEXTURETYPE_2D,
-		.format = SDL_GPU_TEXTUREFORMAT_D16_UNORM,
-		.usage = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET,
-		.width = (Uint32) size.w,
-		.height = (Uint32) size.h,
-		.layer_count_or_depth = 1,
-		.num_levels = 1,
-		.sample_count = SDL_GPU_SAMPLECOUNT_1,
-	}, NULL);
-}
-
 static void upload_vertex_buffer(const RenderDevice *renderDevice, SDL_GPUBuffer *buffer) {
-	SDL_GPUTransferBuffer *transferBuffer = $(renderDevice, createTransferBuffer, &(SDL_GPUTransferBufferCreateInfo) {
+
+  SDL_GPUTransferBuffer *transferBuffer = $(renderDevice, createTransferBuffer, &(SDL_GPUTransferBufferCreateInfo) {
 		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
 		.size = sizeof(vertex_data),
 	});
@@ -105,56 +86,51 @@ static void upload_vertex_buffer(const RenderDevice *renderDevice, SDL_GPUBuffer
 	$(renderDevice, releaseTransferBuffer, transferBuffer);
 }
 
-
+/**
+ * @brief
+ */
 int main(int argc, char **argv) {
 
 	int status = EXIT_FAILURE;
-	SDL_Window *window = NULL;
-	RenderDevice *renderDevice = NULL;
-	SDL_GPUBuffer *vertexBuffer = NULL;
-	SDL_GPUTexture *depthTexture = NULL;
-	SDL_GPUShader *vertexShader = NULL;
-	SDL_GPUShader *fragmentShader = NULL;
-	SDL_GPUGraphicsPipeline *pipeline = NULL;
-	SDL_Size depthSize = MakeSize(0, 0);
 
-	if (!SDL_Init(SDL_INIT_VIDEO)) {
-		log_sdl_error("SDL_Init");
-		return status;
-	}
+  SDL_Init(SDL_INIT_VIDEO);
 
-  $$(Resource, addResourcePath, SHADERS);
+	SDL_Window *window = SDL_CreateWindow("ObjectivelyGPU Hello", 800, 600, SDL_WINDOW_HIGH_PIXEL_DENSITY);
+  GPU_Assert(window, "Failed to create window");
 
-	window = SDL_CreateWindow("ObjectivelyGPU Hello", 800, 600, SDL_WINDOW_HIGH_PIXEL_DENSITY);
-	if (!window) {
-		log_sdl_error("SDL_CreateWindow");
-		goto cleanup;
-	}
+  $$(Resource, addResourcePath, EXAMPLES);
 
-	renderDevice = $(alloc(RenderDevice), initWithWindow, window);
+	RenderDevice *renderDevice = $(alloc(RenderDevice), initWithWindow, window);
+  assert(renderDevice);
 
-	vertexBuffer = $(renderDevice, createBuffer, &(SDL_GPUBufferCreateInfo) {
+	SDL_GPUBuffer *vertexBuffer = $(renderDevice, createBuffer, &(SDL_GPUBufferCreateInfo) {
 		.usage = SDL_GPU_BUFFERUSAGE_VERTEX,
 		.size = sizeof(vertex_data),
 	});
 	upload_vertex_buffer(renderDevice, vertexBuffer);
 
-	int drawableWidth = 0;
-	int drawableHeight = 0;
-	if (!SDL_GetWindowSizeInPixels(window, &drawableWidth, &drawableHeight)) {
-		log_sdl_error("SDL_GetWindowSizeInPixels");
-		goto cleanup;
-	}
+	int w = 0;
+	int h = 0;
+  SDL_GetWindowSizeInPixels(window, &w, &h);
 
-	depthSize = MakeSize(drawableWidth, drawableHeight);
-	depthTexture = create_depth_texture(renderDevice, depthSize);
+  SDL_GPUTexture *depthTexture = $(renderDevice, createTexture, &(SDL_GPUTextureCreateInfo) {
+    .type = SDL_GPU_TEXTURETYPE_2D,
+    .format = SDL_GPU_TEXTUREFORMAT_D16_UNORM,
+    .usage = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET,
+    .width = (Uint32) w,
+    .height = (Uint32) h,
+    .layer_count_or_depth = 1,
+    .num_levels = 1,
+    .sample_count = SDL_GPU_SAMPLECOUNT_1,
+  }, NULL);
 
-	vertexShader = $(renderDevice, loadShader, "Hello.vert", &(SDL_GPUShaderCreateInfo) {
+	SDL_GPUShader *vertexShader = $(renderDevice, loadShader, "Hello.vert", &(SDL_GPUShaderCreateInfo) {
 		.entrypoint = "vs_main",
 		.stage = SDL_GPU_SHADERSTAGE_VERTEX,
 		.num_uniform_buffers = 1,
 	});
-	fragmentShader = $(renderDevice, loadShader, "Hello.frag", &(SDL_GPUShaderCreateInfo) {
+
+  SDL_GPUShader *fragmentShader = $(renderDevice, loadShader, "Hello.frag", &(SDL_GPUShaderCreateInfo) {
 		.entrypoint = "fs_main",
 		.stage = SDL_GPU_SHADERSTAGE_FRAGMENT,
 	});
@@ -162,12 +138,14 @@ int main(int argc, char **argv) {
 	SDL_GPUColorTargetDescription colorTargetDescription = {
 		.format = $(renderDevice, getSwapchainTextureFormat, window),
 	};
-	SDL_GPUVertexBufferDescription vertexBufferDescription = {
+
+  SDL_GPUVertexBufferDescription vertexBufferDescription = {
 		.slot = 0,
 		.pitch = sizeof(VertexData),
 		.input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX,
 		.instance_step_rate = 0,
 	};
+
 	SDL_GPUVertexAttribute vertexAttributes[] = {
 		{
 			.location = 0,
@@ -183,7 +161,7 @@ int main(int argc, char **argv) {
 		},
 	};
 
-	pipeline = $(renderDevice, createGraphicsPipeline, &(SDL_GPUGraphicsPipelineCreateInfo) {
+	SDL_GPUGraphicsPipeline *pipeline = $(renderDevice, createGraphicsPipeline, &(SDL_GPUGraphicsPipelineCreateInfo) {
 		.vertex_shader = vertexShader,
 		.fragment_shader = fragmentShader,
 		.vertex_input_state = {
@@ -264,12 +242,6 @@ int main(int argc, char **argv) {
 			$(cmd, cancel);
 			release(cmd);
 			continue;
-		}
-
-		if (depthTexture == NULL || swapchain.size.w != depthSize.w || swapchain.size.h != depthSize.h) {
-			depthSize = swapchain.size;
-			$(renderDevice, releaseTexture, depthTexture);
-			depthTexture = create_depth_texture(renderDevice, depthSize);
 		}
 
 		float4x4 mv = float4x4_rotation(angleX, float3_new(1.f, 0.f, 0.f));
