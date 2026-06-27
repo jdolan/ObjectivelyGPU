@@ -144,12 +144,7 @@ int main(int argc, char **argv) {
 
 		CommandBuffer *cmd = $(renderDevice, acquireCommandBuffer);
 		SwapchainTexture swapchain = { 0 };
-
-		if (!$(cmd, acquireSwapchainTexture, window, &swapchain)) {
-			$(cmd, cancel);
-			release(cmd);
-			continue;
-		}
+		$(cmd, waitAndAcquireSwapchainTexture, window, &swapchain);
 
 		float time = (float) (SDL_GetTicks() - startTicks) / 1000.0f;
 		$(cmd, pushComputeUniformData, 0, &time, sizeof(time));
