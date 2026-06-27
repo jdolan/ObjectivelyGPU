@@ -22,6 +22,7 @@
  */
 
 #include <assert.h>
+#include <string.h>
 
 #include "CopyPass.h"
 
@@ -77,15 +78,17 @@ static void downloadTexture(const CopyPass *self, const SDL_GPUTextureRegion *sr
 }
 
 /**
- * @fn CopyPass *CopyPass::init(CopyPass *self, SDL_GPUCopyPass *pass)
+ * @fn CopyPass *CopyPass::init(CopyPass *self, SDL_GPUCopyPass *pass, SDL_GPUDevice *device)
  * @memberof CopyPass
  */
-static CopyPass *init(CopyPass *self, SDL_GPUCopyPass *pass) {
+static CopyPass *init(CopyPass *self, SDL_GPUCopyPass *pass, SDL_GPUDevice *device) {
 
   self = (CopyPass *) super(Object, self, init);
   if (self) {
     self->pass = pass;
     assert(self->pass);
+    self->device = device;
+    assert(self->device);
   }
 
   return self;
@@ -97,6 +100,36 @@ static CopyPass *init(CopyPass *self, SDL_GPUCopyPass *pass) {
  */
 static void uploadBuffer(const CopyPass *self, const SDL_GPUTransferBufferLocation *src, const SDL_GPUBufferRegion *dst, bool cycle) {
   SDL_UploadToGPUBuffer(self->pass, src, dst, cycle);
+}
+
+/**
+ * @fn void CopyPass::uploadData(const CopyPass *self, SDL_GPUBuffer *dst, const void *data, Uint32 size, Uint32 offset, bool cycle)
+ * @memberof CopyPass
+ */
+static void uploadData(const CopyPass *self, SDL_GPUBuffer *dst, const void *data, Uint32 size, Uint32 offset, bool cycle) {
+  assert(self);
+  assert(dst);
+  assert(data);
+  assert(size);
+
+  SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->device, &(SDL_GPUTransferBufferCreateInfo) {
+    .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+    .size = size,
+  });
+  GPU_Assert(tbuf, "SDL_CreateGPUTransferBuffer");
+
+  void *mapped = SDL_MapGPUTransferBuffer(self->device, tbuf, cycle);
+  GPU_Assert(mapped, "SDL_MapGPUTransferBuffer");
+
+  memcpy(mapped, data, size);
+  SDL_UnmapGPUTransferBuffer(self->device, tbuf);
+
+  SDL_UploadToGPUBuffer(self->pass,
+    &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf },
+    &(SDL_GPUBufferRegion) { .buffer = dst, .offset = offset, .size = size },
+    cycle);
+
+  SDL_ReleaseGPUTransferBuffer(self->device, tbuf);
 }
 
 /**
@@ -122,6 +155,7 @@ static void initialize(Class *clazz) {
   ((CopyPassInterface *) clazz->interface)->downloadTexture = downloadTexture;
   ((CopyPassInterface *) clazz->interface)->init = init;
   ((CopyPassInterface *) clazz->interface)->uploadBuffer = uploadBuffer;
+  ((CopyPassInterface *) clazz->interface)->uploadData = uploadData;
   ((CopyPassInterface *) clazz->interface)->uploadTexture = uploadTexture;
 }
 

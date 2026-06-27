@@ -69,6 +69,12 @@ struct CopyPass {
    * @private
    */
   SDL_GPUCopyPass *pass;
+
+  /**
+   * @brief The GPU device, used by `uploadData` to manage transfer buffers.
+   * @private
+   */
+  SDL_GPUDevice *device;
 };
 
 /**
@@ -110,14 +116,15 @@ struct CopyPassInterface {
   void (*downloadTexture)(const CopyPass *self, const SDL_GPUTextureRegion *src, const SDL_GPUTextureTransferInfo *dst);
 
   /**
-   * @fn CopyPass *CopyPass::init(CopyPass *self, SDL_GPUCopyPass *pass)
+   * @fn CopyPass *CopyPass::init(CopyPass *self, SDL_GPUCopyPass *pass, SDL_GPUDevice *device)
    * @brief Initializes this CopyPass wrapping the given SDL copy pass.
    * @param self The CopyPass.
    * @param pass The SDL copy pass to wrap. Must not be NULL.
+   * @param device The SDL GPU device, used by `uploadData` to manage transfer buffers.
    * @return The initialized CopyPass, or NULL on failure.
    * @memberof CopyPass
    */
-  CopyPass *(*init)(CopyPass *self, SDL_GPUCopyPass *pass);
+  CopyPass *(*init)(CopyPass *self, SDL_GPUCopyPass *pass, SDL_GPUDevice *device);
 
   /**
    * @fn void CopyPass::uploadBuffer(const CopyPass *self, const SDL_GPUTransferBufferLocation *src, const SDL_GPUBufferRegion *dst, bool cycle)
@@ -129,6 +136,23 @@ struct CopyPassInterface {
    * @memberof CopyPass
    */
   void (*uploadBuffer)(const CopyPass *self, const SDL_GPUTransferBufferLocation *src, const SDL_GPUBufferRegion *dst, bool cycle);
+
+  /**
+   * @fn void CopyPass::uploadData(const CopyPass *self, SDL_GPUBuffer *dst, const void *data, Uint32 size, Uint32 offset, bool cycle)
+   * @brief Uploads raw CPU data to a GPU buffer, managing the transfer buffer internally.
+   * @details Allocates a temporary transfer buffer, copies @p data into it, records
+   *   the upload, and releases the transfer buffer — all within this call. Use this
+   *   to batch multiple buffer uploads into a single copy pass without manual transfer
+   *   buffer management.
+   * @param self The CopyPass.
+   * @param dst The GPU buffer to upload into.
+   * @param data CPU pointer to the source data.
+   * @param size Number of bytes to upload.
+   * @param offset Byte offset into @p dst where the data is written.
+   * @param cycle When true, the GPU buffer is cycled to avoid pipeline stalls.
+   * @memberof CopyPass
+   */
+  void (*uploadData)(const CopyPass *self, SDL_GPUBuffer *dst, const void *data, Uint32 size, Uint32 offset, bool cycle);
 
   /**
    * @fn void CopyPass::uploadTexture(const CopyPass *self, const SDL_GPUTextureTransferInfo *src, const SDL_GPUTextureRegion *dst, bool cycle)

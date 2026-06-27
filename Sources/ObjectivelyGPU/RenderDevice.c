@@ -24,6 +24,9 @@
 #include <assert.h>
 #include <string.h>
 
+#include <SDL3/SDL_surface.h>
+
+#include <Objectively/Data.h>
 #include <Objectively/Resource.h>
 
 #include "CommandBuffer.h"
@@ -40,6 +43,12 @@
 static void dealloc(Object *self) {
 
   RenderDevice *this = (RenderDevice *) self;
+
+  if (this->device) {
+    SDL_ReleaseGPUSampler(this->device, this->_samplerNearest);
+    SDL_ReleaseGPUSampler(this->device, this->_samplerLinear);
+    SDL_ReleaseGPUSampler(this->device, this->_samplerAnisotropic);
+  }
 
   if (this->window && this->device) {
     SDL_ReleaseWindowFromGPUDevice(this->device, this->window);
@@ -63,7 +72,9 @@ static CommandBuffer *acquireCommandBuffer(const RenderDevice *self) {
   SDL_GPUCommandBuffer *cmd = SDL_AcquireGPUCommandBuffer(self->device);
   GPU_Assert(cmd, "SDL_AcquireGPUCommandBuffer");
 
-  return $(alloc(CommandBuffer), initWithCommandBuffer, cmd);
+  CommandBuffer *buffer = $(alloc(CommandBuffer), initWithCommandBuffer, cmd);
+  buffer->device = self->device;
+  return buffer;
 }
 
 /**
@@ -91,6 +102,59 @@ static SDL_GPUBuffer *createBuffer(const RenderDevice *self, const SDL_GPUBuffer
   GPU_Assert(buffer, "SDL_CreateGPUBuffer");
 
   return buffer;
+}
+
+/**
+ * @fn SDL_GPUBuffer *RenderDevice::createBufferWithConstMem(const RenderDevice *self, SDL_GPUBufferUsageFlags usage, const void *mem, Uint32 size)
+ * @memberof RenderDevice
+ */
+static SDL_GPUBuffer *createBufferWithConstMem(const RenderDevice *self, SDL_GPUBufferUsageFlags usage, const void *mem, Uint32 size) {
+  assert(self);
+  assert(mem);
+  assert(size);
+
+  SDL_GPUBuffer *buffer = $(self, createBuffer, &(SDL_GPUBufferCreateInfo) {
+    .usage = usage,
+    .size = size,
+  });
+
+  SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->device, &(SDL_GPUTransferBufferCreateInfo) {
+    .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+    .size = size,
+  });
+  GPU_Assert(tbuf, "SDL_CreateGPUTransferBuffer");
+
+  void *mapped = SDL_MapGPUTransferBuffer(self->device, tbuf, false);
+  GPU_Assert(mapped, "SDL_MapGPUTransferBuffer");
+
+  memcpy(mapped, mem, size);
+  SDL_UnmapGPUTransferBuffer(self->device, tbuf);
+
+  CommandBuffer *cmd = $(self, acquireCommandBuffer);
+  CopyPass *copyPass = $(cmd, beginCopyPass);
+
+  $(copyPass, uploadBuffer,
+    &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf },
+    &(SDL_GPUBufferRegion) { .buffer = buffer, .size = size },
+    false);
+
+  release(copyPass);
+  $(self, submit, cmd);
+  release(cmd);
+  SDL_ReleaseGPUTransferBuffer(self->device, tbuf);
+
+  return buffer;
+}
+
+/**
+ * @fn SDL_GPUBuffer *RenderDevice::createBufferWithData(const RenderDevice *self, SDL_GPUBufferUsageFlags usage, const Data *data)
+ * @memberof RenderDevice
+ */
+static SDL_GPUBuffer *createBufferWithData(const RenderDevice *self, SDL_GPUBufferUsageFlags usage, const Data *data) {
+  assert(self);
+  assert(data);
+
+  return $(self, createBufferWithConstMem, usage, data->bytes, (Uint32) data->length);
 }
 
 /**
@@ -127,6 +191,71 @@ static SDL_GPUSampler *createSampler(const RenderDevice *self, const SDL_GPUSamp
   GPU_Assert(sampler, "SDL_CreateGPUSampler");
 
   return sampler;
+}
+
+/**
+ * @fn SDL_GPUSampler *RenderDevice::samplerAnisotropic(const RenderDevice *self)
+ * @memberof RenderDevice
+ */
+static SDL_GPUSampler *samplerAnisotropic(const RenderDevice *self) {
+  assert(self);
+
+  RenderDevice *this = (RenderDevice *) self;
+  if (!this->_samplerAnisotropic) {
+    this->_samplerAnisotropic = $(self, createSampler, &(SDL_GPUSamplerCreateInfo) {
+      .min_filter = SDL_GPU_FILTER_LINEAR,
+      .mag_filter = SDL_GPU_FILTER_LINEAR,
+      .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_LINEAR,
+      .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+      .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+      .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+      .enable_anisotropy = true,
+      .max_anisotropy = 16.f,
+    });
+  }
+  return this->_samplerAnisotropic;
+}
+
+/**
+ * @fn SDL_GPUSampler *RenderDevice::samplerLinear(const RenderDevice *self)
+ * @memberof RenderDevice
+ */
+static SDL_GPUSampler *samplerLinear(const RenderDevice *self) {
+  assert(self);
+
+  RenderDevice *this = (RenderDevice *) self;
+  if (!this->_samplerLinear) {
+    this->_samplerLinear = $(self, createSampler, &(SDL_GPUSamplerCreateInfo) {
+      .min_filter = SDL_GPU_FILTER_LINEAR,
+      .mag_filter = SDL_GPU_FILTER_LINEAR,
+      .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_LINEAR,
+      .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+      .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+      .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+    });
+  }
+  return this->_samplerLinear;
+}
+
+/**
+ * @fn SDL_GPUSampler *RenderDevice::samplerNearest(const RenderDevice *self)
+ * @memberof RenderDevice
+ */
+static SDL_GPUSampler *samplerNearest(const RenderDevice *self) {
+  assert(self);
+
+  RenderDevice *this = (RenderDevice *) self;
+  if (!this->_samplerNearest) {
+    this->_samplerNearest = $(self, createSampler, &(SDL_GPUSamplerCreateInfo) {
+      .min_filter = SDL_GPU_FILTER_NEAREST,
+      .mag_filter = SDL_GPU_FILTER_NEAREST,
+      .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
+      .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+      .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+      .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    });
+  }
+  return this->_samplerNearest;
 }
 
 /**
@@ -207,9 +336,35 @@ static SDL_GPUTransferBuffer *createTransferBuffer(const RenderDevice *self, con
 }
 
 /**
- * @fn SDL_GPUTextureFormat RenderDevice::getSwapchainTextureFormat(const RenderDevice *self, SDL_Window *window)
+ * @fn SDL_GPUTexture *RenderDevice::createTextureFromSurface(const RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage)
  * @memberof RenderDevice
  */
+static SDL_GPUTexture *createTextureFromSurface(const RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage) {
+  assert(self);
+  assert(surface);
+
+  SDL_Surface *rgba = surface->format == SDL_PIXELFORMAT_RGBA32
+    ? surface
+    : SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
+  GPU_Assert(rgba, "SDL_ConvertSurface");
+
+  SDL_GPUTexture *texture = $(self, createTexture, &(SDL_GPUTextureCreateInfo) {
+    .type = SDL_GPU_TEXTURETYPE_2D,
+    .format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
+    .usage = usage,
+    .width = (Uint32) rgba->w,
+    .height = (Uint32) rgba->h,
+    .layer_count_or_depth = 1,
+    .num_levels = 1,
+    .sample_count = SDL_GPU_SAMPLECOUNT_1,
+  }, rgba->pixels);
+
+  if (rgba != surface) {
+    SDL_DestroySurface(rgba);
+  }
+
+  return texture;
+}
 static SDL_GPUTextureFormat getSwapchainTextureFormat(const RenderDevice *self, SDL_Window *window) {
   return SDL_GetGPUSwapchainTextureFormat(self->device, window);
 }
@@ -526,6 +681,42 @@ static void unmapTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffer 
 }
 
 /**
+ * @fn void RenderDevice::uploadBuffer(const RenderDevice *self, SDL_GPUBuffer *buffer, const void *data, Uint32 size, Uint32 offset, bool cycle)
+ * @memberof RenderDevice
+ */
+static void uploadBuffer(const RenderDevice *self, SDL_GPUBuffer *buffer, const void *data, Uint32 size, Uint32 offset, bool cycle) {
+  assert(self);
+  assert(buffer);
+  assert(data);
+  assert(size);
+
+  SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->device, &(SDL_GPUTransferBufferCreateInfo) {
+    .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+    .size = size,
+  });
+  GPU_Assert(tbuf, "SDL_CreateGPUTransferBuffer");
+
+  void *mapped = SDL_MapGPUTransferBuffer(self->device, tbuf, cycle);
+  GPU_Assert(mapped, "SDL_MapGPUTransferBuffer");
+
+  memcpy(mapped, data, size);
+  SDL_UnmapGPUTransferBuffer(self->device, tbuf);
+
+  CommandBuffer *cmd = $(self, acquireCommandBuffer);
+  CopyPass *copyPass = $(cmd, beginCopyPass);
+
+  $(copyPass, uploadBuffer,
+    &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf },
+    &(SDL_GPUBufferRegion) { .buffer = buffer, .offset = offset, .size = size },
+    cycle);
+
+  release(copyPass);
+  $(self, submit, cmd);
+  release(cmd);
+  SDL_ReleaseGPUTransferBuffer(self->device, tbuf);
+}
+
+/**
  * @fn bool RenderDevice::waitForFences(const RenderDevice *self, bool wait_all, SDL_GPUFence *const *fences, Uint32 num_fences)
  * @memberof RenderDevice
  */
@@ -577,11 +768,14 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->acquireCommandBuffer = acquireCommandBuffer;
   ((RenderDeviceInterface *) clazz->interface)->acquireSwapchainTexture = acquireSwapchainTexture;
   ((RenderDeviceInterface *) clazz->interface)->createBuffer = createBuffer;
+  ((RenderDeviceInterface *) clazz->interface)->createBufferWithConstMem = createBufferWithConstMem;
+  ((RenderDeviceInterface *) clazz->interface)->createBufferWithData = createBufferWithData;
   ((RenderDeviceInterface *) clazz->interface)->createComputePipeline = createComputePipeline;
   ((RenderDeviceInterface *) clazz->interface)->createGraphicsPipeline = createGraphicsPipeline;
   ((RenderDeviceInterface *) clazz->interface)->createSampler = createSampler;
   ((RenderDeviceInterface *) clazz->interface)->createShader = createShader;
   ((RenderDeviceInterface *) clazz->interface)->createTexture = createTexture;
+  ((RenderDeviceInterface *) clazz->interface)->createTextureFromSurface = createTextureFromSurface;
   ((RenderDeviceInterface *) clazz->interface)->createTransferBuffer = createTransferBuffer;
   ((RenderDeviceInterface *) clazz->interface)->getSwapchainTextureFormat = getSwapchainTextureFormat;
   ((RenderDeviceInterface *) clazz->interface)->init = init;
@@ -598,6 +792,9 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->releaseShader = releaseShader;
   ((RenderDeviceInterface *) clazz->interface)->releaseTexture = releaseTexture;
   ((RenderDeviceInterface *) clazz->interface)->releaseTransferBuffer = releaseTransferBuffer;
+  ((RenderDeviceInterface *) clazz->interface)->samplerAnisotropic = samplerAnisotropic;
+  ((RenderDeviceInterface *) clazz->interface)->samplerLinear = samplerLinear;
+  ((RenderDeviceInterface *) clazz->interface)->samplerNearest = samplerNearest;
   ((RenderDeviceInterface *) clazz->interface)->setAllowedFramesInFlight = setAllowedFramesInFlight;
   ((RenderDeviceInterface *) clazz->interface)->setBufferName = setBufferName;
   ((RenderDeviceInterface *) clazz->interface)->setSwapchainParameters = setSwapchainParameters;
@@ -608,6 +805,7 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->textureSupportsFormat = textureSupportsFormat;
   ((RenderDeviceInterface *) clazz->interface)->textureSupportsSampleCount = textureSupportsSampleCount;
   ((RenderDeviceInterface *) clazz->interface)->unmapTransferBuffer = unmapTransferBuffer;
+  ((RenderDeviceInterface *) clazz->interface)->uploadBuffer = uploadBuffer;
   ((RenderDeviceInterface *) clazz->interface)->waitForFences = waitForFences;
   ((RenderDeviceInterface *) clazz->interface)->waitForIdle = waitForIdle;
   ((RenderDeviceInterface *) clazz->interface)->waitForSwapchain = waitForSwapchain;

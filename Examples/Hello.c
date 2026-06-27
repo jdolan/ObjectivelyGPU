@@ -53,39 +53,6 @@ static const VertexData vertex_data[] = {
 	{ -0.5f, -0.5f, -0.5f,  0, 1, 0 }, {  0.5f, -0.5f, -0.5f, 0, 0, 1 }, {  0.5f, -0.5f,  0.5f, 1, 0, 1 },
 };
 
-static void upload_vertex_buffer(const RenderDevice *renderDevice, SDL_GPUBuffer *buffer) {
-
-  SDL_GPUTransferBuffer *transferBuffer = $(renderDevice, createTransferBuffer, &(SDL_GPUTransferBufferCreateInfo) {
-		.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-		.size = sizeof(vertex_data),
-	});
-
-	void *mapped = $(renderDevice, mapTransferBuffer, transferBuffer, false);
-	SDL_memcpy(mapped, vertex_data, sizeof(vertex_data));
-	$(renderDevice, unmapTransferBuffer, transferBuffer);
-
-	CommandBuffer *cmd = $(renderDevice, acquireCommandBuffer);
-	CopyPass *copyPass = $(cmd, beginCopyPass);
-
-	$(copyPass, uploadBuffer,
-	  &(SDL_GPUTransferBufferLocation) {
-		.transfer_buffer = transferBuffer,
-		.offset = 0,
-	  },
-	  &(SDL_GPUBufferRegion) {
-		.buffer = buffer,
-		.offset = 0,
-		.size = sizeof(vertex_data),
-	  },
-	  false);
-
-	release(copyPass);
-	$(cmd, submit);
-	release(cmd);
-
-	$(renderDevice, releaseTransferBuffer, transferBuffer);
-}
-
 /**
  * @brief
  */
@@ -100,29 +67,20 @@ int main(int argc, char **argv) {
 
   $$(Resource, addResourcePath, EXAMPLES);
 
-	RenderDevice *renderDevice = $(alloc(RenderDevice), initWithWindow, window);
+  RenderDevice *renderDevice = $(alloc(RenderDevice), initWithWindow, window);
   assert(renderDevice);
 
-	SDL_GPUBuffer *vertexBuffer = $(renderDevice, createBuffer, &(SDL_GPUBufferCreateInfo) {
-		.usage = SDL_GPU_BUFFERUSAGE_VERTEX,
-		.size = sizeof(vertex_data),
-	});
-	upload_vertex_buffer(renderDevice, vertexBuffer);
+  SDL_GPUBuffer *vertexBuffer = $(renderDevice, createBufferWithConstMem,
+  	SDL_GPU_BUFFERUSAGE_VERTEX, vertex_data, sizeof(vertex_data));
 
-	int w = 0;
-	int h = 0;
+  int w = 0;
+  int h = 0;
   SDL_GetWindowSizeInPixels(window, &w, &h);
 
-  SDL_GPUTexture *depthTexture = $(renderDevice, createTexture, &(SDL_GPUTextureCreateInfo) {
-    .type = SDL_GPU_TEXTURETYPE_2D,
-    .format = SDL_GPU_TEXTUREFORMAT_D16_UNORM,
-    .usage = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET,
-    .width = (Uint32) w,
-    .height = (Uint32) h,
-    .layer_count_or_depth = 1,
-    .num_levels = 1,
-    .sample_count = SDL_GPU_SAMPLECOUNT_1,
-  }, NULL);
+  Framebuffer *framebuffer = $(alloc(Framebuffer), initWithDevice, renderDevice,
+    &MakeSize(w, h),
+    SDL_GPU_TEXTUREFORMAT_INVALID,
+    SDL_GPU_TEXTUREFORMAT_D16_UNORM);
 
 	SDL_GPUShader *vertexShader = $(renderDevice, loadShader, "Hello.vert", &(SDL_GPUShaderCreateInfo) {
 		.entrypoint = "vs_main",
@@ -194,9 +152,7 @@ int main(int argc, char **argv) {
 	});
 
 	$(renderDevice, releaseShader, vertexShader);
-	vertexShader = NULL;
 	$(renderDevice, releaseShader, fragmentShader);
-	fragmentShader = NULL;
 
 	bool running = true;
 	float angleX = 0.0f;
@@ -256,14 +212,9 @@ int main(int argc, char **argv) {
 			.load_op = SDL_GPU_LOADOP_CLEAR,
 			.store_op = SDL_GPU_STOREOP_STORE,
 		};
-		SDL_GPUDepthStencilTargetInfo depthTarget = {
-			.texture = depthTexture,
-			.clear_depth = 1.0f,
-			.load_op = SDL_GPU_LOADOP_CLEAR,
-			.store_op = SDL_GPU_STOREOP_DONT_CARE,
-			.stencil_load_op = SDL_GPU_LOADOP_DONT_CARE,
-			.stencil_store_op = SDL_GPU_STOREOP_DONT_CARE,
-		};
+
+		SDL_GPUDepthStencilTargetInfo depthTarget = $(framebuffer, depthTargetInfo,
+			SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_DONT_CARE, 1.f);
 
 		RenderPass *renderPass = $(cmd, beginRenderPass, &colorTarget, 1, &depthTarget);
 		$(renderPass, bindPipeline, pipeline);
@@ -298,8 +249,8 @@ cleanup:
 	if (vertexBuffer) {
 		$(renderDevice, releaseBuffer, vertexBuffer);
 	}
-	if (depthTexture) {
-		$(renderDevice, releaseTexture, depthTexture);
+	if (framebuffer) {
+		release(framebuffer);
 	}
 	if (renderDevice) {
 		release(renderDevice);

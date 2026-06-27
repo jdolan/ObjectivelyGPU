@@ -68,6 +68,12 @@ struct CommandBuffer {
    * @brief The underlying SDL command buffer.
    */
   SDL_GPUCommandBuffer *cmd;
+
+  /**
+   * @brief The GPU device, threaded through to pass objects that need it.
+   * @private
+   */
+  SDL_GPUDevice *device;
 };
 
 /**

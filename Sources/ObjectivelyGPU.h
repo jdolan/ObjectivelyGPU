@@ -26,6 +26,7 @@
 #include <ObjectivelyGPU/CommandBuffer.h>
 #include <ObjectivelyGPU/ComputePass.h>
 #include <ObjectivelyGPU/CopyPass.h>
+#include <ObjectivelyGPU/Framebuffer.h>
 #include <ObjectivelyGPU/Mathlib.h>
 #include <ObjectivelyGPU/RenderDevice.h>
 #include <ObjectivelyGPU/RenderPass.h>

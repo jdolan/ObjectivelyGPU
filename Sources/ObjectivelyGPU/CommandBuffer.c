@@ -61,7 +61,7 @@ static CopyPass *beginCopyPass(const CommandBuffer *self) {
   SDL_GPUCopyPass *pass = SDL_BeginGPUCopyPass(self->cmd);
   GPU_Assert(pass, "SDL_BeginGPUCopyPass");
 
-  return $(alloc(CopyPass), init, pass);
+  return $(alloc(CopyPass), init, pass, self->device);
 }
 
 /**

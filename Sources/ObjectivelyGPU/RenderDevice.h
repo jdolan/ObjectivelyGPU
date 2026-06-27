@@ -26,7 +26,9 @@
 #include <stdlib.h>
 
 #include <SDL3/SDL_gpu.h>
+#include <SDL3/SDL_surface.h>
 
+#include <Objectively/Data.h>
 #include <Objectively/Object.h>
 
 #include <ObjectivelyGPU/CommandBuffer.h>
@@ -90,6 +92,24 @@ struct RenderDevice {
    * @brief The `SDL_Window` associated with @c device.
    */
   SDL_Window *window;
+
+  /**
+   * @brief Cached nearest-neighbor sampler, initialized on first use.
+   * @private
+   */
+  SDL_GPUSampler *_samplerNearest;
+
+  /**
+   * @brief Cached bilinear sampler, initialized on first use.
+   * @private
+   */
+  SDL_GPUSampler *_samplerLinear;
+
+  /**
+   * @brief Cached anisotropic sampler, initialized on first use.
+   * @private
+   */
+  SDL_GPUSampler *_samplerAnisotropic;
 };
 
 /**
@@ -140,6 +160,34 @@ struct RenderDeviceInterface {
   SDL_GPUBuffer *(*createBuffer)(const RenderDevice *self, const SDL_GPUBufferCreateInfo *info);
 
   /**
+   * @fn SDL_GPUBuffer *RenderDevice::createBufferWithConstMem(const RenderDevice *self, SDL_GPUBufferUsageFlags usage, const void *mem, Uint32 size)
+   * @brief Creates a GPU buffer and uploads @p mem in a single call.
+   * @details Allocates a temporary transfer buffer, copies @p mem, records a copy
+   *   pass, submits, and releases the transfer buffer before returning. The returned
+   *   buffer is immediately GPU-resident.
+   * @param self The RenderDevice.
+   * @param usage Buffer usage flags (e.g. `SDL_GPU_BUFFERUSAGE_VERTEX`).
+   * @param mem CPU pointer to the source data. Must not be NULL.
+   * @param size Number of bytes to allocate and upload.
+   * @return A new `SDL_GPUBuffer` populated with @p mem. GPU_Asserts on failure. Release with `releaseBuffer`.
+   * @memberof RenderDevice
+   */
+  SDL_GPUBuffer *(*createBufferWithConstMem)(const RenderDevice *self, SDL_GPUBufferUsageFlags usage, const void *mem, Uint32 size);
+
+  /**
+   * @fn SDL_GPUBuffer *RenderDevice::createBufferWithData(const RenderDevice *self, SDL_GPUBufferUsageFlags usage, const Data *data)
+   * @brief Creates a GPU buffer and uploads the contents of an Objectively `Data` object.
+   * @details Convenience wrapper over `createBufferWithConstMem` for data loaded via
+   *   the Objectively Resource system.
+   * @param self The RenderDevice.
+   * @param usage Buffer usage flags (e.g. `SDL_GPU_BUFFERUSAGE_VERTEX`).
+   * @param data Source data object. Must not be NULL.
+   * @return A new `SDL_GPUBuffer` populated with @p data. GPU_Asserts on failure. Release with `releaseBuffer`.
+   * @memberof RenderDevice
+   */
+  SDL_GPUBuffer *(*createBufferWithData)(const RenderDevice *self, SDL_GPUBufferUsageFlags usage, const Data *data);
+
+  /**
    * @fn SDL_GPUComputePipeline *RenderDevice::createComputePipeline(const RenderDevice *self, const SDL_GPUComputePipelineCreateInfo *info)
    * @brief Creates a compute pipeline from a compiled compute shader.
    * @param self The RenderDevice.
@@ -171,6 +219,39 @@ struct RenderDeviceInterface {
   SDL_GPUSampler *(*createSampler)(const RenderDevice *self, const SDL_GPUSamplerCreateInfo *info);
 
   /**
+   * @fn SDL_GPUSampler *RenderDevice::samplerAnisotropic(const RenderDevice *self)
+   * @brief Returns a cached anisotropic sampler (16x anisotropy, linear mip, repeat address).
+   * @details The sampler is created on first call and reused thereafter. It is
+   *   released automatically in `dealloc`. Do not release it manually.
+   * @param self The RenderDevice.
+   * @return A cached `SDL_GPUSampler` suitable for high-quality world geometry.
+   * @memberof RenderDevice
+   */
+  SDL_GPUSampler *(*samplerAnisotropic)(const RenderDevice *self);
+
+  /**
+   * @fn SDL_GPUSampler *RenderDevice::samplerLinear(const RenderDevice *self)
+   * @brief Returns a cached bilinear sampler (linear mip, repeat address).
+   * @details The sampler is created on first call and reused thereafter. It is
+   *   released automatically in `dealloc`. Do not release it manually.
+   * @param self The RenderDevice.
+   * @return A cached `SDL_GPUSampler` suitable for general world textures.
+   * @memberof RenderDevice
+   */
+  SDL_GPUSampler *(*samplerLinear)(const RenderDevice *self);
+
+  /**
+   * @fn SDL_GPUSampler *RenderDevice::samplerNearest(const RenderDevice *self)
+   * @brief Returns a cached nearest-neighbor sampler (clamp-to-edge address).
+   * @details The sampler is created on first call and reused thereafter. It is
+   *   released automatically in `dealloc`. Do not release it manually.
+   * @param self The RenderDevice.
+   * @return A cached `SDL_GPUSampler` suitable for UI and pixel-art textures.
+   * @memberof RenderDevice
+   */
+  SDL_GPUSampler *(*samplerNearest)(const RenderDevice *self);
+
+  /**
    * @fn SDL_GPUShader *RenderDevice::createShader(const RenderDevice *self, const SDL_GPUShaderCreateInfo *info)
    * @brief Creates a GPU shader from a fully-filled `SDL_GPUShaderCreateInfo`.
    * @details All fields of @p info, including `code`, `code_size`, and `format`,
@@ -196,6 +277,20 @@ struct RenderDeviceInterface {
    * @memberof RenderDevice
    */
   SDL_GPUTexture *(*createTexture)(const RenderDevice *self, const SDL_GPUTextureCreateInfo *info, const void *pixels);
+
+  /**
+   * @fn SDL_GPUTexture *RenderDevice::createTextureFromSurface(const RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage)
+   * @brief Creates a GPU texture from an `SDL_Surface`, uploading pixel data immediately.
+   * @details Converts @p surface to `SDL_PIXELFORMAT_RGBA32` if needed, derives the
+   *   texture dimensions from the surface, and calls `createTexture` with
+   *   `SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM`. The surface is not modified or freed.
+   * @param self The RenderDevice.
+   * @param surface The source surface. Must not be NULL.
+   * @param usage Texture usage flags (e.g. `SDL_GPU_TEXTUREUSAGE_SAMPLER`).
+   * @return A new `SDL_GPUTexture`. GPU_Asserts on failure. Release with `releaseTexture`.
+   * @memberof RenderDevice
+   */
+  SDL_GPUTexture *(*createTextureFromSurface)(const RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage);
 
   /**
    * @fn SDL_GPUTransferBuffer *RenderDevice::createTransferBuffer(const RenderDevice *self, const SDL_GPUTransferBufferCreateInfo *info)
@@ -491,6 +586,23 @@ struct RenderDeviceInterface {
    * @memberof RenderDevice
    */
   void (*unmapTransferBuffer)(const RenderDevice *self, SDL_GPUTransferBuffer *tbuf);
+
+  /**
+   * @fn void RenderDevice::uploadBuffer(const RenderDevice *self, SDL_GPUBuffer *buffer, const void *data, Uint32 size, Uint32 offset, bool cycle)
+   * @brief Uploads raw CPU data into an existing GPU buffer.
+   * @details Acquires a command buffer, creates a temporary transfer buffer, records a
+   *   copy pass, submits, and releases the transfer buffer. Use this for dynamic buffers
+   *   re-uploaded each frame (sprites, UI, particles). To batch multiple uploads into one
+   *   command buffer, use `CopyPass::uploadData` instead.
+   * @param self The RenderDevice.
+   * @param buffer The destination GPU buffer. Must not be NULL.
+   * @param data CPU pointer to the source data. Must not be NULL.
+   * @param size Number of bytes to upload.
+   * @param offset Byte offset into @p buffer where the data is written.
+   * @param cycle When true, the GPU buffer is cycled to avoid pipeline stalls.
+   * @memberof RenderDevice
+   */
+  void (*uploadBuffer)(const RenderDevice *self, SDL_GPUBuffer *buffer, const void *data, Uint32 size, Uint32 offset, bool cycle);
 
   /**
    * @fn bool RenderDevice::waitForFences(const RenderDevice *self, bool wait_all, SDL_GPUFence *const *fences, Uint32 num_fences)

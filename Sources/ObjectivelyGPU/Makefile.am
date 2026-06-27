@@ -10,6 +10,7 @@ pkginclude_HEADERS = \
     CommandBuffer.h \
     ComputePass.h \
     CopyPass.h \
+    Framebuffer.h \
     Mathlib.h \
     RenderDevice.h \
     RenderPass.h \
@@ -21,6 +22,7 @@ libObjectivelyGPU_la_SOURCES = \
     CommandBuffer.c \
     ComputePass.c \
     CopyPass.c \
+    Framebuffer.c \
     RenderDevice.c \
     RenderPass.c
 
