@@ -5,7 +5,7 @@ noinst_PROGRAMS = \
 	HelloCompute
 
 CFLAGS += \
-	-I$(top_srcdir)/Sources \
+	-isystem $(top_srcdir)/Sources \
 	@HOST_CFLAGS@ \
 	@OBJECTIVELY_CFLAGS@ \
 	@SDL3_CFLAGS@

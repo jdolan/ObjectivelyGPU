@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = nostdinc
-AM_CPPFLAGS = -I$(top_srcdir)/Sources -iquote$(top_builddir)/Sources/ObjectivelyGPU
+AM_CPPFLAGS = -isystem $(top_srcdir)/Sources -iquote$(top_builddir)/Sources/ObjectivelyGPU
 
 noinst_HEADERS = \
     Config.h
