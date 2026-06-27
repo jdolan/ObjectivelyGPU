@@ -35,11 +35,10 @@
     <CustomBuild Include="..\Examples\Shaders\Hello.vert.hlsl">
       <Message>Compiling Hello.vert.hlsl</Message>
       <Command>
-        shadercross %(FullPath) -s HLSL -d SPIRV -t vertex -e vs_main -o ..\Examples\Shaders\Hello.vert.spv &amp;&amp;
-        shadercross %(FullPath) -s HLSL -d MSL   -t vertex -e vs_main -o ..\Examples\Shaders\Hello.vert.msl &amp;&amp;
-        shadercross %(FullPath) -s HLSL -d DXIL  -t vertex -e vs_main -o ..\Examples\Shaders\Hello.vert.dxil
+        shadercross %(FullPath) -s HLSL -d SPIRV -t vertex -e vs_main -o ..\Examples\Shaders\Hello.vert.spv
+        shadercross %(FullPath) -s HLSL -d MSL   -t vertex -e vs_main -o ..\Examples\Shaders\Hello.vert.msl
       </Command>
-      <Outputs>..\Examples\Shaders\Hello.vert.spv;..\Examples\Shaders\Hello.vert.msl;..\Examples\Shaders\Hello.vert.dxil</Outputs>
+      <Outputs>..\Examples\Shaders\Hello.vert.spv;..\Examples\Shaders\Hello.vert.msl</Outputs>
     </CustomBuild>
   </ItemGroup>
 
@@ -50,9 +49,8 @@
       <Command>
         shadercross %(FullPath) -s HLSL -d SPIRV -t fragment -e fs_main -o ..\Examples\Shaders\Hello.frag.spv
         shadercross %(FullPath) -s HLSL -d MSL   -t fragment -e fs_main -o ..\Examples\Shaders\Hello.frag.msl
-        shadercross %(FullPath) -s HLSL -d DXIL  -t fragment -e fs_main -o ..\Examples\Shaders\Hello.frag.dxil
       </Command>
-      <Outputs>..\Examples\Shaders\Hello.frag.spv;..\Examples\Shaders\Hello.frag.msl;..\Examples\Shaders\Hello.frag.dxil</Outputs>
+      <Outputs>..\Examples\Shaders\Hello.frag.spv;..\Examples\Shaders\Hello.frag.msl</Outputs>
     </CustomBuild>
   </ItemGroup>
 
@@ -61,11 +59,10 @@
     <CustomBuild Include="..\Examples\Shaders\HelloCompute.comp.hlsl">
       <Message>Compiling HelloCompute.comp.hlsl</Message>
       <Command>
-        shadercross %(FullPath) -s HLSL -d SPIRV -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.spv &amp;&amp;
-        shadercross %(FullPath) -s HLSL -d MSL   -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.msl &amp;&amp;
-        shadercross %(FullPath) -s HLSL -d DXIL  -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.dxil
+        shadercross %(FullPath) -s HLSL -d SPIRV -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.spv
+        shadercross %(FullPath) -s HLSL -d MSL   -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.msl
       </Command>
-      <Outputs>..\Examples\Shaders\HelloCompute.comp.spv;..\Examples\Shaders\HelloCompute.comp.msl;..\Examples\Shaders\HelloCompute.comp.dxil</Outputs>
+      <Outputs>..\Examples\Shaders\HelloCompute.comp.spv;..\Examples\Shaders\HelloCompute.comp.msl</Outputs>
     </CustomBuild>
   </ItemGroup>
 
@@ -74,11 +71,10 @@
     <CustomBuild Include="..\Examples\Shaders\HelloCompute.vert.hlsl">
       <Message>Compiling HelloCompute.vert.hlsl</Message>
       <Command>
-        shadercross %(FullPath) -s HLSL -d SPIRV -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.spv &amp;&amp;
-        shadercross %(FullPath) -s HLSL -d MSL   -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.msl &amp;&amp;
-        shadercross %(FullPath) -s HLSL -d DXIL  -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.dxil
+        shadercross %(FullPath) -s HLSL -d SPIRV -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.spv
+        shadercross %(FullPath) -s HLSL -d MSL   -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.msl
       </Command>
-      <Outputs>..\Examples\Shaders\HelloCompute.vert.spv;..\Examples\Shaders\HelloCompute.vert.msl;..\Examples\Shaders\HelloCompute.vert.dxil</Outputs>
+      <Outputs>..\Examples\Shaders\HelloCompute.vert.spv;..\Examples\Shaders\HelloCompute.vert.msl</Outputs>
     </CustomBuild>
   </ItemGroup>
 
@@ -87,11 +83,10 @@
     <CustomBuild Include="..\Examples\Shaders\HelloCompute.frag.hlsl">
       <Message>Compiling HelloCompute.frag.hlsl</Message>
       <Command>
-        shadercross %(FullPath) -s HLSL -d SPIRV -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.spv &amp;&amp;
-        shadercross %(FullPath) -s HLSL -d MSL   -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.msl &amp;&amp;
-        shadercross %(FullPath) -s HLSL -d DXIL  -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.dxil
+        shadercross %(FullPath) -s HLSL -d SPIRV -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.spv
+        shadercross %(FullPath) -s HLSL -d MSL   -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.msl
       </Command>
-      <Outputs>..\Examples\Shaders\HelloCompute.frag.spv;..\Examples\Shaders\HelloCompute.frag.msl;..\Examples\Shaders\HelloCompute.frag.dxil</Outputs>
+      <Outputs>..\Examples\Shaders\HelloCompute.frag.spv;..\Examples\Shaders\HelloCompute.frag.msl</Outputs>
     </CustomBuild>
   </ItemGroup>
 
