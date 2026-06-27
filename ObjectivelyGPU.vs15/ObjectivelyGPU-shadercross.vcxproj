@@ -61,8 +61,8 @@
     <CustomBuild Include="..\Examples\Shaders\HelloCompute.comp.hlsl">
       <Message>Compiling HelloCompute.comp.hlsl</Message>
       <Command>
-        shadercross %(FullPath) -s HLSL -d SPIRV -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.spv
-        shadercross %(FullPath) -s HLSL -d MSL   -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.msl
+        shadercross %(FullPath) -s HLSL -d SPIRV -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.spv &amp;&amp;
+        shadercross %(FullPath) -s HLSL -d MSL   -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.msl &amp;&amp;
         shadercross %(FullPath) -s HLSL -d DXIL  -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.dxil
       </Command>
       <Outputs>..\Examples\Shaders\HelloCompute.comp.spv;..\Examples\Shaders\HelloCompute.comp.msl;..\Examples\Shaders\HelloCompute.comp.dxil</Outputs>
