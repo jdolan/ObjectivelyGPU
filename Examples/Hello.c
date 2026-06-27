@@ -162,11 +162,6 @@ int main(int argc, char **argv) {
 				case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
 					running = false;
 					break;
-				case SDL_EVENT_KEY_DOWN:
-					if (event.key.key == SDLK_ESCAPE) {
-						running = false;
-					}
-					break;
 				default:
 					break;
 			}
@@ -195,11 +190,11 @@ int main(int argc, char **argv) {
 			continue;
 		}
 
-		float4x4 mv = float4x4_rotation(angleX, float3_new(1.f, 0.f, 0.f));
-		mv = float4x4_mul(float4x4_rotation(angleY, float3_new(0.f, 1.f, 0.f)), mv);
-		mv = float4x4_mul(float4x4_translation(float3_new(0.f, 0.f, -2.5f)), mv);
-		const float4x4 proj = float4x4_perspective(45.f, (float) swapchain.size.w / (float) swapchain.size.h, 0.01f, 100.f);
-		const float4x4 matrixFinal = float4x4_mul(proj, mv);
+		float4x4 modelView = float4x4_rotation(angleX, float3_new(1.f, 0.f, 0.f));
+		modelView = float4x4_mul(float4x4_rotation(angleY, float3_new(0.f, 1.f, 0.f)), modelView);
+		modelView = float4x4_mul(float4x4_translation(float3_new(0.f, 0.f, -2.5f)), modelView);
+		const float4x4 projection = float4x4_perspective(45.f, (float) swapchain.size.w / (float) swapchain.size.h, 0.01f, 100.f);
+		const float4x4 modelViewProjection = float4x4_mul(projection, modelView);
 
 		SDL_GPUColorTargetInfo colorTarget = {
 			.texture = swapchain.texture,
@@ -217,7 +212,7 @@ int main(int argc, char **argv) {
 			.buffer = vertexBuffer,
 			.offset = 0,
 		}, 1);
-		$(cmd, pushVertexUniformData, 0, matrixFinal.f, sizeof(matrixFinal));
+		$(cmd, pushVertexUniformData, 0, modelViewProjection.f, sizeof(modelViewProjection));
 		$(renderPass, drawPrimitives, (Uint32) SDL_arraysize(vertex_data), 1, 0, 0);
 		release(renderPass);
 
