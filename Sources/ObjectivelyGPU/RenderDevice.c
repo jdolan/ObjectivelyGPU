@@ -288,7 +288,7 @@ static SDL_GPUShader *loadShader(const RenderDevice *self, const char *name, con
     return shader;
   }
 
-  GPU_Assert(false, "loadShader: no supported format found for '%s'", name);
+  GPU_Assert(false, "loadShader: no supported format found for '%s'\n", name);
   return NULL;
 }
 

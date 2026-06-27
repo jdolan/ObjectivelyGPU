@@ -28,6 +28,10 @@
 #include <Objectively.h>
 #include <ObjectivelyGPU.h>
 
+#ifndef SHADERS
+# define SHADERS "."
+#endif
+
 typedef struct {
 	float x, y, z;
 	float r, g, b;
@@ -103,8 +107,6 @@ static void upload_vertex_buffer(const RenderDevice *renderDevice, SDL_GPUBuffer
 
 
 int main(int argc, char **argv) {
-	(void) argc;
-	(void) argv;
 
 	int status = EXIT_FAILURE;
 	SDL_Window *window = NULL;
@@ -121,12 +123,7 @@ int main(int argc, char **argv) {
 		return status;
 	}
 
-	const char *basePath = SDL_GetBasePath();
-	if (basePath) {
-		char shaderDir[512];
-		SDL_snprintf(shaderDir, sizeof(shaderDir), "%sShaders", basePath);
-		$$(Resource, addResourcePath, shaderDir);
-	}
+  $$(Resource, addResourcePath, SHADERS);
 
 	window = SDL_CreateWindow("ObjectivelyGPU Hello", 800, 600, SDL_WINDOW_HIGH_PIXEL_DENSITY);
 	if (!window) {

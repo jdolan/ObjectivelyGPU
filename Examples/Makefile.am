@@ -6,6 +6,7 @@ noinst_PROGRAMS = \
 
 CFLAGS += \
 	-I$(top_srcdir)/Sources \
+ 	-DSHADERS=\"$(abs_srcdir)/Shaders\" \ 
 	@HOST_CFLAGS@ \
 	@OBJECTIVELY_CFLAGS@ \
 	@SDL3_CFLAGS@

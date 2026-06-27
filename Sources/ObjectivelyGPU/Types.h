@@ -65,10 +65,9 @@ struct SDL_Size {
  * SDL_gpu operations where failure is unrecoverable (bad device, OOM, wrong
  * thread, unsupported format, etc.).
  */
-#define GPU_Assert(cond, fmt, ...) do { \
+#define GPU_Assert(cond, fmt, ...) \
   if (!(cond)) { \
-    SDL_LogCritical(SDL_LOG_CATEGORY_GPU, "%s::%s: " fmt ": %s", _Class()->def.name, __func__, ## __VA_ARGS__, SDL_GetError()); \
+    SDL_LogCritical(SDL_LOG_CATEGORY_GPU, "%s::%d::%s: " fmt ": %s", __FILE__, __LINE__, __func__, ## __VA_ARGS__, SDL_GetError()); \
     SDL_TriggerBreakpoint(); \
     exit(EXIT_FAILURE); \
-  } \
-} while (0)
+  }
