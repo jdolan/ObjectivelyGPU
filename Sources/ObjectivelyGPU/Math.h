@@ -23,7 +23,6 @@
 
 #pragma once
 
-#include <math.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -31,9 +30,7 @@
   #define M_PI 3.14159265358979323846
 #endif
 
-// ---------------------------------------------------------------------------
-// Scalar
-// ---------------------------------------------------------------------------
+#pragma mark - float
 
 /**
  * @return `degrees` converted to radians.
@@ -85,9 +82,7 @@ static inline float float_sign(float f) {
 	return (f > 0.f) - (f < 0.f);
 }
 
-// ---------------------------------------------------------------------------
-// float2
-// ---------------------------------------------------------------------------
+#pragma mark - float2
 
 /**
  * @brief Two-component single-precision vector. Component layout matches HLSL `float2`.
@@ -132,9 +127,7 @@ static inline float2 float2_lerp(float2 a, float2 b, float t) {
 
 static inline bool float2_equal(float2 a, float2 b) { return a.x == b.x && a.y == b.y; }
 
-// ---------------------------------------------------------------------------
-// float3
-// ---------------------------------------------------------------------------
+#pragma mark - float3
 
 /**
  * @brief Three-component single-precision vector. Component layout matches HLSL `float3`.
@@ -196,9 +189,7 @@ static inline float3 float3_reflect(float3 v, float3 n) {
 
 static inline bool float3_equal(float3 a, float3 b) { return a.x == b.x && a.y == b.y && a.z == b.z; }
 
-// ---------------------------------------------------------------------------
-// float4
-// ---------------------------------------------------------------------------
+#pragma mark - float4
 
 /**
  * @brief Four-component single-precision vector. Component layout matches HLSL `float4`.
@@ -246,9 +237,7 @@ static inline float4 float4_lerp(float4 a, float4 b, float t) {
 
 static inline bool float4_equal(float4 a, float4 b) { return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w; }
 
-// ---------------------------------------------------------------------------
-// float4x4
-// ---------------------------------------------------------------------------
+#pragma mark - float4x4
 
 /**
  * @brief Column-major 4x4 single-precision matrix. Layout matches HLSL `float4x4`.

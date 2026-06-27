@@ -23,6 +23,8 @@
 
 #pragma once
 
+#include <math.h>
+
 #include <ObjectivelyGPU/CommandBuffer.h>
 #include <ObjectivelyGPU/ComputePass.h>
 #include <ObjectivelyGPU/CopyPass.h>
