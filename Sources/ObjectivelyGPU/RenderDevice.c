@@ -32,6 +32,26 @@
 
 #define _Class _RenderDevice
 
+#pragma mark - Object lifecycle
+
+/**
+ * @see Object::dealloc(Object *)
+ */
+static void dealloc(Object *self) {
+
+  RenderDevice *this = (RenderDevice *) self;
+
+  if (this->window && this->device) {
+    SDL_ReleaseWindowFromGPUDevice(this->device, this->window);
+  }
+
+  if (this->device) {
+    SDL_DestroyGPUDevice(this->device);
+  }
+
+  super(Object, self, dealloc);
+}
+
 #pragma mark - RenderDevice
 
 /**
@@ -39,8 +59,6 @@
  * @memberof RenderDevice
  */
 static CommandBuffer *acquireCommandBuffer(const RenderDevice *self) {
-
-  assert(self);
 
   SDL_GPUCommandBuffer *cmd = SDL_AcquireGPUCommandBuffer(self->device);
   GPU_Assert(cmd, "SDL_AcquireGPUCommandBuffer");
@@ -53,11 +71,6 @@ static CommandBuffer *acquireCommandBuffer(const RenderDevice *self) {
  * @memberof RenderDevice
  */
 static bool acquireSwapchainTexture(const RenderDevice *self, CommandBuffer *cmd, Swapchain *swapchain) {
-
-  assert(self);
-  assert(cmd);
-  assert(cmd->cmd);
-  assert(swapchain);
 
   SDL_AcquireGPUSwapchainTexture(cmd->cmd,
                                  self->window,
@@ -74,10 +87,9 @@ static bool acquireSwapchainTexture(const RenderDevice *self, CommandBuffer *cmd
  */
 static SDL_GPUBuffer *createBuffer(const RenderDevice *self, const SDL_GPUBufferCreateInfo *info) {
 
-  assert(info);
-
   SDL_GPUBuffer *buffer = SDL_CreateGPUBuffer(self->device, info);
   GPU_Assert(buffer, "SDL_CreateGPUBuffer");
+
   return buffer;
 }
 
@@ -87,10 +99,9 @@ static SDL_GPUBuffer *createBuffer(const RenderDevice *self, const SDL_GPUBuffer
  */
 static SDL_GPUComputePipeline *createComputePipeline(const RenderDevice *self, const SDL_GPUComputePipelineCreateInfo *info) {
 
-  assert(info);
-
   SDL_GPUComputePipeline *pipeline = SDL_CreateGPUComputePipeline(self->device, info);
   GPU_Assert(pipeline, "SDL_CreateGPUComputePipeline");
+
   return pipeline;
 }
 
@@ -100,10 +111,9 @@ static SDL_GPUComputePipeline *createComputePipeline(const RenderDevice *self, c
  */
 static SDL_GPUGraphicsPipeline *createGraphicsPipeline(const RenderDevice *self, const SDL_GPUGraphicsPipelineCreateInfo *info) {
 
-  assert(info);
-
   SDL_GPUGraphicsPipeline *pipeline = SDL_CreateGPUGraphicsPipeline(self->device, info);
   GPU_Assert(pipeline, "SDL_CreateGPUGraphicsPipeline");
+
   return pipeline;
 }
 
@@ -113,10 +123,9 @@ static SDL_GPUGraphicsPipeline *createGraphicsPipeline(const RenderDevice *self,
  */
 static SDL_GPUSampler *createSampler(const RenderDevice *self, const SDL_GPUSamplerCreateInfo *info) {
 
-  assert(info);
-
   SDL_GPUSampler *sampler = SDL_CreateGPUSampler(self->device, info);
   GPU_Assert(sampler, "SDL_CreateGPUSampler");
+
   return sampler;
 }
 
@@ -126,10 +135,9 @@ static SDL_GPUSampler *createSampler(const RenderDevice *self, const SDL_GPUSamp
  */
 static SDL_GPUShader *createShader(const RenderDevice *self, const SDL_GPUShaderCreateInfo *info) {
 
-  assert(info);
-
   SDL_GPUShader *shader = SDL_CreateGPUShader(self->device, info);
   GPU_Assert(shader, "SDL_CreateGPUShader");
+
   return shader;
 }
 
@@ -138,9 +146,6 @@ static SDL_GPUShader *createShader(const RenderDevice *self, const SDL_GPUShader
  * @memberof RenderDevice
  */
 static SDL_GPUTexture *createTexture(const RenderDevice *self, const SDL_GPUTextureCreateInfo *info, const void *pixels) {
-
-  assert(self);
-  assert(info);
 
   SDL_GPUTexture *texture = SDL_CreateGPUTexture(self->device, info);
   GPU_Assert(texture, "SDL_CreateGPUTexture");
@@ -151,7 +156,7 @@ static SDL_GPUTexture *createTexture(const RenderDevice *self, const SDL_GPUText
 
     const SDL_GPUTransferBufferCreateInfo tbufInfo = {
       .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-      .size  = totalBytes,
+      .size = totalBytes,
     };
 
     SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->device, &tbufInfo);
@@ -159,6 +164,7 @@ static SDL_GPUTexture *createTexture(const RenderDevice *self, const SDL_GPUText
 
     void *mapped = SDL_MapGPUTransferBuffer(self->device, tbuf, false);
     GPU_Assert(mapped, "SDL_MapGPUTransferBuffer");
+
     memcpy(mapped, pixels, totalBytes);
     SDL_UnmapGPUTransferBuffer(self->device, tbuf);
 
@@ -167,15 +173,15 @@ static SDL_GPUTexture *createTexture(const RenderDevice *self, const SDL_GPUText
 
     const SDL_GPUTextureTransferInfo src = {
       .transfer_buffer = tbuf,
-      .offset          = 0,
-      .pixels_per_row  = info->width,
-      .rows_per_layer  = info->height,
+      .offset = 0,
+      .pixels_per_row = info->width,
+      .rows_per_layer = info->height,
     };
     const SDL_GPUTextureRegion dst = {
       .texture = texture,
-      .w       = info->width,
-      .h       = info->height,
-      .d       = info->layer_count_or_depth,
+      .w = info->width,
+      .h = info->height,
+      .d = info->layer_count_or_depth,
     };
     $(copyPass, uploadTexture, &src, &dst, false);
 
@@ -194,11 +200,10 @@ static SDL_GPUTexture *createTexture(const RenderDevice *self, const SDL_GPUText
  */
 static SDL_GPUTransferBuffer *createTransferBuffer(const RenderDevice *self, const SDL_GPUTransferBufferCreateInfo *info) {
 
-  assert(info);
+  SDL_GPUTransferBuffer *buffer = SDL_CreateGPUTransferBuffer(self->device, info);
+  GPU_Assert(buffer, "SDL_CreateGPUTransferBuffer");
 
-  SDL_GPUTransferBuffer *transferBuffer = SDL_CreateGPUTransferBuffer(self->device, info);
-  GPU_Assert(transferBuffer, "SDL_CreateGPUTransferBuffer");
-  return transferBuffer;
+  return buffer;
 }
 
 /**
@@ -206,9 +211,6 @@ static SDL_GPUTransferBuffer *createTransferBuffer(const RenderDevice *self, con
  * @memberof RenderDevice
  */
 static SDL_GPUTextureFormat getSwapchainTextureFormat(const RenderDevice *self, SDL_Window *window) {
-
-  assert(window);
-
   return SDL_GetGPUSwapchainTextureFormat(self->device, window);
 }
 
@@ -252,9 +254,6 @@ static RenderDevice *initWithWindow(RenderDevice *self, SDL_Window *window) {
  */
 static SDL_GPUShader *loadShader(const RenderDevice *self, const char *name, const SDL_GPUShaderCreateInfo *info) {
 
-  assert(name);
-  assert(info);
-
   static const struct {
     SDL_GPUShaderFormat format;
     const char *ext;
@@ -280,9 +279,9 @@ static SDL_GPUShader *loadShader(const RenderDevice *self, const char *name, con
     }
 
     SDL_GPUShaderCreateInfo filled = *info;
-    filled.code      = res->data->bytes;
+    filled.code = res->data->bytes;
     filled.code_size = res->data->length;
-    filled.format    = formats[i].format;
+    filled.format = formats[i].format;
 
     SDL_GPUShader *shader = $(self, createShader, &filled);
     release(res);
@@ -299,9 +298,6 @@ static SDL_GPUShader *loadShader(const RenderDevice *self, const char *name, con
  */
 static SDL_GPUComputePipeline *loadComputePipeline(const RenderDevice *self, const char *name, const SDL_GPUComputePipelineCreateInfo *info) {
 
-  assert(name);
-  assert(info);
-
   static const struct {
     SDL_GPUShaderFormat format;
     const char *ext;
@@ -314,6 +310,7 @@ static SDL_GPUComputePipeline *loadComputePipeline(const RenderDevice *self, con
   const SDL_GPUShaderFormat supported = SDL_GetGPUShaderFormats(self->device);
 
   for (size_t i = 0; i < SDL_arraysize(formats); i++) {
+
     if (!(supported & formats[i].format)) {
       continue;
     }
@@ -332,9 +329,9 @@ static SDL_GPUComputePipeline *loadComputePipeline(const RenderDevice *self, con
     }
 
     SDL_GPUComputePipelineCreateInfo filled = *info;
-    filled.code      = res->data->bytes;
+    filled.code = res->data->bytes;
     filled.code_size = res->data->length;
-    filled.format    = formats[i].format;
+    filled.format = formats[i].format;
 
     SDL_GPUComputePipeline *pipeline = $(self, createComputePipeline, &filled);
     release(res);
@@ -351,10 +348,9 @@ static SDL_GPUComputePipeline *loadComputePipeline(const RenderDevice *self, con
  */
 static void *mapTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffer *tbuf, bool cycle) {
 
-  assert(tbuf);
-
   void *mapped = SDL_MapGPUTransferBuffer(self->device, tbuf, cycle);
   GPU_Assert(mapped, "SDL_MapGPUTransferBuffer");
+
   return mapped;
 }
 
@@ -363,9 +359,6 @@ static void *mapTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffer *
  * @memberof RenderDevice
  */
 static bool queryFence(const RenderDevice *self, SDL_GPUFence *fence) {
-
-  assert(fence);
-
   return SDL_QueryGPUFence(self->device, fence);
 }
 
@@ -374,10 +367,7 @@ static bool queryFence(const RenderDevice *self, SDL_GPUFence *fence) {
  * @memberof RenderDevice
  */
 static void releaseBuffer(const RenderDevice *self, SDL_GPUBuffer *buffer) {
-
-  if (buffer) {
-    SDL_ReleaseGPUBuffer(self->device, buffer);
-  }
+  SDL_ReleaseGPUBuffer(self->device, buffer);
 }
 
 /**
@@ -385,10 +375,7 @@ static void releaseBuffer(const RenderDevice *self, SDL_GPUBuffer *buffer) {
  * @memberof RenderDevice
  */
 static void releaseComputePipeline(const RenderDevice *self, SDL_GPUComputePipeline *pipeline) {
-
-  if (pipeline) {
-    SDL_ReleaseGPUComputePipeline(self->device, pipeline);
-  }
+  SDL_ReleaseGPUComputePipeline(self->device, pipeline);
 }
 
 /**
@@ -396,10 +383,7 @@ static void releaseComputePipeline(const RenderDevice *self, SDL_GPUComputePipel
  * @memberof RenderDevice
  */
 static void releaseFence(const RenderDevice *self, SDL_GPUFence *fence) {
-
-  if (fence) {
-    SDL_ReleaseGPUFence(self->device, fence);
-  }
+  SDL_ReleaseGPUFence(self->device, fence);
 }
 
 /**
@@ -407,10 +391,7 @@ static void releaseFence(const RenderDevice *self, SDL_GPUFence *fence) {
  * @memberof RenderDevice
  */
 static void releaseGraphicsPipeline(const RenderDevice *self, SDL_GPUGraphicsPipeline *pipeline) {
-
-  if (pipeline) {
-    SDL_ReleaseGPUGraphicsPipeline(self->device, pipeline);
-  }
+  SDL_ReleaseGPUGraphicsPipeline(self->device, pipeline);
 }
 
 /**
@@ -418,10 +399,7 @@ static void releaseGraphicsPipeline(const RenderDevice *self, SDL_GPUGraphicsPip
  * @memberof RenderDevice
  */
 static void releaseSampler(const RenderDevice *self, SDL_GPUSampler *sampler) {
-
-  if (sampler) {
-    SDL_ReleaseGPUSampler(self->device, sampler);
-  }
+  SDL_ReleaseGPUSampler(self->device, sampler);
 }
 
 /**
@@ -429,10 +407,7 @@ static void releaseSampler(const RenderDevice *self, SDL_GPUSampler *sampler) {
  * @memberof RenderDevice
  */
 static void releaseShader(const RenderDevice *self, SDL_GPUShader *shader) {
-
-  if (shader) {
-    SDL_ReleaseGPUShader(self->device, shader);
-  }
+  SDL_ReleaseGPUShader(self->device, shader);
 }
 
 /**
@@ -440,10 +415,7 @@ static void releaseShader(const RenderDevice *self, SDL_GPUShader *shader) {
  * @memberof RenderDevice
  */
 static void releaseTexture(const RenderDevice *self, SDL_GPUTexture *texture) {
-
-  if (texture) {
-    SDL_ReleaseGPUTexture(self->device, texture);
-  }
+  SDL_ReleaseGPUTexture(self->device, texture);
 }
 
 /**
@@ -451,10 +423,7 @@ static void releaseTexture(const RenderDevice *self, SDL_GPUTexture *texture) {
  * @memberof RenderDevice
  */
 static void releaseTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffer *tbuf) {
-
-  if (tbuf) {
-    SDL_ReleaseGPUTransferBuffer(self->device, tbuf);
-  }
+  SDL_ReleaseGPUTransferBuffer(self->device, tbuf);
 }
 
 /**
@@ -462,7 +431,6 @@ static void releaseTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffe
  * @memberof RenderDevice
  */
 static bool setAllowedFramesInFlight(const RenderDevice *self, Uint32 allowed) {
-
   return SDL_SetGPUAllowedFramesInFlight(self->device, allowed);
 }
 
@@ -471,10 +439,6 @@ static bool setAllowedFramesInFlight(const RenderDevice *self, Uint32 allowed) {
  * @memberof RenderDevice
  */
 static void setBufferName(const RenderDevice *self, SDL_GPUBuffer *buffer, const char *name) {
-
-  assert(buffer);
-  assert(name);
-
   SDL_SetGPUBufferName(self->device, buffer, name);
 }
 
@@ -483,9 +447,6 @@ static void setBufferName(const RenderDevice *self, SDL_GPUBuffer *buffer, const
  * @memberof RenderDevice
  */
 static bool setSwapchainParameters(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition, SDL_GPUPresentMode mode) {
-
-  assert(window);
-
   return SDL_SetGPUSwapchainParameters(self->device, window, composition, mode);
 }
 
@@ -494,10 +455,6 @@ static bool setSwapchainParameters(const RenderDevice *self, SDL_Window *window,
  * @memberof RenderDevice
  */
 static void setTextureName(const RenderDevice *self, SDL_GPUTexture *texture, const char *name) {
-
-  assert(texture);
-  assert(name);
-
   SDL_SetGPUTextureName(self->device, texture, name);
 }
 
@@ -528,11 +485,6 @@ static void setWindow(RenderDevice *self, SDL_Window *window) {
  * @memberof RenderDevice
  */
 static void submit(const RenderDevice *self, CommandBuffer *cmd) {
-
-  assert(self);
-  assert(cmd);
-  assert(cmd->cmd);
-
   const bool ok = SDL_SubmitGPUCommandBuffer(cmd->cmd);
   GPU_Assert(ok, "SDL_SubmitGPUCommandBuffer");
 }
@@ -543,12 +495,9 @@ static void submit(const RenderDevice *self, CommandBuffer *cmd) {
  */
 static SDL_GPUFence *submitAndFence(const RenderDevice *self, CommandBuffer *cmd) {
 
-  assert(self);
-  assert(cmd);
-  assert(cmd->cmd);
-
   SDL_GPUFence *fence = SDL_SubmitGPUCommandBufferAndAcquireFence(cmd->cmd);
   GPU_Assert(fence, "SDL_SubmitGPUCommandBufferAndAcquireFence");
+
   return fence;
 }
 
@@ -557,7 +506,6 @@ static SDL_GPUFence *submitAndFence(const RenderDevice *self, CommandBuffer *cmd
  * @memberof RenderDevice
  */
 static bool textureSupportsFormat(const RenderDevice *self, SDL_GPUTextureFormat format, SDL_GPUTextureType type, SDL_GPUTextureUsageFlags usage) {
-
   return SDL_GPUTextureSupportsFormat(self->device, format, type, usage);
 }
 
@@ -566,7 +514,6 @@ static bool textureSupportsFormat(const RenderDevice *self, SDL_GPUTextureFormat
  * @memberof RenderDevice
  */
 static bool textureSupportsSampleCount(const RenderDevice *self, SDL_GPUTextureFormat format, SDL_GPUSampleCount sample_count) {
-
   return SDL_GPUTextureSupportsSampleCount(self->device, format, sample_count);
 }
 
@@ -575,9 +522,6 @@ static bool textureSupportsSampleCount(const RenderDevice *self, SDL_GPUTextureF
  * @memberof RenderDevice
  */
 static void unmapTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffer *tbuf) {
-
-  assert(tbuf);
-
   SDL_UnmapGPUTransferBuffer(self->device, tbuf);
 }
 
@@ -586,9 +530,6 @@ static void unmapTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffer 
  * @memberof RenderDevice
  */
 static bool waitForFences(const RenderDevice *self, bool wait_all, SDL_GPUFence *const *fences, Uint32 num_fences) {
-
-  assert(fences || num_fences == 0);
-
   return SDL_WaitForGPUFences(self->device, wait_all, fences, num_fences);
 }
 
@@ -597,7 +538,6 @@ static bool waitForFences(const RenderDevice *self, bool wait_all, SDL_GPUFence 
  * @memberof RenderDevice
  */
 static bool waitForIdle(const RenderDevice *self) {
-
   return SDL_WaitForGPUIdle(self->device);
 }
 
@@ -606,9 +546,6 @@ static bool waitForIdle(const RenderDevice *self) {
  * @memberof RenderDevice
  */
 static bool waitForSwapchain(const RenderDevice *self, SDL_Window *window) {
-
-  assert(window);
-
   return SDL_WaitForGPUSwapchain(self->device, window);
 }
 
@@ -617,9 +554,6 @@ static bool waitForSwapchain(const RenderDevice *self, SDL_Window *window) {
  * @memberof RenderDevice
  */
 static bool windowSupportsPresentMode(const RenderDevice *self, SDL_Window *window, SDL_GPUPresentMode mode) {
-
-  assert(window);
-
   return SDL_WindowSupportsGPUPresentMode(self->device, window, mode);
 }
 
@@ -628,30 +562,7 @@ static bool windowSupportsPresentMode(const RenderDevice *self, SDL_Window *wind
  * @memberof RenderDevice
  */
 static bool windowSupportsSwapchainComposition(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition) {
-
-  assert(window);
-
   return SDL_WindowSupportsGPUSwapchainComposition(self->device, window, composition);
-}
-
-#pragma mark - Object lifecycle
-
-/**
- * @see Object::dealloc(Object *)
- */
-static void dealloc(Object *self) {
-
-  RenderDevice *this = (RenderDevice *) self;
-
-  if (this->window && this->device) {
-    SDL_ReleaseWindowFromGPUDevice(this->device, this->window);
-  }
-
-  if (this->device) {
-    SDL_DestroyGPUDevice(this->device);
-  }
-
-  super(Object, self, dealloc);
 }
 
 #pragma mark - Class lifecycle

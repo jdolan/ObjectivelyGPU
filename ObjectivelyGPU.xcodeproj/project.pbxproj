@@ -125,6 +125,16 @@
 		CECF83952FEF65FF00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83962FEF65FF00CB0CCA /* ObjectivelyGPU.pc.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ObjectivelyGPU.pc.in; sourceTree = "<group>"; };
 		CECF83972FEF6A7200CB0CCA /* Mathlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Mathlib.h; sourceTree = "<group>"; };
+		CECF83992FEF6B2400CB0CCA /* Hello.frag.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Hello.frag.msl; sourceTree = "<group>"; };
+		CECF839A2FEF6B2400CB0CCA /* Hello.frag.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hello.frag.spv; sourceTree = "<group>"; };
+		CECF839B2FEF6B2400CB0CCA /* Hello.vert.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Hello.vert.msl; sourceTree = "<group>"; };
+		CECF839C2FEF6B2400CB0CCA /* Hello.vert.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hello.vert.spv; sourceTree = "<group>"; };
+		CECF839D2FEF6B2400CB0CCA /* HelloCompute.comp.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.comp.msl; sourceTree = "<group>"; };
+		CECF839E2FEF6B2400CB0CCA /* HelloCompute.comp.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = HelloCompute.comp.spv; sourceTree = "<group>"; };
+		CECF839F2FEF6B2400CB0CCA /* HelloCompute.frag.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.frag.msl; sourceTree = "<group>"; };
+		CECF83A02FEF6B2400CB0CCA /* HelloCompute.frag.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = HelloCompute.frag.spv; sourceTree = "<group>"; };
+		CECF83A12FEF6B2400CB0CCA /* HelloCompute.vert.msl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloCompute.vert.msl; sourceTree = "<group>"; };
+		CECF83A22FEF6B2400CB0CCA /* HelloCompute.vert.spv */ = {isa = PBXFileReference; lastKnownFileType = file; path = HelloCompute.vert.spv; sourceTree = "<group>"; };
 		CEEAAFF72FED833A00FFEBE6 /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
 		CEEAAFF82FED833A00FFEBE6 /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CEEAAFFA2FED833A00FFEBE6 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -295,11 +305,21 @@
 		SC00500000000000000000A0 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
-				SC00600000000000000000A0 /* Hello.vert.hlsl */,
 				SC00700000000000000000A0 /* Hello.frag.hlsl */,
+				CECF83992FEF6B2400CB0CCA /* Hello.frag.msl */,
+				CECF839A2FEF6B2400CB0CCA /* Hello.frag.spv */,
+				SC00600000000000000000A0 /* Hello.vert.hlsl */,
+				CECF839B2FEF6B2400CB0CCA /* Hello.vert.msl */,
+				CECF839C2FEF6B2400CB0CCA /* Hello.vert.spv */,
 				SC00800000000000000000A0 /* HelloCompute.comp.hlsl */,
-				SC00900000000000000000A0 /* HelloCompute.vert.hlsl */,
+				CECF839D2FEF6B2400CB0CCA /* HelloCompute.comp.msl */,
+				CECF839E2FEF6B2400CB0CCA /* HelloCompute.comp.spv */,
 				SC00A00000000000000000A0 /* HelloCompute.frag.hlsl */,
+				CECF839F2FEF6B2400CB0CCA /* HelloCompute.frag.msl */,
+				CECF83A02FEF6B2400CB0CCA /* HelloCompute.frag.spv */,
+				SC00900000000000000000A0 /* HelloCompute.vert.hlsl */,
+				CECF83A12FEF6B2400CB0CCA /* HelloCompute.vert.msl */,
+				CECF83A22FEF6B2400CB0CCA /* HelloCompute.vert.spv */,
 				CECF83912FEF634300CB0CCA /* Makefile.am */,
 			);
 			path = Shaders;
@@ -429,11 +449,11 @@
 			projectRoot = "";
 			targets = (
 				EA25F2CECA5EE87704453CE2 /* ObjectivelyGPU */,
+				SC00000000000000000000A0 /* ObjectivelyGPU-shadercross */,
 				EI03000000000000000000A1 /* ObjectivelyGPU-xcframework */,
 				EE00B00000000000000000B1 /* ObjectivelyGPU-Hello */,
 				EE00C00000000000000000B1 /* ObjectivelyGPU-HelloCompute */,
 				EI00F00000000000000000B1 /* ObjectivelyGPU-Hello-iOS */,
-				SC00000000000000000000A0 /* ObjectivelyGPU-shadercross */,
 			);
 		};
 /* End PBXProject section */
@@ -505,7 +525,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nSHADERS=\"$SRCROOT/Examples/Shaders\"\ncompile() {\n  local name=$1 stage=$2 ep=$3\n  shadercross \"$SHADERS/${name}.hlsl\" -s HLSL -d SPIRV -t $stage -e $ep -o \"$SHADERS/${name}.spv\"\n  shadercross \"$SHADERS/${name}.hlsl\" -s HLSL -d MSL   -t $stage -e $ep -o \"$SHADERS/${name}.msl\"\n}\ncompile Hello.vert      vertex   vs_main\ncompile Hello.frag      fragment fs_main\ncompile HelloCompute.comp compute  cs_main\ncompile HelloCompute.vert vertex   vs_main\ncompile HelloCompute.frag fragment fs_main\n";
+			shellScript = "set -e\nSHADERS=\"$SRCROOT/Examples/Shaders\"\ncompile() {\n  local name=$1 stage=$2 ep=$3\n  shadercross \"$SHADERS/${name}.hlsl\" -s HLSL -d SPIRV -t $stage -e $ep -o \"$SHADERS/${name}.spv\"\n  shadercross \"$SHADERS/${name}.hlsl\" -s HLSL -d MSL   -t $stage -e $ep -o \"$SHADERS/${name}.msl\"\n}\ncompile Hello.vert vertex vs_main\ncompile Hello.frag fragment fs_main\ncompile HelloCompute.comp compute cs_main\ncompile HelloCompute.vert vertex vs_main\ncompile HelloCompute.frag fragment fs_main\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
