@@ -10,7 +10,7 @@ pkginclude_HEADERS = \
     CommandBuffer.h \
     ComputePass.h \
     CopyPass.h \
-    Math.h \
+    Mathlib.h \
     RenderDevice.h \
     RenderPass.h \
     Types.h

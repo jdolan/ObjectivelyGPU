@@ -30,7 +30,7 @@ SPIRV_BLOBS = \
 EXTRA_DIST = $(HLSL_FILES) $(MSL_BLOBS) $(SPIRV_BLOBS)
 
 .PHONY: shadercross
-shadercross: $(addprefix $(srcdir)/,$(MSL_BLOBS) $(SPIRV_BLOBS))
+shadercross: $(EXTRA_DIST)
 
 $(srcdir)/%.vert.spv: $(srcdir)/%.vert.hlsl
 	$(SHADERCROSS) $< -s HLSL -d SPIRV -t vertex -e vs_main -o $@

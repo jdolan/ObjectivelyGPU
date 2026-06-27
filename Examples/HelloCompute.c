@@ -56,12 +56,11 @@ int main(int argc, char **argv) {
 		return status;
 	}
 
-	char *basePath = SDL_GetBasePath();
+	const char *basePath = SDL_GetBasePath();
 	if (basePath) {
 		char shaderDir[512];
 		SDL_snprintf(shaderDir, sizeof(shaderDir), "%sShaders", basePath);
 		$$(Resource, addResourcePath, shaderDir);
-		SDL_free(basePath);
 	}
 
 	window = SDL_CreateWindow("ObjectivelyGPU HelloCompute", 800, 600, SDL_WINDOW_HIGH_PIXEL_DENSITY);
