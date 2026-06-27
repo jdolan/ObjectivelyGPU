@@ -33,11 +33,16 @@
 #pragma mark - CommandBuffer
 
 /**
- * @fn bool CommandBuffer::acquireSwapchainTexture(const CommandBuffer *self, SDL_Window *window, SDL_GPUTexture **texture, Uint32 *w, Uint32 *h)
+ * @fn bool CommandBuffer::acquireSwapchainTexture(const CommandBuffer *self, SDL_Window *window, SwapchainTexture *swapchain)
  * @memberof CommandBuffer
  */
-static bool acquireSwapchainTexture(const CommandBuffer *self, SDL_Window *window, SDL_GPUTexture **texture, Uint32 *w, Uint32 *h) {
-  return SDL_AcquireGPUSwapchainTexture(self->cmd, window, texture, w, h);
+static bool acquireSwapchainTexture(const CommandBuffer *self, SDL_Window *window, SwapchainTexture *swapchain) {
+  assert(swapchain);
+
+  Uint32 w = 0, h = 0;
+  const bool ok = SDL_AcquireGPUSwapchainTexture(self->cmd, window, &swapchain->texture, &w, &h);
+  swapchain->size = MakeSize(w, h);
+  return ok && swapchain->texture;
 }
 
 /**
@@ -194,14 +199,17 @@ static SDL_GPUFence *submitAndFence(const CommandBuffer *self) {
 }
 
 /**
- * @fn bool CommandBuffer::waitAndAcquireSwapchainTexture(const CommandBuffer *self, SDL_Window *window, SDL_GPUTexture **texture, Uint32 *w, Uint32 *h)
+ * @fn bool CommandBuffer::waitAndAcquireSwapchainTexture(const CommandBuffer *self, SDL_Window *window, SwapchainTexture *swapchain)
  * @memberof CommandBuffer
  */
-static bool waitAndAcquireSwapchainTexture(const CommandBuffer *self, SDL_Window *window, SDL_GPUTexture **texture, Uint32 *w, Uint32 *h) {
+static bool waitAndAcquireSwapchainTexture(const CommandBuffer *self, SDL_Window *window, SwapchainTexture *swapchain) {
+  assert(swapchain);
 
-  const bool ok = SDL_WaitAndAcquireGPUSwapchainTexture(self->cmd, window, texture, w, h);
+  Uint32 w = 0, h = 0;
+  const bool ok = SDL_WaitAndAcquireGPUSwapchainTexture(self->cmd, window, &swapchain->texture, &w, &h);
   GPU_Assert(ok, "SDL_WaitAndAcquireGPUSwapchainTexture");
 
+  swapchain->size = MakeSize(w, h);
   return ok;
 }
 

@@ -275,7 +275,7 @@ SDL_AppResult SDL_AppIterate(void *unused) {
 	while (app.angleY >= 360.0f) app.angleY -= 360.0f;
 
 	CommandBuffer *cmd = $(app.renderDevice, acquireCommandBuffer);
-	Swapchain swapchain = { 0 };
+	SwapchainTexture swapchain = { 0 };
 	if (!$(app.renderDevice, acquireSwapchainTexture, cmd, &swapchain)) {
 		$(cmd, cancel);
 		release(cmd);

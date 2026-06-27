@@ -79,21 +79,6 @@ static CommandBuffer *acquireCommandBuffer(const RenderDevice *self) {
 }
 
 /**
- * @fn bool RenderDevice::acquireSwapchainTexture(const RenderDevice *self, CommandBuffer *cmd, Swapchain *swapchain)
- * @memberof RenderDevice
- */
-static bool acquireSwapchainTexture(const RenderDevice *self, CommandBuffer *cmd, Swapchain *swapchain) {
-
-  SDL_AcquireGPUSwapchainTexture(cmd->cmd,
-                                 self->window,
-                                 &swapchain->texture,
-                                 (unsigned int *) &swapchain->size.w,
-                                 (unsigned int *) &swapchain->size.h);
-
-  return swapchain->texture != NULL;
-}
-
-/**
  * @fn SDL_GPUBuffer *RenderDevice::createBuffer(const RenderDevice *self, const SDL_GPUBufferCreateInfo *info)
  * @memberof RenderDevice
  */
@@ -788,7 +773,6 @@ static void initialize(Class *clazz) {
   ((ObjectInterface *) clazz->interface)->dealloc = dealloc;
 
   ((RenderDeviceInterface *) clazz->interface)->acquireCommandBuffer = acquireCommandBuffer;
-  ((RenderDeviceInterface *) clazz->interface)->acquireSwapchainTexture = acquireSwapchainTexture;
   ((RenderDeviceInterface *) clazz->interface)->createBuffer = createBuffer;
   ((RenderDeviceInterface *) clazz->interface)->createBufferWithConstMem = createBufferWithConstMem;
   ((RenderDeviceInterface *) clazz->interface)->createBufferWithData = createBufferWithData;

@@ -41,27 +41,6 @@
 
 typedef struct CommandBuffer CommandBuffer;
 typedef struct RenderDevice RenderDevice;
-
-/**
- * @brief The Swapchain (render target) type.
- */
-struct Swapchain {
-
-  /**
-   * @brief The current render target.
-   * @private
-   */
-  SDL_GPUTexture *texture;
-
-  /**
-   * @brief The swapchain dimensions.
-   * @private
-   */
-  SDL_Size size;
-};
-
-typedef struct Swapchain Swapchain;
-
 typedef struct RenderDeviceInterface RenderDeviceInterface;
 
 /**
@@ -139,21 +118,6 @@ struct RenderDeviceInterface {
    * @memberof RenderDevice
    */
   CommandBuffer *(*acquireCommandBuffer)(const RenderDevice *self);
-
-  /**
-   * @fn bool RenderDevice::acquireSwapchainTexture(const RenderDevice *self, CommandBuffer *cmd, Swapchain *swapchain)
-   * @brief Acquires the swapchain render target for the current frame.
-   * @details Wraps `SDL_AcquireGPUSwapchainTexture` using `self->window`. On
-   *   success, fills `swapchain->texture` with the current back-buffer and
-   *   `swapchain->size` with its pixel dimensions. Returns `false` (without
-   *   asserting) when the window is minimised or the swapchain is unavailable.
-   * @param self The RenderDevice.
-   * @param cmd The active CommandBuffer for this frame.
-   * @param swapchain Output structure to populate with the texture and dimensions.
-   * @return `true` if a swapchain texture was acquired; `false` otherwise.
-   * @memberof RenderDevice
-   */
-  bool (*acquireSwapchainTexture)(const RenderDevice *self, CommandBuffer *cmd, Swapchain *swapchain);
 
   /**
    * @fn SDL_GPUBuffer *RenderDevice::createBuffer(const RenderDevice *self, const SDL_GPUBufferCreateInfo *info)

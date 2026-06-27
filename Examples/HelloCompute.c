@@ -143,9 +143,9 @@ int main(int argc, char **argv) {
 		}
 
 		CommandBuffer *cmd = $(renderDevice, acquireCommandBuffer);
-		Swapchain swapchain = { 0 };
+		SwapchainTexture swapchain = { 0 };
 
-		if (!$(renderDevice, acquireSwapchainTexture, cmd, &swapchain)) {
+		if (!$(cmd, acquireSwapchainTexture, window, &swapchain)) {
 			$(cmd, cancel);
 			release(cmd);
 			continue;

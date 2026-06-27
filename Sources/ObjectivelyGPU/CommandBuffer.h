@@ -37,6 +37,25 @@ typedef struct CopyPass CopyPass;
 typedef struct RenderPass RenderPass;
 typedef struct CommandBuffer CommandBuffer;
 typedef struct CommandBufferInterface CommandBufferInterface;
+typedef struct SwapchainTexture SwapchainTexture;
+
+/**
+ * @brief The swapchain texture acquired for a single frame.
+ * @details Valid only between a successful `acquireSwapchainTexture` call and
+ * the `submit` of the same `CommandBuffer`. SDL3 reclaims the texture on submit.
+ */
+struct SwapchainTexture {
+
+  /**
+   * @brief The swapchain render target for this frame.
+   */
+  SDL_GPUTexture *texture;
+
+  /**
+   * @brief The swapchain dimensions in pixels.
+   */
+  SDL_Size size;
+};
 
 /**
  * @brief A recorded sequence of GPU commands for a single frame.
@@ -87,17 +106,18 @@ struct CommandBufferInterface {
   ObjectInterface objectInterface;
 
   /**
-   * @fn bool CommandBuffer::acquireSwapchainTexture(const CommandBuffer *self, SDL_Window *window, SDL_GPUTexture **texture, Uint32 *w, Uint32 *h)
+   * @fn bool CommandBuffer::acquireSwapchainTexture(const CommandBuffer *self, SDL_Window *window, SwapchainTexture *swapchain)
    * @brief Acquires the next swapchain texture for rendering.
+   * @details Returns `false` (without asserting) when the window is minimised
+   *   or the swapchain is temporarily unavailable. The caller should skip
+   *   rendering for that frame.
    * @param self The CommandBuffer.
    * @param window The window whose swapchain to acquire.
-   * @param texture Receives the swapchain texture, or NULL if unavailable this frame.
-   * @param w Receives the swapchain width in pixels, or NULL.
-   * @param h Receives the swapchain height in pixels, or NULL.
-   * @return True on success, false on error.
+   * @param swapchain Output structure populated with the texture and dimensions.
+   * @return True on success, false when the swapchain is unavailable this frame.
    * @memberof CommandBuffer
    */
-  bool (*acquireSwapchainTexture)(const CommandBuffer *self, SDL_Window *window, SDL_GPUTexture **texture, Uint32 *w, Uint32 *h);
+  bool (*acquireSwapchainTexture)(const CommandBuffer *self, SDL_Window *window, SwapchainTexture *swapchain);
 
   /**
    * @fn ComputePass *CommandBuffer::beginComputePass(const CommandBuffer *self, ...)
@@ -239,18 +259,17 @@ struct CommandBufferInterface {
   SDL_GPUFence *(*submitAndFence)(const CommandBuffer *self);
 
   /**
-   * @fn bool CommandBuffer::waitAndAcquireSwapchainTexture(const CommandBuffer *self, SDL_Window *window, SDL_GPUTexture **texture, Uint32 *w, Uint32 *h)
+   * @fn bool CommandBuffer::waitAndAcquireSwapchainTexture(const CommandBuffer *self, SDL_Window *window, SwapchainTexture *swapchain)
    * @brief Blocks until a swapchain texture is available, then acquires it.
-   * @details Prefer `acquireSwapchainTexture` unless you must block.
+   * @details Prefer `acquireSwapchainTexture` unless you must guarantee a
+   *   texture this frame (e.g. during resize).
    * @param self The CommandBuffer.
    * @param window The window whose swapchain to acquire.
-   * @param texture Receives the swapchain texture.
-   * @param w Receives the swapchain width in pixels, or NULL.
-   * @param h Receives the swapchain height in pixels, or NULL.
+   * @param swapchain Output structure populated with the texture and dimensions.
    * @return True on success, false on error.
    * @memberof CommandBuffer
    */
-  bool (*waitAndAcquireSwapchainTexture)(const CommandBuffer *self, SDL_Window *window, SDL_GPUTexture **texture, Uint32 *w, Uint32 *h);
+  bool (*waitAndAcquireSwapchainTexture)(const CommandBuffer *self, SDL_Window *window, SwapchainTexture *swapchain);
 };
 
 /**

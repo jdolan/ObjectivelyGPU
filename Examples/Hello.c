@@ -182,39 +182,35 @@ int main(int argc, char **argv) {
 		}
 
 		CommandBuffer *cmd = $(renderDevice, acquireCommandBuffer);
-		Swapchain swapchain = { 0 };
 
-		if (!$(renderDevice, acquireSwapchainTexture, cmd, &swapchain)) {
-			$(cmd, cancel);
-			release(cmd);
-			continue;
-		}
+		SwapchainTexture swapchain = { 0 };
+    if ($(cmd, acquireSwapchainTexture, window, &swapchain)) {
 
-		float4x4 modelView = float4x4_rotation(angleX, float3_new(1.f, 0.f, 0.f));
-		modelView = float4x4_mul(float4x4_rotation(angleY, float3_new(0.f, 1.f, 0.f)), modelView);
-		modelView = float4x4_mul(float4x4_translation(float3_new(0.f, 0.f, -2.5f)), modelView);
-		const float4x4 projection = float4x4_perspective(45.f, (float) swapchain.size.w / (float) swapchain.size.h, 0.01f, 100.f);
-		const float4x4 modelViewProjection = float4x4_mul(projection, modelView);
+      float4x4 modelView = float4x4_rotation(angleX, float3_new(1.f, 0.f, 0.f));
+      modelView = float4x4_mul(float4x4_rotation(angleY, float3_new(0.f, 1.f, 0.f)), modelView);
+      modelView = float4x4_mul(float4x4_translation(float3_new(0.f, 0.f, -2.5f)), modelView);
+      const float4x4 projection = float4x4_perspective(45.f, (float) swapchain.size.w / (float) swapchain.size.h, 0.01f, 100.f);
+      const float4x4 modelViewProjection = float4x4_mul(projection, modelView);
 
-		SDL_GPUColorTargetInfo colorTarget = {
-			.texture = swapchain.texture,
-			.clear_color = { 0.1f, 0.1f, 0.2f, 1.0f },
-			.load_op = SDL_GPU_LOADOP_CLEAR,
-			.store_op = SDL_GPU_STOREOP_STORE,
-		};
+      SDL_GPUColorTargetInfo colorTarget = {
+        .texture = swapchain.texture,
+        .clear_color = { 0.1f, 0.1f, 0.2f, 1.0f },
+        .load_op = SDL_GPU_LOADOP_CLEAR,
+        .store_op = SDL_GPU_STOREOP_STORE,
+      };
 
-		SDL_GPUDepthStencilTargetInfo depthTarget = $(framebuffer, depthTargetInfo,
-			SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_DONT_CARE, 1.f);
+      SDL_GPUDepthStencilTargetInfo depthTarget = $(framebuffer, depthTargetInfo, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_DONT_CARE, 1.f);
 
-		RenderPass *renderPass = $(cmd, beginRenderPass, &colorTarget, 1, &depthTarget);
-		$(renderPass, bindPipeline, pipeline);
-		$(renderPass, bindVertexBuffers, 0, &(SDL_GPUBufferBinding) {
-			.buffer = vertexBuffer,
-			.offset = 0,
-		}, 1);
-		$(cmd, pushVertexUniformData, 0, modelViewProjection.f, sizeof(modelViewProjection));
-		$(renderPass, drawPrimitives, (Uint32) SDL_arraysize(vertex_data), 1, 0, 0);
-		release(renderPass);
+      RenderPass *renderPass = $(cmd, beginRenderPass, &colorTarget, 1, &depthTarget);
+      $(renderPass, bindPipeline, pipeline);
+      $(renderPass, bindVertexBuffers, 0, &(SDL_GPUBufferBinding) {
+        .buffer = vertexBuffer,
+        .offset = 0,
+      }, 1);
+      $(cmd, pushVertexUniformData, 0, modelViewProjection.f, sizeof(modelViewProjection));
+      $(renderPass, drawPrimitives, (Uint32) SDL_arraysize(vertex_data), 1, 0, 0);
+      release(renderPass);
+    }
 
 		$(cmd, submit);
 		release(cmd);
