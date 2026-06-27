@@ -32,6 +32,7 @@
  * @brief CopyPass wraps an `SDL_GPUCopyPass` for uploading and copying GPU resources.
  */
 
+typedef struct CommandBuffer CommandBuffer;
 typedef struct CopyPass CopyPass;
 typedef struct CopyPassInterface CopyPassInterface;
 
@@ -71,10 +72,10 @@ struct CopyPass {
   SDL_GPUCopyPass *pass;
 
   /**
-   * @brief The GPU device, used by `uploadData` to manage transfer buffers.
+   * @brief The CommandBuffer this pass was begun from.
    * @private
    */
-  SDL_GPUDevice *device;
+  CommandBuffer *cmd;
 };
 
 /**
@@ -116,15 +117,15 @@ struct CopyPassInterface {
   void (*downloadTexture)(const CopyPass *self, const SDL_GPUTextureRegion *src, const SDL_GPUTextureTransferInfo *dst);
 
   /**
-   * @fn CopyPass *CopyPass::init(CopyPass *self, SDL_GPUCopyPass *pass, SDL_GPUDevice *device)
+   * @fn CopyPass *CopyPass::init(CopyPass *self, SDL_GPUCopyPass *pass, CommandBuffer *cmd)
    * @brief Initializes this CopyPass wrapping the given SDL copy pass.
    * @param self The CopyPass.
    * @param pass The SDL copy pass to wrap. Must not be NULL.
-   * @param device The SDL GPU device, used by `uploadData` to manage transfer buffers.
+   * @param cmd The CommandBuffer this pass was begun from.
    * @return The initialized CopyPass, or NULL on failure.
    * @memberof CopyPass
    */
-  CopyPass *(*init)(CopyPass *self, SDL_GPUCopyPass *pass, SDL_GPUDevice *device);
+  CopyPass *(*init)(CopyPass *self, SDL_GPUCopyPass *pass, CommandBuffer *cmd);
 
   /**
    * @fn void CopyPass::uploadBuffer(const CopyPass *self, const SDL_GPUTransferBufferLocation *src, const SDL_GPUBufferRegion *dst, bool cycle)

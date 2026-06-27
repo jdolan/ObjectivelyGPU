@@ -24,7 +24,9 @@
 #include <assert.h>
 #include <string.h>
 
+#include "CommandBuffer.h"
 #include "CopyPass.h"
+#include "RenderDevice.h"
 
 #define _Class _CopyPass
 
@@ -78,17 +80,17 @@ static void downloadTexture(const CopyPass *self, const SDL_GPUTextureRegion *sr
 }
 
 /**
- * @fn CopyPass *CopyPass::init(CopyPass *self, SDL_GPUCopyPass *pass, SDL_GPUDevice *device)
+ * @fn CopyPass *CopyPass::init(CopyPass *self, SDL_GPUCopyPass *pass, CommandBuffer *cmd)
  * @memberof CopyPass
  */
-static CopyPass *init(CopyPass *self, SDL_GPUCopyPass *pass, SDL_GPUDevice *device) {
+static CopyPass *init(CopyPass *self, SDL_GPUCopyPass *pass, CommandBuffer *cmd) {
 
   self = (CopyPass *) super(Object, self, init);
   if (self) {
     self->pass = pass;
     assert(self->pass);
-    self->device = device;
-    assert(self->device);
+    self->cmd = cmd;
+    assert(self->cmd);
   }
 
   return self;
@@ -112,24 +114,24 @@ static void uploadData(const CopyPass *self, SDL_GPUBuffer *dst, const void *dat
   assert(data);
   assert(size);
 
-  SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->device, &(SDL_GPUTransferBufferCreateInfo) {
+  SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->cmd->device->device, &(SDL_GPUTransferBufferCreateInfo) {
     .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
     .size = size,
   });
   GPU_Assert(tbuf, "SDL_CreateGPUTransferBuffer");
 
-  void *mapped = SDL_MapGPUTransferBuffer(self->device, tbuf, cycle);
+  void *mapped = SDL_MapGPUTransferBuffer(self->cmd->device->device, tbuf, cycle);
   GPU_Assert(mapped, "SDL_MapGPUTransferBuffer");
 
   memcpy(mapped, data, size);
-  SDL_UnmapGPUTransferBuffer(self->device, tbuf);
+  SDL_UnmapGPUTransferBuffer(self->cmd->device->device, tbuf);
 
   SDL_UploadToGPUBuffer(self->pass,
     &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf },
     &(SDL_GPUBufferRegion) { .buffer = dst, .offset = offset, .size = size },
     cycle);
 
-  SDL_ReleaseGPUTransferBuffer(self->device, tbuf);
+  SDL_ReleaseGPUTransferBuffer(self->cmd->device->device, tbuf);
 }
 
 /**

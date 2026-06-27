@@ -23,6 +23,7 @@
 
 #include <assert.h>
 
+#include "CommandBuffer.h"
 #include "RenderPass.h"
 
 #define _Class _RenderPass
@@ -150,15 +151,17 @@ static void drawPrimitivesIndirect(const RenderPass *self, SDL_GPUBuffer *buffer
 }
 
 /**
- * @fn RenderPass *RenderPass::init(RenderPass *self, SDL_GPURenderPass *pass)
+ * @fn RenderPass *RenderPass::init(RenderPass *self, SDL_GPURenderPass *pass, CommandBuffer *cmd)
  * @memberof RenderPass
  */
-static RenderPass *init(RenderPass *self, SDL_GPURenderPass *pass) {
+static RenderPass *init(RenderPass *self, SDL_GPURenderPass *pass, CommandBuffer *cmd) {
 
   self = (RenderPass *) super(Object, self, init);
   if (self) {
     self->pass = pass;
     assert(self->pass);
+    self->cmd = cmd;
+    assert(self->cmd);
   }
 
   return self;

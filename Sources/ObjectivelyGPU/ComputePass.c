@@ -23,6 +23,7 @@
 
 #include <assert.h>
 
+#include "CommandBuffer.h"
 #include "ComputePass.h"
 
 #define _Class _ComputePass
@@ -93,15 +94,17 @@ static void dispatchComputeIndirect(const ComputePass *self, SDL_GPUBuffer *buff
 }
 
 /**
- * @fn ComputePass *ComputePass::init(ComputePass *self, SDL_GPUComputePass *pass)
+ * @fn ComputePass *ComputePass::init(ComputePass *self, SDL_GPUComputePass *pass, CommandBuffer *cmd)
  * @memberof ComputePass
  */
-static ComputePass *init(ComputePass *self, SDL_GPUComputePass *pass) {
+static ComputePass *init(ComputePass *self, SDL_GPUComputePass *pass, CommandBuffer *cmd) {
 
   self = (ComputePass *) super(Object, self, init);
   if (self) {
     self->pass = pass;
     assert(self->pass);
+    self->cmd = cmd;
+    assert(self->cmd);
   }
 
   return self;

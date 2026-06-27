@@ -57,7 +57,7 @@ static ComputePass *beginComputePass(const CommandBuffer *self, const SDL_GPUSto
   SDL_GPUComputePass *pass = SDL_BeginGPUComputePass(self->cmd, storageTextures, numStorageTextures, storageBuffers, numStorageBuffers);
   GPU_Assert(pass, "SDL_BeginGPUComputePass");
 
-  return $(alloc(ComputePass), init, pass);
+  return $(alloc(ComputePass), init, pass, (CommandBuffer *) self);
 }
 
 /**
@@ -69,7 +69,7 @@ static CopyPass *beginCopyPass(const CommandBuffer *self) {
   SDL_GPUCopyPass *pass = SDL_BeginGPUCopyPass(self->cmd);
   GPU_Assert(pass, "SDL_BeginGPUCopyPass");
 
-  return $(alloc(CopyPass), init, pass, self->device->device);
+  return $(alloc(CopyPass), init, pass, (CommandBuffer *) self);
 }
 
 /**
@@ -81,7 +81,7 @@ static RenderPass *beginRenderPass(const CommandBuffer *self, const SDL_GPUColor
   SDL_GPURenderPass *pass = SDL_BeginGPURenderPass(self->cmd, colorTargets, numColorTargets, depthStencil);
   GPU_Assert(pass, "SDL_BeginGPURenderPass");
 
-  return $(alloc(RenderPass), init, pass);
+  return $(alloc(RenderPass), init, pass, (CommandBuffer *) self);
 }
 
 /**
