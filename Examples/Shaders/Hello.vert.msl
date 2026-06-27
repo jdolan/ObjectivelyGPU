@@ -1,0 +1,30 @@
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct UBO
+{
+    float4x4 ModelViewProj;
+};
+
+struct vs_main_out
+{
+    float4 _entryPointOutput_color [[user(locn0)]];
+    float4 gl_Position [[position]];
+};
+
+struct vs_main_in
+{
+    float3 input_position [[attribute(0)]];
+    float3 input_color [[attribute(1)]];
+};
+
+vertex vs_main_out vs_main(vs_main_in in [[stage_in]], constant UBO& _40 [[buffer(0)]])
+{
+    vs_main_out out = {};
+    out._entryPointOutput_color = float4(in.input_color, 1.0);
+    out.gl_Position = _40.ModelViewProj * float4(in.input_position, 1.0);
+    return out;
+}
+

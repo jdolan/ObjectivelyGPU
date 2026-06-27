@@ -294,6 +294,58 @@ static SDL_GPUShader *loadShader(const RenderDevice *self, const char *name, con
 }
 
 /**
+ * @fn SDL_GPUComputePipeline *RenderDevice::loadComputePipeline(const RenderDevice *self, const char *name, const SDL_GPUComputePipelineCreateInfo *info)
+ * @memberof RenderDevice
+ */
+static SDL_GPUComputePipeline *loadComputePipeline(const RenderDevice *self, const char *name, const SDL_GPUComputePipelineCreateInfo *info) {
+
+  assert(name);
+  assert(info);
+
+  static const struct {
+    SDL_GPUShaderFormat format;
+    const char *ext;
+  } formats[] = {
+    { SDL_GPU_SHADERFORMAT_MSL,  ".msl"  },
+    { SDL_GPU_SHADERFORMAT_DXIL, ".dxil" },
+    { SDL_GPU_SHADERFORMAT_SPIRV,".spv"  },
+  };
+
+  const SDL_GPUShaderFormat supported = SDL_GetGPUShaderFormats(self->device);
+
+  for (size_t i = 0; i < SDL_arraysize(formats); i++) {
+    if (!(supported & formats[i].format)) {
+      continue;
+    }
+
+    char path[256];
+    SDL_snprintf(path, sizeof(path), "%s%s", name, formats[i].ext);
+
+    Resource *res = $$(Resource, resourceWithName, path);
+    if (!res) {
+      continue;
+    }
+
+    if (!res->data || res->data->length == 0) {
+      release(res);
+      continue;
+    }
+
+    SDL_GPUComputePipelineCreateInfo filled = *info;
+    filled.code      = res->data->bytes;
+    filled.code_size = res->data->length;
+    filled.format    = formats[i].format;
+
+    SDL_GPUComputePipeline *pipeline = $(self, createComputePipeline, &filled);
+    release(res);
+    return pipeline;
+  }
+
+  GPU_Assert(false, "loadComputePipeline: no shader blob found for '%s' in any supported format", name);
+  return NULL;
+}
+
+/**
  * @fn void *RenderDevice::mapTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffer *tbuf, bool cycle)
  * @memberof RenderDevice
  */
@@ -624,6 +676,7 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->init = init;
   ((RenderDeviceInterface *) clazz->interface)->initWithWindow = initWithWindow;
   ((RenderDeviceInterface *) clazz->interface)->loadShader = loadShader;
+  ((RenderDeviceInterface *) clazz->interface)->loadComputePipeline = loadComputePipeline;
   ((RenderDeviceInterface *) clazz->interface)->mapTransferBuffer = mapTransferBuffer;
   ((RenderDeviceInterface *) clazz->interface)->queryFence = queryFence;
   ((RenderDeviceInterface *) clazz->interface)->releaseBuffer = releaseBuffer;

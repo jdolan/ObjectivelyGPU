@@ -34,62 +34,8 @@ typedef struct {
 	float x, y;
 } Particle;
 
-static const char *compute_shader_msl =
-"#include <metal_stdlib>\n"
-"using namespace metal;\n"
-"\n"
-"struct Particle {\n"
-"    float2 position;\n"
-"};\n"
-"\n"
-"kernel void main0(uint id [[thread_position_in_grid]], constant float& time [[buffer(0)]], device Particle *particles [[buffer(1)]]) {\n"
-"    float angle = (float(id) / 256.0) * 6.28318 + time;\n"
-"    float r = 0.1 + 0.6 * float(id % 64) / 64.0;\n"
-"    particles[id].position = float2(cos(angle) * r, sin(angle) * r);\n"
-"}\n";
-
-static const char *vertex_shader_msl =
-"#include <metal_stdlib>\n"
-"using namespace metal;\n"
-"\n"
-"struct Particle {\n"
-"    float2 position;\n"
-"};\n"
-"\n"
-"struct main0_out {\n"
-"    float4 gl_Position [[position]];\n"
-"    float point_size [[point_size]];\n"
-"};\n"
-"\n"
-"vertex main0_out main0(uint id [[vertex_id]], const device Particle *particles [[buffer(0)]]) {\n"
-"    main0_out out = {};\n"
-"    out.gl_Position = float4(particles[id].position, 0.0, 1.0);\n"
-"    out.point_size = 4.0;\n"
-"    return out;\n"
-"}\n";
-
-static const char *fragment_shader_msl =
-"#include <metal_stdlib>\n"
-"using namespace metal;\n"
-"\n"
-"fragment float4 main0() {\n"
-"    return float4(0.8, 0.5, 1.0, 1.0);\n"
-"}\n";
-
 static void log_sdl_error(const char *what) {
 	SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "%s: %s", what, SDL_GetError());
-}
-
-static SDL_GPUShader *create_shader(const RenderDevice *renderDevice, const char *source, SDL_GPUShaderStage stage, Uint32 numStorageBuffers, Uint32 numUniformBuffers) {
-	return $(renderDevice, createShader, &(SDL_GPUShaderCreateInfo) {
-		.code_size = SDL_strlen(source),
-		.code = (const Uint8 *) source,
-		.entrypoint = "main0",
-		.format = SDL_GPU_SHADERFORMAT_MSL,
-		.stage = stage,
-		.num_storage_buffers = numStorageBuffers,
-		.num_uniform_buffers = numUniformBuffers,
-	});
 }
 
 int main(int argc, char **argv) {
@@ -110,6 +56,14 @@ int main(int argc, char **argv) {
 		return status;
 	}
 
+	char *basePath = SDL_GetBasePath();
+	if (basePath) {
+		char shaderDir[512];
+		SDL_snprintf(shaderDir, sizeof(shaderDir), "%sShaders", basePath);
+		$$(Resource, addResourcePath, shaderDir);
+		SDL_free(basePath);
+	}
+
 	window = SDL_CreateWindow("ObjectivelyGPU HelloCompute", 800, 600, SDL_WINDOW_HIGH_PIXEL_DENSITY);
 	if (!window) {
 		log_sdl_error("SDL_CreateWindow");
@@ -123,11 +77,8 @@ int main(int argc, char **argv) {
 		.size = NUM_PARTICLES * sizeof(Particle),
 	});
 
-	computePipeline = $(renderDevice, createComputePipeline, &(SDL_GPUComputePipelineCreateInfo) {
-		.code_size = SDL_strlen(compute_shader_msl),
-		.code = (const Uint8 *) compute_shader_msl,
-		.entrypoint = "main0",
-		.format = SDL_GPU_SHADERFORMAT_MSL,
+	computePipeline = $(renderDevice, loadComputePipeline, "HelloCompute.comp", &(SDL_GPUComputePipelineCreateInfo) {
+		.entrypoint = "cs_main",
 		.num_readwrite_storage_buffers = 1,
 		.num_uniform_buffers = 1,
 		.threadcount_x = NUM_PARTICLES,
@@ -135,8 +86,15 @@ int main(int argc, char **argv) {
 		.threadcount_z = 1,
 	});
 
-	vertexShader = create_shader(renderDevice, vertex_shader_msl, SDL_GPU_SHADERSTAGE_VERTEX, 1, 0);
-	fragmentShader = create_shader(renderDevice, fragment_shader_msl, SDL_GPU_SHADERSTAGE_FRAGMENT, 0, 0);
+	vertexShader = $(renderDevice, loadShader, "HelloCompute.vert", &(SDL_GPUShaderCreateInfo) {
+		.entrypoint = "vs_main",
+		.stage = SDL_GPU_SHADERSTAGE_VERTEX,
+		.num_storage_buffers = 1,
+	});
+	fragmentShader = $(renderDevice, loadShader, "HelloCompute.frag", &(SDL_GPUShaderCreateInfo) {
+		.entrypoint = "fs_main",
+		.stage = SDL_GPU_SHADERSTAGE_FRAGMENT,
+	});
 
 	SDL_GPUColorTargetDescription colorTargetDescription = {
 		.format = $(renderDevice, getSwapchainTextureFormat, window),

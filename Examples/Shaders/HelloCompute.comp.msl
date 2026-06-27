@@ -1,0 +1,27 @@
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct Params
+{
+    float time;
+};
+
+struct Particle
+{
+    float2 position;
+};
+
+struct particles
+{
+    Particle _data[1];
+};
+
+kernel void cs_main(constant Params& _23 [[buffer(0)]], device particles& particles_1 [[buffer(1)]], uint3 gl_GlobalInvocationID [[thread_position_in_grid]])
+{
+    float _77 = (float(gl_GlobalInvocationID.x) * 0.0245436728000640869140625) + _23.time;
+    float _83 = 0.100000001490116119384765625 + (float(gl_GlobalInvocationID.x % 64u) * 0.00937500037252902984619140625);
+    particles_1._data[gl_GlobalInvocationID.x].position = float2(cos(_77) * _83, sin(_77) * _83);
+}
+

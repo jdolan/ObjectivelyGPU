@@ -18,6 +18,17 @@
 			name = "ObjectivelyGPU-xcframework";
 			productName = "ObjectivelyGPU-xcframework";
 		};
+		SC00000000000000000000A0 /* ObjectivelyGPU-shadercross */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = SC00400000000000000000A0 /* Build configuration list for PBXAggregateTarget "ObjectivelyGPU-shadercross" */;
+			buildPhases = (
+				SC00100000000000000000A0 /* Compile Shaders */,
+			);
+			dependencies = (
+			);
+			name = "ObjectivelyGPU-shadercross";
+			productName = "ObjectivelyGPU-shadercross";
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -128,6 +139,11 @@
 		EI00050000000000000000B5 /* ObjectivelyGPU.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ObjectivelyGPU.xcframework; path = Frameworks/ObjectivelyGPU.xcframework; sourceTree = "<group>"; };
 		EI00060000000000000000B6 /* Objectively.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Objectively.xcframework; path = Frameworks/Objectively.xcframework; sourceTree = "<group>"; };
 		FDEE3DD81E43E5CFE68E9519 /* Renderer.frag.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Renderer.frag.hlsl; sourceTree = "<group>"; };
+		SC00600000000000000000A0 /* Hello.vert.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Hello.vert.hlsl"; sourceTree = "<group>"; };
+		SC00700000000000000000A0 /* Hello.frag.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Hello.frag.hlsl"; sourceTree = "<group>"; };
+		SC00800000000000000000A0 /* HelloCompute.comp.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "HelloCompute.comp.hlsl"; sourceTree = "<group>"; };
+		SC00900000000000000000A0 /* HelloCompute.vert.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "HelloCompute.vert.hlsl"; sourceTree = "<group>"; };
+		SC00A00000000000000000A0 /* HelloCompute.frag.hlsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "HelloCompute.frag.hlsl"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -260,6 +276,7 @@
 		EE00200000000000000000B1 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
+				SC00500000000000000000A0 /* Shaders */,
 				EI00E00000000000000000B1 /* Hello-iOS */,
 				EE00010000000000000000B1 /* Hello.c */,
 				EE00020000000000000000B2 /* HelloCompute.c */,
@@ -275,6 +292,18 @@
 				EI00030000000000000000B3 /* LaunchScreen.storyboard */,
 			);
 			path = "Hello-iOS";
+			sourceTree = "<group>";
+		};
+		SC00500000000000000000A0 /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				SC00600000000000000000A0 /* Hello.vert.hlsl */,
+				SC00700000000000000000A0 /* Hello.frag.hlsl */,
+				SC00800000000000000000A0 /* HelloCompute.comp.hlsl */,
+				SC00900000000000000000A0 /* HelloCompute.vert.hlsl */,
+				SC00A00000000000000000A0 /* HelloCompute.frag.hlsl */,
+			);
+			path = Shaders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -404,6 +433,7 @@
 				EE00B00000000000000000B1 /* ObjectivelyGPU-Hello */,
 				EE00C00000000000000000B1 /* ObjectivelyGPU-HelloCompute */,
 				EI00F00000000000000000B1 /* ObjectivelyGPU-Hello-iOS */,
+				SC00000000000000000000A0 /* ObjectivelyGPU-shadercross */,
 			);
 		};
 /* End PBXProject section */
@@ -437,6 +467,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "exec \"$SRCROOT/scripts/build-xcframework.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		SC00100000000000000000A0 /* Compile Shaders */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+					"$(SRCROOT)/Examples/Shaders/Hello.vert.hlsl",
+					"$(SRCROOT)/Examples/Shaders/Hello.frag.hlsl",
+					"$(SRCROOT)/Examples/Shaders/HelloCompute.comp.hlsl",
+					"$(SRCROOT)/Examples/Shaders/HelloCompute.vert.hlsl",
+					"$(SRCROOT)/Examples/Shaders/HelloCompute.frag.hlsl",
+			);
+			name = "Compile Shaders";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+					"$(SRCROOT)/Examples/Shaders/Hello.vert.msl",
+					"$(SRCROOT)/Examples/Shaders/Hello.vert.spv",
+					"$(SRCROOT)/Examples/Shaders/Hello.vert.dxil",
+					"$(SRCROOT)/Examples/Shaders/Hello.frag.msl",
+					"$(SRCROOT)/Examples/Shaders/Hello.frag.spv",
+					"$(SRCROOT)/Examples/Shaders/Hello.frag.dxil",
+					"$(SRCROOT)/Examples/Shaders/HelloCompute.comp.msl",
+					"$(SRCROOT)/Examples/Shaders/HelloCompute.comp.spv",
+					"$(SRCROOT)/Examples/Shaders/HelloCompute.comp.dxil",
+					"$(SRCROOT)/Examples/Shaders/HelloCompute.vert.msl",
+					"$(SRCROOT)/Examples/Shaders/HelloCompute.vert.spv",
+					"$(SRCROOT)/Examples/Shaders/HelloCompute.vert.dxil",
+					"$(SRCROOT)/Examples/Shaders/HelloCompute.frag.msl",
+					"$(SRCROOT)/Examples/Shaders/HelloCompute.frag.spv",
+					"$(SRCROOT)/Examples/Shaders/HelloCompute.frag.dxil",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nSHADERS=\"$SRCROOT/Examples/Shaders\"\ncompile() {\n  local name=$1 stage=$2 ep=$3\n  glslc -fshader-stage=$stage -x hlsl -fentry-point=$ep \"$SHADERS/${name}.hlsl\" -o \"$SHADERS/${name}.spv\"\n  shadercross \"$SHADERS/${name}.spv\" -s SPIRV -d MSL -t $stage -e $ep -o \"$SHADERS/${name}.msl\"\n  shadercross \"$SHADERS/${name}.hlsl\" -s HLSL -d DXIL -t $stage -e $ep -o \"$SHADERS/${name}.dxil\"\n}\ncompile Hello.vert      vertex   vs_main\ncompile Hello.frag      fragment fs_main\ncompile HelloCompute.comp compute  cs_main\ncompile HelloCompute.vert vertex   vs_main\ncompile HelloCompute.frag fragment fs_main\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -772,6 +841,20 @@
 			};
 			name = Release;
 		};
+		SC00200000000000000000A0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "ObjectivelyGPU-shadercross";
+			};
+			name = Debug;
+		};
+		SC00300000000000000000A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "ObjectivelyGPU-shadercross";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -825,6 +908,15 @@
 			buildConfigurations = (
 				EI03200000000000000000A1 /* Debug */,
 				EI03300000000000000000A2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		SC00400000000000000000A0 /* Build configuration list for PBXAggregateTarget "ObjectivelyGPU-shadercross" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				SC00200000000000000000A0 /* Debug */,
+				SC00300000000000000000A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

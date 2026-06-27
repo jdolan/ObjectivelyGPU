@@ -1,0 +1,17 @@
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct fs_main_out
+{
+    float4 _entryPointOutput [[color(0)]];
+};
+
+fragment fs_main_out fs_main()
+{
+    fs_main_out out = {};
+    out._entryPointOutput = float4(0.800000011920928955078125, 0.5, 1.0, 1.0);
+    return out;
+}
+
