@@ -6,7 +6,7 @@ AUTOMAKE_OPTIONS = nostdinc
 
 SHADERCROSS = shadercross
 
-HLSL_SOURCES = \
+HLSL_FILES = \
     Hello.vert.hlsl \
     Hello.frag.hlsl \
     HelloCompute.comp.hlsl \
@@ -27,12 +27,7 @@ SPIRV_BLOBS = \
     HelloCompute.vert.spv \
     HelloCompute.frag.spv
 
-EXTRA_DIST = $(HLSL_SOURCES) $(MSL_BLOBS) $(SPIRV_BLOBS)
-
-# -------------------------------------------------------------------------
-# shadercross — regenerate all blobs from HLSL source.
-# Requires shadercross (from SDL_shadercross).
-# -------------------------------------------------------------------------
+EXTRA_DIST = $(HLSL_FILES) $(MSL_BLOBS) $(SPIRV_BLOBS)
 
 .PHONY: shadercross
 shadercross: $(addprefix $(srcdir)/,$(MSL_BLOBS) $(SPIRV_BLOBS))
