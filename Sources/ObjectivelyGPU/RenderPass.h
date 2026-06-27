@@ -66,12 +66,6 @@ struct RenderPass {
   RenderPassInterface *interface;
 
   /**
-   * @brief The CommandBuffer this pass was begun from.
-   * @private
-   */
-  CommandBuffer *cmd;
-
-  /**
    * @brief When true, the render pass clears to @c clear_color before drawing.
    * @details Defaults to `true` (clear to opaque black).
    */
@@ -82,6 +76,12 @@ struct RenderPass {
    * @details Defaults to opaque black `{0, 0, 0, 1}`.
    */
   SDL_FColor clearColor;
+
+  /**
+   * @brief The CommandBuffer this pass was begun from.
+   * @private
+   */
+  CommandBuffer *cmd;
 
   /**
    * @brief The underlying SDL render pass.
@@ -196,7 +196,7 @@ struct RenderPassInterface {
    * @fn RenderPass *RenderPass::init(RenderPass *self, CommandBuffer *cmd, SDL_GPURenderPass *pass)
    * @brief Initializes this RenderPass wrapping the given SDL render pass.
    * @param self The RenderPass.
-   * @param cmd The CommandBuffer this pass was begun from.
+   * @param cmd The CommandBuffer that created this pass.
    * @param pass The SDL render pass to wrap. Must not be NULL.
    * @return The initialized RenderPass, or NULL on failure.
    * @memberof RenderPass

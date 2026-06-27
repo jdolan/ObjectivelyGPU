@@ -139,7 +139,7 @@ struct ComputePassInterface {
    * @fn ComputePass *ComputePass::init(ComputePass *self, CommandBuffer *cmd, SDL_GPUComputePass *pass)
    * @brief Initializes this ComputePass wrapping the given SDL compute pass.
    * @param self The ComputePass.
-   * @param cmd The CommandBuffer this pass was begun from.
+   * @param cmd The CommandBuffer that created this pass.
    * @param pass The SDL compute pass to wrap. Must not be NULL.
    * @return The initialized ComputePass, or NULL on failure.
    * @memberof ComputePass
