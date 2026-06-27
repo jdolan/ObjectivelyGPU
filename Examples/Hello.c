@@ -149,40 +149,6 @@ static void upload_vertex_buffer(const RenderDevice *renderDevice, SDL_GPUBuffer
 	$(renderDevice, releaseTransferBuffer, transferBuffer);
 }
 
-static void rotate_matrix(float angle, float x, float y, float z, float *r) {
-    float radians = angle * SDL_PI_F / 180.0f;
-    float c = SDL_cosf(radians), s = SDL_sinf(radians), c1 = 1.0f - c;
-    float length = SDL_sqrtf(x*x + y*y + z*z);
-    float u[3] = { x/length, y/length, z/length };
-    for (int i = 0; i < 16; i++) r[i] = 0.0f;
-    r[15] = 1.0f;
-    for (int i = 0; i < 3; i++) {
-        r[i*4 + (i+1)%3] = u[(i+2)%3] * s;
-        r[i*4 + (i+2)%3] = -u[(i+1)%3] * s;
-    }
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            r[i*4+j] += c1 * u[i] * u[j] + (i == j ? c : 0.0f);
-}
-
-static void perspective_matrix(float fovy, float aspect, float znear, float zfar, float *r) {
-    float f = 1.0f / SDL_tanf((fovy / 180.0f) * SDL_PI_F * 0.5f);
-    for (int i = 0; i < 16; i++) r[i] = 0.0f;
-    r[0] = f / aspect; r[5] = f;
-    r[10] = (znear + zfar) / (znear - zfar); r[11] = -1.0f;
-    r[14] = (2.0f * znear * zfar) / (znear - zfar);
-}
-
-static void multiply_matrix(const float *lhs, const float *rhs, float *r) {
-    float tmp[16];
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++) {
-            tmp[j*4+i] = 0.0f;
-            for (int k = 0; k < 4; k++)
-                tmp[j*4+i] += lhs[k*4+i] * rhs[j*4+k];
-        }
-    for (int i = 0; i < 16; i++) r[i] = tmp[i];
-}
 
 int main(int argc, char **argv) {
 	(void) argc;
@@ -343,17 +309,11 @@ int main(int argc, char **argv) {
 			depthTexture = create_depth_texture(renderDevice, depthSize);
 		}
 
-		float matrixModelView[16];
-		float matrixRotate[16];
-		float matrixPerspective[16];
-		float matrixFinal[16];
-
-		rotate_matrix(angleX, 1.0f, 0.0f, 0.0f, matrixModelView);
-		rotate_matrix(angleY, 0.0f, 1.0f, 0.0f, matrixRotate);
-		multiply_matrix(matrixRotate, matrixModelView, matrixModelView);
-		matrixModelView[14] -= 2.5f;
-		perspective_matrix(45.0f, (float) swapchain.size.w / (float) swapchain.size.h, 0.01f, 100.0f, matrixPerspective);
-		multiply_matrix(matrixPerspective, matrixModelView, matrixFinal);
+		float4x4 mv = float4x4_rotation(angleX, float3_new(1.f, 0.f, 0.f));
+		mv = float4x4_mul(float4x4_rotation(angleY, float3_new(0.f, 1.f, 0.f)), mv);
+		mv = float4x4_mul(float4x4_translation(float3_new(0.f, 0.f, -2.5f)), mv);
+		const float4x4 proj = float4x4_perspective(45.f, (float) swapchain.size.w / (float) swapchain.size.h, 0.01f, 100.f);
+		const float4x4 matrixFinal = float4x4_mul(proj, mv);
 
 		SDL_GPUColorTargetInfo colorTarget = {
 			.texture = swapchain.texture,
@@ -376,7 +336,7 @@ int main(int argc, char **argv) {
 			.buffer = vertexBuffer,
 			.offset = 0,
 		}, 1);
-		$(cmd, pushVertexUniformData, 0, matrixFinal, sizeof(matrixFinal));
+		$(cmd, pushVertexUniformData, 0, matrixFinal.f, sizeof(matrixFinal));
 		$(renderPass, drawPrimitives, (Uint32) SDL_arraysize(vertex_data), 1, 0, 0);
 		release(renderPass);
 
