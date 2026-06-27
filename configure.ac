@@ -57,6 +57,7 @@ PKG_CHECK_MODULES([SDL3], [sdl3 >= 3.2.0])
 AC_CONFIG_FILES([
 	Makefile
 	Examples/Makefile
+	Examples/Shaders/Makefile
 	Sources/Makefile
 	Sources/ObjectivelyGPU.pc
 	Sources/ObjectivelyGPU/Makefile

@@ -261,7 +261,27 @@ struct RenderDeviceInterface {
   SDL_GPUShader *(*loadShader)(const RenderDevice *self, const char *name, const SDL_GPUShaderCreateInfo *info);
 
   /**
-   * @fn void *RenderDevice::mapTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffer *tbuf, bool cycle)
+  * @fn SDL_GPUComputePipeline *RenderDevice::loadComputePipeline(const RenderDevice *self, const char *name, const SDL_GPUComputePipelineCreateInfo *info)
+  * @brief Loads a compiled compute shader blob via the Resource system and creates a compute pipeline.
+  * @details Parallel to `loadShader` for compute stages. Appends the platform-appropriate
+  *   extension to @c name and resolves it via Objectively's ResourceProvider chain:
+  *   - Metal (macOS/iOS): `.msl`
+  *   - Vulkan (Linux/Android): `.spv`
+  *   - D3D12 (Windows): `.dxil`
+  *   The caller fills in @c entrypoint, thread counts, and binding counts in @c info.
+  *   @c code, @c code_size, and @c format are filled in by this method.
+  *   Shader blobs are produced offline by @c sdl-shadercross from HLSL source.
+  * @param self The RenderDevice.
+  * @param name Shader base name without extension, e.g. @c "HelloCompute.comp".
+  * @param info Compute pipeline creation parameters. @c code, @c code_size, and
+  *   @c format are ignored; all other fields must be set by the caller.
+  * @return A new SDL_GPUComputePipeline. GPU_Asserts on failure.
+  * @memberof RenderDevice
+  */
+  SDL_GPUComputePipeline *(*loadComputePipeline)(const RenderDevice *self, const char *name, const SDL_GPUComputePipelineCreateInfo *info);
+
+  /**
+  * @fn void *RenderDevice::mapTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffer *tbuf, bool cycle)
    * @brief Maps a transfer buffer into CPU-accessible memory for reading or writing.
    * @details Pass `cycle = true` to let the driver use a fresh buffer allocation
    *   (avoiding a pipeline stall) when the buffer is already in use by the GPU.

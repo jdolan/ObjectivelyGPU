@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGuid>
+    <RootNamespace>ObjectivelyGPU-shadercross</RootNamespace>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup>
+    <ConfigurationType>Utility</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
+  <!-- Hello vertex shader -->
+  <ItemGroup>
+    <CustomBuild Include="..\Examples\Shaders\Hello.vert.hlsl">
+      <Message>Compiling Hello.vert.hlsl</Message>
+      <Command>
+        shadercross %(FullPath) -s HLSL -d SPIRV -t vertex -e vs_main -o ..\Examples\Shaders\Hello.vert.spv
+        shadercross %(FullPath) -s HLSL -d MSL   -t vertex -e vs_main -o ..\Examples\Shaders\Hello.vert.msl
+        shadercross %(FullPath) -s HLSL -d DXIL  -t vertex -e vs_main -o ..\Examples\Shaders\Hello.vert.dxil
+      </Command>
+      <Outputs>..\Examples\Shaders\Hello.vert.spv;..\Examples\Shaders\Hello.vert.msl;..\Examples\Shaders\Hello.vert.dxil</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+
+  <!-- Hello fragment shader -->
+  <ItemGroup>
+    <CustomBuild Include="..\Examples\Shaders\Hello.frag.hlsl">
+      <Message>Compiling Hello.frag.hlsl</Message>
+      <Command>
+        shadercross %(FullPath) -s HLSL -d SPIRV -t fragment -e fs_main -o ..\Examples\Shaders\Hello.frag.spv
+        shadercross %(FullPath) -s HLSL -d MSL   -t fragment -e fs_main -o ..\Examples\Shaders\Hello.frag.msl
+        shadercross %(FullPath) -s HLSL -d DXIL  -t fragment -e fs_main -o ..\Examples\Shaders\Hello.frag.dxil
+      </Command>
+      <Outputs>..\Examples\Shaders\Hello.frag.spv;..\Examples\Shaders\Hello.frag.msl;..\Examples\Shaders\Hello.frag.dxil</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+
+  <!-- HelloCompute compute shader -->
+  <ItemGroup>
+    <CustomBuild Include="..\Examples\Shaders\HelloCompute.comp.hlsl">
+      <Message>Compiling HelloCompute.comp.hlsl</Message>
+      <Command>
+        shadercross %(FullPath) -s HLSL -d SPIRV -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.spv
+        shadercross %(FullPath) -s HLSL -d MSL   -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.msl
+        shadercross %(FullPath) -s HLSL -d DXIL  -t compute -e cs_main -o ..\Examples\Shaders\HelloCompute.comp.dxil
+      </Command>
+      <Outputs>..\Examples\Shaders\HelloCompute.comp.spv;..\Examples\Shaders\HelloCompute.comp.msl;..\Examples\Shaders\HelloCompute.comp.dxil</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+
+  <!-- HelloCompute vertex shader -->
+  <ItemGroup>
+    <CustomBuild Include="..\Examples\Shaders\HelloCompute.vert.hlsl">
+      <Message>Compiling HelloCompute.vert.hlsl</Message>
+      <Command>
+        shadercross %(FullPath) -s HLSL -d SPIRV -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.spv
+        shadercross %(FullPath) -s HLSL -d MSL   -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.msl
+        shadercross %(FullPath) -s HLSL -d DXIL  -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.dxil
+      </Command>
+      <Outputs>..\Examples\Shaders\HelloCompute.vert.spv;..\Examples\Shaders\HelloCompute.vert.msl;..\Examples\Shaders\HelloCompute.vert.dxil</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+
+  <!-- HelloCompute fragment shader -->
+  <ItemGroup>
+    <CustomBuild Include="..\Examples\Shaders\HelloCompute.frag.hlsl">
+      <Message>Compiling HelloCompute.frag.hlsl</Message>
+      <Command>
+        shadercross %(FullPath) -s HLSL -d SPIRV -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.spv
+        shadercross %(FullPath) -s HLSL -d MSL   -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.msl
+        shadercross %(FullPath) -s HLSL -d DXIL  -t fragment -e fs_main -o ..\Examples\Shaders\HelloCompute.frag.dxil
+      </Command>
+      <Outputs>..\Examples\Shaders\HelloCompute.frag.spv;..\Examples\Shaders\HelloCompute.frag.msl;..\Examples\Shaders\HelloCompute.frag.dxil</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

@@ -28,43 +28,6 @@
 #include <Objectively.h>
 #include <ObjectivelyGPU.h>
 
-static const char *vertex_shader_msl =
-"#include <metal_stdlib>\n"
-"using namespace metal;\n"
-"\n"
-"struct type_UBO {\n"
-"    float4x4 ModelViewProj;\n"
-"};\n"
-"\n"
-"struct main0_out {\n"
-"    float4 out_color [[user(locn0)]];\n"
-"    float4 gl_Position [[position]];\n"
-"};\n"
-"\n"
-"struct main0_in {\n"
-"    float3 in_position [[attribute(0)]];\n"
-"    float3 in_color [[attribute(1)]];\n"
-"};\n"
-"\n"
-"vertex main0_out main0(main0_in in [[stage_in]], constant type_UBO& UBO [[buffer(0)]]) {\n"
-"    main0_out out = {};\n"
-"    out.out_color = float4(in.in_color, 1.0);\n"
-"    out.gl_Position = UBO.ModelViewProj * float4(in.in_position, 1.0);\n"
-"    return out;\n"
-"}\n";
-
-static const char *fragment_shader_msl =
-"#include <metal_stdlib>\n"
-"using namespace metal;\n"
-"\n"
-"struct main0_in {\n"
-"    float4 in_color [[user(locn0)]];\n"
-"};\n"
-"\n"
-"fragment float4 main0(main0_in in [[stage_in]]) {\n"
-"    return in.in_color;\n"
-"}\n";
-
 typedef struct {
 	float x, y, z;
 	float r, g, b;
@@ -87,17 +50,6 @@ static const VertexData vertex_data[] = {
 
 static void log_sdl_error(const char *what) {
 	SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "%s: %s", what, SDL_GetError());
-}
-
-static SDL_GPUShader *create_shader(const RenderDevice *renderDevice, const char *source, SDL_GPUShaderStage stage, Uint32 numUniformBuffers) {
-	return $(renderDevice, createShader, &(SDL_GPUShaderCreateInfo) {
-		.code_size = SDL_strlen(source),
-		.code = (const Uint8 *) source,
-		.entrypoint = "main0",
-		.format = SDL_GPU_SHADERFORMAT_MSL,
-		.stage = stage,
-		.num_uniform_buffers = numUniformBuffers,
-	});
 }
 
 static SDL_GPUTexture *create_depth_texture(const RenderDevice *renderDevice, SDL_Size size) {
@@ -203,6 +155,13 @@ int main(int argc, char **argv) {
 		return status;
 	}
 
+	const char *basePath = SDL_GetBasePath();
+	if (basePath) {
+		char shaderDir[512];
+		SDL_snprintf(shaderDir, sizeof(shaderDir), "%sShaders", basePath);
+		$$(Resource, addResourcePath, shaderDir);
+	}
+
 	window = SDL_CreateWindow("ObjectivelyGPU Hello", 800, 600, SDL_WINDOW_HIGH_PIXEL_DENSITY);
 	if (!window) {
 		log_sdl_error("SDL_CreateWindow");
@@ -227,8 +186,15 @@ int main(int argc, char **argv) {
 	depthSize = MakeSize(drawableWidth, drawableHeight);
 	depthTexture = create_depth_texture(renderDevice, depthSize);
 
-	vertexShader = create_shader(renderDevice, vertex_shader_msl, SDL_GPU_SHADERSTAGE_VERTEX, 1);
-	fragmentShader = create_shader(renderDevice, fragment_shader_msl, SDL_GPU_SHADERSTAGE_FRAGMENT, 0);
+	vertexShader = $(renderDevice, loadShader, "Hello.vert", &(SDL_GPUShaderCreateInfo) {
+		.entrypoint = "vs_main",
+		.stage = SDL_GPU_SHADERSTAGE_VERTEX,
+		.num_uniform_buffers = 1,
+	});
+	fragmentShader = $(renderDevice, loadShader, "Hello.frag", &(SDL_GPUShaderCreateInfo) {
+		.entrypoint = "fs_main",
+		.stage = SDL_GPU_SHADERSTAGE_FRAGMENT,
+	});
 
 	SDL_GPUColorTargetDescription colorTargetDescription = {
 		.format = $(renderDevice, getSwapchainTextureFormat, window),

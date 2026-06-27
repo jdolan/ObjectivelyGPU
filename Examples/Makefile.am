@@ -1,3 +1,5 @@
+SUBDIRS = Shaders
+
 noinst_PROGRAMS = \
 	Hello \
 	HelloCompute
