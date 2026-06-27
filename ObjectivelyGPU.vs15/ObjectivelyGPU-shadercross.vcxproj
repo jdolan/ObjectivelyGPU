@@ -74,8 +74,8 @@
     <CustomBuild Include="..\Examples\Shaders\HelloCompute.vert.hlsl">
       <Message>Compiling HelloCompute.vert.hlsl</Message>
       <Command>
-        shadercross %(FullPath) -s HLSL -d SPIRV -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.spv
-        shadercross %(FullPath) -s HLSL -d MSL   -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.msl
+        shadercross %(FullPath) -s HLSL -d SPIRV -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.spv &amp;&amp;
+        shadercross %(FullPath) -s HLSL -d MSL   -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.msl &amp;&amp;
         shadercross %(FullPath) -s HLSL -d DXIL  -t vertex -e vs_main -o ..\Examples\Shaders\HelloCompute.vert.dxil
       </Command>
       <Outputs>..\Examples\Shaders\HelloCompute.vert.spv;..\Examples\Shaders\HelloCompute.vert.msl;..\Examples\Shaders\HelloCompute.vert.dxil</Outputs>
