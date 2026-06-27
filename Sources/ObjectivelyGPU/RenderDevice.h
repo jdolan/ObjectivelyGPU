@@ -106,6 +106,12 @@ struct RenderDevice {
   SDL_GPUSampler *_samplerLinear;
 
   /**
+   * @brief Cached bilinear clamp-to-edge sampler, initialized on first use.
+   * @private
+   */
+  SDL_GPUSampler *_samplerLinearClamp;
+
+  /**
    * @brief Cached anisotropic sampler, initialized on first use.
    * @private
    */
@@ -239,6 +245,19 @@ struct RenderDeviceInterface {
    * @memberof RenderDevice
    */
   SDL_GPUSampler *(*samplerLinear)(const RenderDevice *self);
+
+  /**
+   * @fn SDL_GPUSampler *RenderDevice::samplerLinearClamp(const RenderDevice *self)
+   * @brief Returns a cached bilinear sampler with clamp-to-edge addressing (no mipmaps).
+   * @details The sampler is created on first call and reused thereafter. It is
+   *   released automatically in `dealloc`. Do not release it manually.
+   *   This is the correct sampler for UI elements, sprites, and render targets —
+   *   linear magnification without edge bleeding or mip artifacts.
+   * @param self The RenderDevice.
+   * @return A cached `SDL_GPUSampler` suitable for UI and sprite rendering.
+   * @memberof RenderDevice
+   */
+  SDL_GPUSampler *(*samplerLinearClamp)(const RenderDevice *self);
 
   /**
    * @fn SDL_GPUSampler *RenderDevice::samplerNearest(const RenderDevice *self)

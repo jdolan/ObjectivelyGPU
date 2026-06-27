@@ -47,6 +47,7 @@ static void dealloc(Object *self) {
   if (this->device) {
     SDL_ReleaseGPUSampler(this->device, this->_samplerNearest);
     SDL_ReleaseGPUSampler(this->device, this->_samplerLinear);
+    SDL_ReleaseGPUSampler(this->device, this->_samplerLinearClamp);
     SDL_ReleaseGPUSampler(this->device, this->_samplerAnisotropic);
   }
 
@@ -235,6 +236,27 @@ static SDL_GPUSampler *samplerLinear(const RenderDevice *self) {
     });
   }
   return this->_samplerLinear;
+}
+
+/**
+ * @fn SDL_GPUSampler *RenderDevice::samplerLinearClamp(const RenderDevice *self)
+ * @memberof RenderDevice
+ */
+static SDL_GPUSampler *samplerLinearClamp(const RenderDevice *self) {
+  assert(self);
+
+  RenderDevice *this = (RenderDevice *) self;
+  if (!this->_samplerLinearClamp) {
+    this->_samplerLinearClamp = $(self, createSampler, &(SDL_GPUSamplerCreateInfo) {
+      .min_filter = SDL_GPU_FILTER_LINEAR,
+      .mag_filter = SDL_GPU_FILTER_LINEAR,
+      .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
+      .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+      .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+      .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    });
+  }
+  return this->_samplerLinearClamp;
 }
 
 /**
@@ -794,6 +816,7 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->releaseTransferBuffer = releaseTransferBuffer;
   ((RenderDeviceInterface *) clazz->interface)->samplerAnisotropic = samplerAnisotropic;
   ((RenderDeviceInterface *) clazz->interface)->samplerLinear = samplerLinear;
+  ((RenderDeviceInterface *) clazz->interface)->samplerLinearClamp = samplerLinearClamp;
   ((RenderDeviceInterface *) clazz->interface)->samplerNearest = samplerNearest;
   ((RenderDeviceInterface *) clazz->interface)->setAllowedFramesInFlight = setAllowedFramesInFlight;
   ((RenderDeviceInterface *) clazz->interface)->setBufferName = setBufferName;
