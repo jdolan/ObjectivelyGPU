@@ -341,7 +341,7 @@ static SDL_GPUComputePipeline *loadComputePipeline(const RenderDevice *self, con
     return pipeline;
   }
 
-  GPU_Assert(false, "loadComputePipeline: no supported format found for '%s'", name);
+  GPU_Assert(false, "loadComputePipeline: no shader blob found for '%s' in any supported format", name);
   return NULL;
 }
 
