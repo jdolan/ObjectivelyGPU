@@ -8,7 +8,7 @@ ObjectivelyGPU {#index}
 - **RenderDevice** — device creation, buffer/texture/sampler allocation, and shader pipeline compilation
 - **CommandBuffer** — render, compute, and copy command recording
 - **RenderPass**, **ComputePass**, **CopyPass** — typed command encoder wrappers
-- Shader compilation via [SDL_shadercross](https://github.com/libsdl-org/SDL_shadercross) (HLSL → SPIR-V / MSL / DXIL)
+- Shader compilation via [SDL_shadercross](https://github.com/libsdl-org/SDL_shadercross) (HLSL → SPIR-V / MSL)
 - macOS and iOS (Metal), Windows (Direct3D 12), Linux (Vulkan) via SDL3 backends
 
 ## API
