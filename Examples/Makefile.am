@@ -2,14 +2,9 @@ noinst_PROGRAMS = \
 	Hello \
 	HelloCompute
 
-if APPLE
-noinst_PROGRAMS += HelloiOS
-HelloiOS_SOURCES = Hello-iOS/Hello-iOS.c
-endif
-
 CFLAGS += \
 	-I$(top_srcdir)/Sources \
- 	-DEXAMPLES=\"$(abs_srcdir)\" \ 
+	-DEXAMPLES=\"$(abs_srcdir)\" \
 	@HOST_CFLAGS@ \
 	@OBJECTIVELY_CFLAGS@ \
 	@SDL3_CFLAGS@

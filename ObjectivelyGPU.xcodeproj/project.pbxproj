@@ -75,7 +75,7 @@
 		EE00150000000000000000B6 /* ObjectivelyGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6251F22589273797656C269E /* ObjectivelyGPU.framework */; };
 		EE00160000000000000000B7 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
 		EE00170000000000000000B8 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
-		EI00100000000000000000B1 /* Hello-iOS.c in Sources */ = {isa = PBXBuildFile; fileRef = EI00010000000000000000B1 /* Hello-iOS.c */; };
+		EI00100000000000000000B1 /* Hello.c in Sources */ = {isa = PBXBuildFile; fileRef = EE00010000000000000000B1 /* Hello.c */; };
 		EI00300000000000000000B3 /* ObjectivelyGPU.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EI00050000000000000000B5 /* ObjectivelyGPU.xcframework */; };
 		EI00400000000000000000B4 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
 		EI00500000000000000000B5 /* Objectively.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EI00060000000000000000B6 /* Objectively.xcframework */; };
@@ -209,7 +209,6 @@
 		EE00020000000000000000B2 /* HelloCompute.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HelloCompute.c; sourceTree = "<group>"; };
 		EE00030000000000000000B3 /* ObjectivelyGPU-Hello */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ObjectivelyGPU-Hello"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE00040000000000000000B4 /* ObjectivelyGPU-HelloCompute */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ObjectivelyGPU-HelloCompute"; sourceTree = BUILT_PRODUCTS_DIR; };
-		EI00010000000000000000B1 /* Hello-iOS.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "Hello-iOS.c"; sourceTree = "<group>"; };
 		EI00020000000000000000B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EI00030000000000000000B3 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EI00040000000000000000B4 /* ObjectivelyGPU-Hello-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ObjectivelyGPU-Hello-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -369,7 +368,6 @@
 		EI00E00000000000000000B1 /* Hello-iOS */ = {
 			isa = PBXGroup;
 			children = (
-				EI00010000000000000000B1 /* Hello-iOS.c */,
 				EI00020000000000000000B2 /* Info.plist */,
 				EI00030000000000000000B3 /* LaunchScreen.storyboard */,
 			);
