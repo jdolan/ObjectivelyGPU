@@ -59,6 +59,9 @@ static const Vertex vertexes[] = {
 	{ -0.5f, -0.5f, -0.5f,  0, 1, 0 }, {  0.5f, -0.5f, -0.5f, 0, 0, 1 }, {  0.5f, -0.5f,  0.5f, 1, 0, 1 },
 };
 
+/**
+ * @brief SDL application state passed via pointer to callbacks.
+ */
 typedef struct {
 	SDL_Window *window;
 	RenderDevice *renderDevice;
@@ -66,61 +69,59 @@ typedef struct {
 	SDL_GPUBuffer *vertexBuffer;
 	SDL_GPUGraphicsPipeline *pipeline;
 	vec2 angles;
-	Uint64 lastTicks;
-} App;
+	Uint64 ticks;
+} AppState;
 
-static App app;
+static AppState app;
 
+/**
+ * @brief SDL3 application initialization callback.
+ */
 SDL_AppResult SDL_AppInit(void **unused, int argc, char *argv[]) {
-	(void) unused; (void) argc; (void) argv;
 
-	if (!SDL_Init(SDL_INIT_VIDEO)) {
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "SDL_Init: %s", SDL_GetError());
-		return SDL_APP_FAILURE;
-	}
-
-	SDL_memset(&app, 0, sizeof(app));
+	GPU_Assert(SDL_Init(SDL_INIT_VIDEO), "SDL_Init");
 
 #ifdef EXAMPLES
 	$$(Resource, addResourcePath, EXAMPLES);
 #endif
+
 	const char *basePath = SDL_GetBasePath();
 	if (basePath) {
 		$$(Resource, addResourcePath, basePath);
 	}
 
-	app.window = SDL_CreateWindow("Hello ObjectivelyGPU",
-		HELLO_WINDOW_W, HELLO_WINDOW_H, HELLO_WINDOW_FLAGS);
-	if (!app.window) {
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "SDL_CreateWindow: %s", SDL_GetError());
-		return SDL_APP_FAILURE;
-	}
+	SDL_Window *window = SDL_CreateWindow("Hello ObjectivelyGPU", HELLO_WINDOW_W, HELLO_WINDOW_H, HELLO_WINDOW_FLAGS);
+	GPU_Assert(window, "SDL_CreateWindow");
 
-	app.renderDevice = $(alloc(RenderDevice), initWithWindow, app.window);
+	RenderDevice *renderDevice = $(alloc(RenderDevice), initWithWindow, window);
 
 	int w = 0, h = 0;
-	SDL_GetWindowSizeInPixels(app.window, &w, &h);
-	app.framebuffer = $(alloc(Framebuffer), initWithDevice, app.renderDevice,
+	SDL_GetWindowSizeInPixels(window, &w, &h);
+
+	Framebuffer *framebuffer = $(alloc(Framebuffer), initWithDevice, renderDevice,
 		&MakeSize(w, h),
 		SDL_GPU_TEXTUREFORMAT_INVALID,
 		SDL_GPU_TEXTUREFORMAT_D16_UNORM);
 
-	SDL_GPUShader *vertexShader = $(app.renderDevice, loadShader, "Hello.vert", &(SDL_GPUShaderCreateInfo) {
+	SDL_GPUShader *vertexShader = $(renderDevice, loadShader, "Hello.vert", &(SDL_GPUShaderCreateInfo) {
 		.stage = SDL_GPU_SHADERSTAGE_VERTEX,
 		.num_uniform_buffers = 1,
 	});
-	SDL_GPUShader *fragmentShader = $(app.renderDevice, loadShader, "Hello.frag", &(SDL_GPUShaderCreateInfo) {
+
+	SDL_GPUShader *fragmentShader = $(renderDevice, loadShader, "Hello.frag", &(SDL_GPUShaderCreateInfo) {
 		.stage = SDL_GPU_SHADERSTAGE_FRAGMENT,
 	});
 
 	SDL_GPUColorTargetDescription colorTargetDescription = {
-		.format = $(app.renderDevice, getSwapchainTextureFormat, app.window),
+		.format = $(renderDevice, getSwapchainTextureFormat, window),
 	};
+
 	SDL_GPUVertexBufferDescription vertexBufferDescription = {
 		.slot = 0,
 		.pitch = sizeof(Vertex),
 		.input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX,
 	};
+
 	SDL_GPUVertexAttribute vertexAttributes[] = {
 		{
 			.location = 0,
@@ -136,7 +137,7 @@ SDL_AppResult SDL_AppInit(void **unused, int argc, char *argv[]) {
 		},
 	};
 
-	app.pipeline = $(app.renderDevice, createGraphicsPipeline, &(SDL_GPUGraphicsPipelineCreateInfo) {
+	SDL_GPUGraphicsPipeline *pipeline = $(renderDevice, createGraphicsPipeline, &(SDL_GPUGraphicsPipelineCreateInfo) {
 		.vertex_shader = vertexShader,
 		.fragment_shader = fragmentShader,
 		.vertex_input_state = {
@@ -168,36 +169,41 @@ SDL_AppResult SDL_AppInit(void **unused, int argc, char *argv[]) {
 		},
 	});
 
-	$(app.renderDevice, releaseShader, vertexShader);
-	$(app.renderDevice, releaseShader, fragmentShader);
+	$(renderDevice, releaseShader, vertexShader);
+	$(renderDevice, releaseShader, fragmentShader);
 
-	app.vertexBuffer = $(app.renderDevice, createBufferWithConstMem,
-		SDL_GPU_BUFFERUSAGE_VERTEX, vertexes, sizeof(vertexes));
+	SDL_GPUBuffer *vertexBuffer = $(renderDevice, createBufferWithConstMem, SDL_GPU_BUFFERUSAGE_VERTEX, vertexes, sizeof(vertexes));
 
-	app.lastTicks = SDL_GetTicks();
+	app = (AppState) {
+		.window = window,
+		.renderDevice = renderDevice,
+		.framebuffer = framebuffer,
+		.vertexBuffer = vertexBuffer,
+		.pipeline = pipeline,
+	};
+
 	return SDL_APP_CONTINUE;
 }
 
+/**
+ * @brief SDL3 frame function callback.
+ */
 SDL_AppResult SDL_AppIterate(void *unused) {
-	(void) unused;
 
 	Uint64 ticks = SDL_GetTicks();
-	float dt = (float) (ticks - app.lastTicks) / 1000.0f;
-	app.lastTicks = ticks;
+	float dt = (float) (ticks - app.ticks) / 1000.0f;
+	app.ticks = ticks;
 
 	app.angles.x += dt * 30.0f;
 	app.angles.y += dt * 60.0f;
+
 	while (app.angles.x >= 360.0f) app.angles.x -= 360.0f;
 	while (app.angles.y >= 360.0f) app.angles.y -= 360.0f;
 
 	CommandBuffer *cmd = $(app.renderDevice, acquireCommandBuffer);
 
 	SwapchainTexture swapchain = { 0 };
-	if (!$(cmd, acquireSwapchainTexture, &swapchain)) {
-		$(cmd, cancel);
-		release(cmd);
-		return SDL_APP_CONTINUE;
-	}
+	$(cmd, waitAndAcquireSwapchainTexture, &swapchain);
 
 	$(app.framebuffer, resize, &swapchain.size);
 
@@ -205,8 +211,7 @@ SDL_AppResult SDL_AppIterate(void *unused) {
 	modelView = mat4_mul(mat4_rotation(app.angles.y, vec3_new(0.f, 1.f, 0.f)), modelView);
 	modelView = mat4_mul(mat4_translation(vec3_new(0.f, 0.f, -2.5f)), modelView);
 
-	const mat4 projection = mat4_perspective(45.f,
-		(float) swapchain.size.w / (float) swapchain.size.h, 0.01f, 100.f);
+	const mat4 projection = mat4_perspective(45.f, (float) swapchain.size.w / (float) swapchain.size.h, 0.01f, 100.f);
 	const mat4 modelViewProjection = mat4_mul(projection, modelView);
 
 	SDL_GPUColorTargetInfo colorTarget = {
@@ -215,8 +220,8 @@ SDL_AppResult SDL_AppIterate(void *unused) {
 		.load_op = SDL_GPU_LOADOP_CLEAR,
 		.store_op = SDL_GPU_STOREOP_STORE,
 	};
-	SDL_GPUDepthStencilTargetInfo depthTarget = $(app.framebuffer, depthTargetInfo,
-		SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_DONT_CARE, 1.f);
+
+	SDL_GPUDepthStencilTargetInfo depthTarget = $(app.framebuffer, depthTargetInfo, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_DONT_CARE, 1.f);
 
 	RenderPass *renderPass = $(cmd, beginRenderPass, &colorTarget, 1, &depthTarget);
 	$(renderPass, bindPipeline, app.pipeline);
@@ -233,8 +238,11 @@ SDL_AppResult SDL_AppIterate(void *unused) {
 	return SDL_APP_CONTINUE;
 }
 
+/**
+ * @brief SDL3 event callback.
+ */
 SDL_AppResult SDL_AppEvent(void *unused, SDL_Event *event) {
-	(void) unused;
+
 	switch (event->type) {
 		case SDL_EVENT_QUIT:
 		case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
@@ -244,26 +252,24 @@ SDL_AppResult SDL_AppEvent(void *unused, SDL_Event *event) {
 	}
 }
 
+/**
+ * @brief SDL3 quit callback.
+ */
 void SDL_AppQuit(void *unused, SDL_AppResult result) {
-	(void) unused; (void) result;
 
 	if (app.renderDevice) {
 		$(app.renderDevice, waitForIdle);
+
+		if (app.pipeline) {
+			$(app.renderDevice, releaseGraphicsPipeline, app.pipeline);
+		}
+		if (app.vertexBuffer) {
+			$(app.renderDevice, releaseBuffer, app.vertexBuffer);
+		}
 	}
-	if (app.pipeline) {
-		$(app.renderDevice, releaseGraphicsPipeline, app.pipeline);
-	}
-	if (app.vertexBuffer) {
-		$(app.renderDevice, releaseBuffer, app.vertexBuffer);
-	}
-	if (app.framebuffer) {
-		release(app.framebuffer);
-	}
-	if (app.renderDevice) {
-		release(app.renderDevice);
-	}
-	if (app.window) {
-		SDL_DestroyWindow(app.window);
-	}
+
+	release(app.framebuffer);
+	release(app.renderDevice);
+
 	SDL_Quit();
 }
