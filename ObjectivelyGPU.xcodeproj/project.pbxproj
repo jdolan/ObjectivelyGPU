@@ -342,7 +342,6 @@
 		EE00200000000000000000B1 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
-				EI00E00000000000000000B1 /* Hello-iOS */,
 				EE00010000000000000000B1 /* Hello.c */,
 				CECF83A42FEF712F00CB0CCA /* Hello.frag.glsl */,
 				CECF83A52FEF712F00CB0CCA /* Hello.frag.msl */,
@@ -360,18 +359,11 @@
 				CECF83B02FEF712F00CB0CCA /* HelloCompute.vert.glsl */,
 				CECF83B12FEF712F00CB0CCA /* HelloCompute.vert.msl */,
 				CECF83B22FEF712F00CB0CCA /* HelloCompute.vert.spv */,
+				EI00020000000000000000B2 /* Info.plist */,
+				EI00030000000000000000B3 /* LaunchScreen.storyboard */,
 				CECF83A32FEF6F5B00CB0CCA /* Makefile.am */,
 			);
 			path = Examples;
-			sourceTree = "<group>";
-		};
-		EI00E00000000000000000B1 /* Hello-iOS */ = {
-			isa = PBXGroup;
-			children = (
-				EI00020000000000000000B2 /* Info.plist */,
-				EI00030000000000000000B3 /* LaunchScreen.storyboard */,
-			);
-			path = "Hello-iOS";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -853,7 +845,7 @@
 					"$(SRCROOT)/Frameworks/Objectively.xcframework/ios-arm64/Objectively.framework/Headers",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Examples/Hello-iOS/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Examples/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -883,7 +875,7 @@
 					"$(SRCROOT)/Frameworks/Objectively.xcframework/ios-arm64/Objectively.framework/Headers",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Examples/Hello-iOS/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Examples/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
