@@ -13,15 +13,18 @@ struct Particle
     float2 position;
 };
 
-struct particles
+struct ParticleBuffer
 {
-    Particle _data[1];
+    Particle particles[1];
 };
 
-kernel void cs_main(constant Params& _23 [[buffer(0)]], device particles& particles_1 [[buffer(1)]], uint3 gl_GlobalInvocationID [[thread_position_in_grid]])
+constant uint3 gl_WorkGroupSize [[maybe_unused]] = uint3(256u, 1u, 1u);
+
+kernel void main0(constant Params& _27 [[buffer(0)]], device ParticleBuffer& _50 [[buffer(1)]], uint3 gl_GlobalInvocationID [[thread_position_in_grid]])
 {
-    float _77 = (float(gl_GlobalInvocationID.x) * 0.0245436728000640869140625) + _23.time;
-    float _83 = 0.100000001490116119384765625 + (float(gl_GlobalInvocationID.x % 64u) * 0.00937500037252902984619140625);
-    particles_1._data[gl_GlobalInvocationID.x].position = float2(cos(_77) * _83, sin(_77) * _83);
+    uint id = gl_GlobalInvocationID.x;
+    float angle = ((float(id) / 256.0) * 6.28318023681640625) + _27.time;
+    float r = 0.100000001490116119384765625 + ((0.60000002384185791015625 * float(id % 64u)) / 64.0);
+    _50.particles[id].position = float2(cos(angle) * r, sin(angle) * r);
 }
 

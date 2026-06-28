@@ -3,15 +3,15 @@
 
 using namespace metal;
 
-struct fs_main_out
+struct main0_out
 {
-    float4 _entryPointOutput [[color(0)]];
+    float4 out_color [[color(0)]];
 };
 
-fragment fs_main_out fs_main()
+fragment main0_out main0()
 {
-    fs_main_out out = {};
-    out._entryPointOutput = float4(0.800000011920928955078125, 0.5, 1.0, 1.0);
+    main0_out out = {};
+    out.out_color = float4(0.800000011920928955078125, 0.5, 1.0, 1.0);
     return out;
 }
 

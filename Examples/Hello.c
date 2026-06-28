@@ -38,8 +38,8 @@ typedef struct {
 } Scene;
 
 typedef struct {
-	float3 position;
-	float3 color;
+	vec3 position;
+	vec3 color;
 } Vertex;
 
 static const Vertex vertexes[] = {
@@ -62,7 +62,7 @@ static const Vertex vertexes[] = {
  */
 static void drawScene(Scene *scene) {
 
-  static float2 angles;
+  static vec2 angles;
   static Uint64 lastTicks;
 
   Uint64 ticks = SDL_GetTicks();
@@ -84,12 +84,12 @@ static void drawScene(Scene *scene) {
   SwapchainTexture swapchain = { 0 };
   $(cmd, waitAndAcquireSwapchainTexture, &swapchain);
 
-  float4x4 modelView = float4x4_rotation(angles.x, float3_new(1.f, 0.f, 0.f));
-  modelView = float4x4_mul(float4x4_rotation(angles.y, float3_new(0.f, 1.f, 0.f)), modelView);
-  modelView = float4x4_mul(float4x4_translation(float3_new(0.f, 0.f, -2.5f)), modelView);
+  mat4 modelView = mat4_rotation(angles.x, vec3_new(1.f, 0.f, 0.f));
+  modelView = mat4_mul(mat4_rotation(angles.y, vec3_new(0.f, 1.f, 0.f)), modelView);
+  modelView = mat4_mul(mat4_translation(vec3_new(0.f, 0.f, -2.5f)), modelView);
 
-  const float4x4 projection = float4x4_perspective(45.f, (float) swapchain.size.w / (float) swapchain.size.h, 0.01f, 100.f);
-  const float4x4 modelViewProjection = float4x4_mul(projection, modelView);
+  const mat4 projection = mat4_perspective(45.f, (float) swapchain.size.w / (float) swapchain.size.h, 0.01f, 100.f);
+  const mat4 modelViewProjection = mat4_mul(projection, modelView);
 
   SDL_GPUColorTargetInfo colorTarget = {
     .texture = swapchain.texture,

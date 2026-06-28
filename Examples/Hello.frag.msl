@@ -3,20 +3,20 @@
 
 using namespace metal;
 
-struct fs_main_out
+struct main0_out
 {
-    float4 _entryPointOutput [[color(0)]];
+    float4 out_color [[color(0)]];
 };
 
-struct fs_main_in
+struct main0_in
 {
-    float4 input_color [[user(locn0)]];
+    float4 in_color [[user(locn0)]];
 };
 
-fragment fs_main_out fs_main(fs_main_in in [[stage_in]])
+fragment main0_out main0(main0_in in [[stage_in]])
 {
-    fs_main_out out = {};
-    out._entryPointOutput = in.input_color;
+    main0_out out = {};
+    out.out_color = in.in_color;
     return out;
 }
 

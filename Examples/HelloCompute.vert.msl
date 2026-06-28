@@ -8,21 +8,21 @@ struct Particle
     float2 position;
 };
 
-struct particles
+struct ParticleBuffer
 {
-    Particle _data[1];
+    Particle particles[1];
 };
 
-struct vs_main_out
+struct main0_out
 {
     float4 gl_Position [[position]];
     float gl_PointSize [[point_size]];
 };
 
-vertex vs_main_out vs_main(const device particles& particles_1 [[buffer(0)]], uint gl_VertexIndex [[vertex_id]])
+vertex main0_out main0(const device ParticleBuffer& _21 [[buffer(0)]], uint gl_VertexIndex [[vertex_id]])
 {
-    vs_main_out out = {};
-    out.gl_Position = float4(particles_1._data[gl_VertexIndex].position, 0.0, 1.0);
+    main0_out out = {};
+    out.gl_Position = float4(_21.particles[int(gl_VertexIndex)].position, 0.0, 1.0);
     out.gl_PointSize = 4.0;
     return out;
 }

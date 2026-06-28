@@ -19,18 +19,19 @@ LDADD = \
 Hello_SOURCES = Hello.c
 HelloCompute_SOURCES = HelloCompute.c
 
-# All HLSL sources and compiled blobs are versioned in the repository.
-# Normal builds never invoke shadercross.  Run 'make shadercross' after
-# editing a .hlsl file to regenerate the platform blobs.
+# All GLSL sources and compiled blobs are versioned in the repository.
+# Normal builds never invoke glslc or shadercross.  Run 'make shaders' after
+# editing a .glsl file to regenerate the platform blobs.
 
+GLSLC       = glslc
 SHADERCROSS = shadercross
 
-HLSL_SHADERS = \
-    Hello.vert.hlsl \
-    Hello.frag.hlsl \
-    HelloCompute.comp.hlsl \
-    HelloCompute.vert.hlsl \
-    HelloCompute.frag.hlsl
+GLSL_SHADERS = \
+    Hello.vert.glsl \
+    Hello.frag.glsl \
+    HelloCompute.comp.glsl \
+    HelloCompute.vert.glsl \
+    HelloCompute.frag.glsl
 
 MSL_BLOBS = \
     Hello.vert.msl \
@@ -46,25 +47,25 @@ SPIRV_BLOBS = \
     HelloCompute.vert.spv \
     HelloCompute.frag.spv
 
-EXTRA_DIST = $(HLSL_SHADERS) $(MSL_BLOBS) $(SPIRV_BLOBS)
+EXTRA_DIST = $(GLSL_SHADERS) $(MSL_BLOBS) $(SPIRV_BLOBS)
 
-.PHONY: shadercross
-shadercross: $(EXTRA_DIST)
+.PHONY: shaders
+shaders: $(SPV_BLOBS) $(MSL_BLOBS)
 
-$(srcdir)/%.vert.spv: $(srcdir)/%.vert.hlsl
-	$(SHADERCROSS) $< -s HLSL -d SPIRV -t vertex -e vs_main -o $@
+$(srcdir)/%.vert.spv: $(srcdir)/%.vert.glsl
+	$(GLSLC) -fshader-stage=vert $< -o $@
 
-$(srcdir)/%.vert.msl: $(srcdir)/%.vert.hlsl
-	$(SHADERCROSS) $< -s HLSL -d MSL -t vertex -e vs_main -o $@
+$(srcdir)/%.vert.msl: $(srcdir)/%.vert.spv
+	$(SHADERCROSS) $< -s SPIRV -d MSL -t vertex -o $@
 
-$(srcdir)/%.frag.spv: $(srcdir)/%.frag.hlsl
-	$(SHADERCROSS) $< -s HLSL -d SPIRV -t fragment -e fs_main -o $@
+$(srcdir)/%.frag.spv: $(srcdir)/%.frag.glsl
+	$(GLSLC) -fshader-stage=frag $< -o $@
 
-$(srcdir)/%.frag.msl: $(srcdir)/%.frag.hlsl
-	$(SHADERCROSS) $< -s HLSL -d MSL -t fragment -e fs_main -o $@
+$(srcdir)/%.frag.msl: $(srcdir)/%.frag.spv
+	$(SHADERCROSS) $< -s SPIRV -d MSL -t fragment -o $@
 
-$(srcdir)/%.comp.spv: $(srcdir)/%.comp.hlsl
-	$(SHADERCROSS) $< -s HLSL -d SPIRV -t compute -e cs_main -o $@
+$(srcdir)/%.comp.spv: $(srcdir)/%.comp.glsl
+	$(GLSLC) -fshader-stage=comp $< -o $@
 
-$(srcdir)/%.comp.msl: $(srcdir)/%.comp.hlsl
-	$(SHADERCROSS) $< -s HLSL -d MSL -t compute -e cs_main -o $@
+$(srcdir)/%.comp.msl: $(srcdir)/%.comp.spv
+	$(SHADERCROSS) $< -s SPIRV -d MSL -t compute -o $@
