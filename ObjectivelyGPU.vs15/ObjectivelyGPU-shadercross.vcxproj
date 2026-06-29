@@ -24,6 +24,7 @@
     <RootNamespace>ObjectivelyGPU-shadercross</RootNamespace>
   </PropertyGroup>
 
+  <Import Project="build_settings.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup>
     <ConfigurationType>Utility</ConfigurationType>
