@@ -44,7 +44,7 @@ typedef struct CopyPassInterface CopyPassInterface;
  * automatically so no explicit `end` is required:
  *
  * @code
- *   CopyPass *copy = $(cmd, beginCopyPass);
+ *   CopyPass *copy = $(commands, beginCopyPass);
  *   $(copy, uploadBuffer, &src, &dst, false);
  *   release(copy);  // ends the pass
  * @endcode
@@ -68,7 +68,7 @@ struct CopyPass {
    * @brief The CommandBuffer this pass was begun from.
    * @private
    */
-  CommandBuffer *cmd;
+  CommandBuffer *commands;
 
   /**
    * @brief The underlying SDL copy pass.
@@ -117,15 +117,15 @@ struct CopyPassInterface {
   void (*downloadTexture)(const CopyPass *self, const SDL_GPUTextureRegion *src, const SDL_GPUTextureTransferInfo *dst);
 
   /**
-   * @fn CopyPass *CopyPass::init(CopyPass *self, CommandBuffer *cmd, SDL_GPUCopyPass *pass)
+   * @fn CopyPass *CopyPass::init(CopyPass *self, CommandBuffer *commands, SDL_GPUCopyPass *pass)
    * @brief Initializes this CopyPass wrapping the given SDL copy pass.
    * @param self The CopyPass.
-   * @param cmd The CommandBuffer that created this pass.
+   * @param commands The CommandBuffer that created this pass.
    * @param pass The SDL copy pass to wrap. Must not be NULL.
    * @return The initialized CopyPass, or NULL on failure.
    * @memberof CopyPass
    */
-  CopyPass *(*init)(CopyPass *self, CommandBuffer *cmd, SDL_GPUCopyPass *pass);
+  CopyPass *(*init)(CopyPass *self, CommandBuffer *commands, SDL_GPUCopyPass *pass);
 
   /**
    * @fn void CopyPass::uploadBuffer(const CopyPass *self, const SDL_GPUTransferBufferLocation *src, const SDL_GPUBufferRegion *dst, bool cycle)

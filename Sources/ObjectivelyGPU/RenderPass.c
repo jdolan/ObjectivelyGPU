@@ -77,7 +77,6 @@ static void bindIndexBuffer(const RenderPass *self, const SDL_GPUBufferBinding *
   SDL_BindGPUIndexBuffer(self->pass, binding, indexElementSize);
 }
 
-
 /**
  * @fn void RenderPass::bindPipeline(const RenderPass *self, SDL_GPUGraphicsPipeline *pipeline)
  * @memberof RenderPass
@@ -158,15 +157,15 @@ static void drawPrimitivesIndirect(const RenderPass *self, SDL_GPUBuffer *buffer
 }
 
 /**
- * @fn RenderPass *RenderPass::init(RenderPass *self, CommandBuffer *cmd, SDL_GPURenderPass *pass)
+ * @fn RenderPass *RenderPass::init(RenderPass *self, CommandBuffer *commands, SDL_GPURenderPass *pass)
  * @memberof RenderPass
  */
-static RenderPass *init(RenderPass *self, CommandBuffer *cmd, SDL_GPURenderPass *pass) {
+static RenderPass *init(RenderPass *self, CommandBuffer *commands, SDL_GPURenderPass *pass) {
 
   self = (RenderPass *) super(Object, self, init);
   if (self) {
-    self->cmd = cmd;
-    assert(self->cmd);
+    self->commands = commands;
+    assert(self->commands);
 
     self->pass = pass;
     assert(self->pass);

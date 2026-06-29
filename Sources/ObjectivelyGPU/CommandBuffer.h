@@ -87,7 +87,7 @@ struct CommandBuffer {
   /**
    * @brief The underlying SDL command buffer.
    */
-  SDL_GPUCommandBuffer *cmd;
+  SDL_GPUCommandBuffer *commands;
 
   /**
    * @brief The RenderDevice that this CommandBuffer belongs to.
@@ -184,15 +184,15 @@ struct CommandBufferInterface {
   void (*generateMipmaps)(const CommandBuffer *self, SDL_GPUTexture *texture);
 
   /**
-   * @fn CommandBuffer *CommandBuffer::initWithCommandBuffer(CommandBuffer *self, const RenderDevice *device, *SDL_GPUCommandBuffer *cmd)
+   * @fn CommandBuffer *CommandBuffer::initWithCommandBuffer(CommandBuffer *self, const RenderDevice *device, *SDL_GPUCommandBuffer *commands)
    * @brief Initializes this CommandBuffer wrapping the given SDL command buffer.
    * @param self The CommandBuffer.
    * @param device The RenderDevice that created this CommandBuffer.
-   * @param cmd The SDL command buffer to wrap. Must not be NULL.
+   * @param commands The SDL command buffer to wrap. Must not be NULL.
    * @return The initialized CommandBuffer, or NULL on failure.
    * @memberof CommandBuffer
    */
-  CommandBuffer *(*initWithCommandBuffer)(CommandBuffer *self, const RenderDevice *device, SDL_GPUCommandBuffer *cmd);
+  CommandBuffer *(*initWithCommandBuffer)(CommandBuffer *self, const RenderDevice *device, SDL_GPUCommandBuffer *commands);
 
   /**
    * @fn void CommandBuffer::insertDebugLabel(const CommandBuffer *self, const char *text)

@@ -44,7 +44,7 @@ typedef struct ComputePassInterface ComputePassInterface;
  * `SDL_EndGPUComputePass` automatically so no explicit `end` is required:
  *
  * @code
- *   ComputePass *compute = $(cmd, beginComputePass, NULL, 0, storageBuffers, 1);
+ *   ComputePass *compute = $(commands, beginComputePass, NULL, 0, storageBuffers, 1);
  *   $(compute, bindPipeline, pipeline);
  *   $(compute, dispatchCompute, groupsX, groupsY, 1);
  *   release(compute);  // ends the pass
@@ -69,7 +69,7 @@ struct ComputePass {
    * @brief The CommandBuffer this pass was begun from.
    * @private
    */
-  CommandBuffer *cmd;
+  CommandBuffer *commands;
 
   /**
    * @brief The underlying SDL compute pass.
@@ -141,15 +141,15 @@ struct ComputePassInterface {
   void (*dispatchComputeIndirect)(const ComputePass *self, SDL_GPUBuffer *buffer, Uint32 offset);
 
   /**
-   * @fn ComputePass *ComputePass::init(ComputePass *self, CommandBuffer *cmd, SDL_GPUComputePass *pass)
+   * @fn ComputePass *ComputePass::init(ComputePass *self, CommandBuffer *commands, SDL_GPUComputePass *pass)
    * @brief Initializes this ComputePass wrapping the given SDL compute pass.
    * @param self The ComputePass.
-   * @param cmd The CommandBuffer that created this pass.
+   * @param commands The CommandBuffer that created this pass.
    * @param pass The SDL compute pass to wrap. Must not be NULL.
    * @return The initialized ComputePass, or NULL on failure.
    * @memberof ComputePass
    */
-  ComputePass *(*init)(ComputePass *self, CommandBuffer *cmd, SDL_GPUComputePass *pass);
+  ComputePass *(*init)(ComputePass *self, CommandBuffer *commands, SDL_GPUComputePass *pass);
 };
 
 /**

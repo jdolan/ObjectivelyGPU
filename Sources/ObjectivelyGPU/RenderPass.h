@@ -44,7 +44,7 @@ typedef struct RenderPassInterface RenderPassInterface;
  * `SDL_EndGPURenderPass` automatically so no explicit `end` is required:
  *
  * @code
- *   RenderPass *pass = $(cmd, beginRenderPass, colorTargets, numTargets, NULL);
+ *   RenderPass *pass = $(commands, beginRenderPass, colorTargets, numTargets, NULL);
  *   $(pass, bindPipeline, pipeline);
  *   $(pass, drawPrimitives, vertexCount, 1, 0, 0);
  *   release(pass);  // ends the pass
@@ -69,7 +69,7 @@ struct RenderPass {
    * @brief The CommandBuffer this pass was begun from.
    * @private
    */
-  CommandBuffer *cmd;
+  CommandBuffer *commands;
 
   /**
    * @brief The underlying SDL render pass.
@@ -186,15 +186,15 @@ struct RenderPassInterface {
   void (*drawPrimitivesIndirect)(const RenderPass *self, SDL_GPUBuffer *buffer, Uint32 offset, Uint32 drawCount);
 
   /**
-   * @fn RenderPass *RenderPass::init(RenderPass *self, CommandBuffer *cmd, SDL_GPURenderPass *pass)
+   * @fn RenderPass *RenderPass::init(RenderPass *self, CommandBuffer *commands, SDL_GPURenderPass *pass)
    * @brief Initializes this RenderPass wrapping the given SDL render pass.
    * @param self The RenderPass.
-   * @param cmd The CommandBuffer that created this pass.
+   * @param commands The CommandBuffer that created this pass.
    * @param pass The SDL render pass to wrap. Must not be NULL.
    * @return The initialized RenderPass, or NULL on failure.
    * @memberof RenderPass
    */
-  RenderPass *(*init)(RenderPass *self, CommandBuffer *cmd, SDL_GPURenderPass *pass);
+  RenderPass *(*init)(RenderPass *self, CommandBuffer *commands, SDL_GPURenderPass *pass);
 
   /**
    * @fn void RenderPass::setBlendConstants(const RenderPass *self, SDL_FColor blendConstants)

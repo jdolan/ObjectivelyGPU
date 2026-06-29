@@ -513,28 +513,28 @@ struct RenderDeviceInterface {
   void (*setWindow)(RenderDevice *self, SDL_Window *window);
 
   /**
-   * @fn void RenderDevice::submit(const RenderDevice *self, CommandBuffer *cmd)
+   * @fn void RenderDevice::submit(const RenderDevice *self, CommandBuffer *commands)
    * @brief Submits a recorded CommandBuffer to the GPU for execution.
    * @details The CommandBuffer's underlying `SDL_GPUCommandBuffer` is consumed;
    *   the caller must still `release` the CommandBuffer object.
    * @param self The RenderDevice.
-   * @param cmd The CommandBuffer to submit.
+   * @param commands The CommandBuffer to submit.
    * @memberof RenderDevice
    */
-  void (*submit)(const RenderDevice *self, CommandBuffer *cmd);
+  void (*submit)(const RenderDevice *self, CommandBuffer *commands);
 
   /**
-   * @fn SDL_GPUFence *RenderDevice::submitAndFence(const RenderDevice *self, CommandBuffer *cmd)
+   * @fn SDL_GPUFence *RenderDevice::submitAndFence(const RenderDevice *self, CommandBuffer *commands)
    * @brief Submits a CommandBuffer and returns a fence for CPU synchronisation.
-   * @details The fence becomes signaled when all GPU work in @p cmd has completed.
+   * @details The fence becomes signaled when all GPU work in @p commands has completed.
    *   Use `queryFence` or `waitForFences` to poll or block on it, then release it
    *   with `releaseFence`.
    * @param self The RenderDevice.
-   * @param cmd The CommandBuffer to submit.
+   * @param commands The CommandBuffer to submit.
    * @return A new `SDL_GPUFence`. GPU_Asserts on failure. Release with `releaseFence`.
    * @memberof RenderDevice
    */
-  SDL_GPUFence *(*submitAndFence)(const RenderDevice *self, CommandBuffer *cmd);
+  SDL_GPUFence *(*submitAndFence)(const RenderDevice *self, CommandBuffer *commands);
 
   /**
    * @fn bool RenderDevice::textureSupportsFormat(const RenderDevice *self, SDL_GPUTextureFormat format, SDL_GPUTextureType type, SDL_GPUTextureUsageFlags usage)

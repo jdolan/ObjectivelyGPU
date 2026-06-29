@@ -70,10 +70,10 @@ static void dealloc(Object *self) {
  */
 static CommandBuffer *acquireCommandBuffer(const RenderDevice *self) {
 
-  SDL_GPUCommandBuffer *cmd = SDL_AcquireGPUCommandBuffer(self->device);
-  GPU_Assert(cmd, "SDL_AcquireGPUCommandBuffer");
+  SDL_GPUCommandBuffer *commands = SDL_AcquireGPUCommandBuffer(self->device);
+  GPU_Assert(commands, "SDL_AcquireGPUCommandBuffer");
 
-  return $(alloc(CommandBuffer), initWithCommandBuffer, self, cmd);
+  return $(alloc(CommandBuffer), initWithCommandBuffer, self, commands);
 }
 
 /**
@@ -114,8 +114,8 @@ static SDL_GPUBuffer *createBufferWithConstMem(const RenderDevice *self, SDL_GPU
   memcpy(mapped, mem, size);
   SDL_UnmapGPUTransferBuffer(self->device, tbuf);
 
-  CommandBuffer *cmd = $(self, acquireCommandBuffer);
-  CopyPass *copyPass = $(cmd, beginCopyPass);
+  CommandBuffer *commands = $(self, acquireCommandBuffer);
+  CopyPass *copyPass = $(commands, beginCopyPass);
 
   $(copyPass, uploadBuffer,
     &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf },
@@ -123,8 +123,8 @@ static SDL_GPUBuffer *createBufferWithConstMem(const RenderDevice *self, SDL_GPU
     false);
 
   release(copyPass);
-  $(self, submit, cmd);
-  release(cmd);
+  $(self, submit, commands);
+  release(commands);
   SDL_ReleaseGPUTransferBuffer(self->device, tbuf);
 
   return buffer;
@@ -216,8 +216,8 @@ static SDL_GPUTexture *createTexture(const RenderDevice *self, const SDL_GPUText
     memcpy(mapped, pixels, totalBytes);
     SDL_UnmapGPUTransferBuffer(self->device, tbuf);
 
-    CommandBuffer *cmd = $(self, acquireCommandBuffer);
-    CopyPass *copyPass = $(cmd, beginCopyPass);
+    CommandBuffer *commands = $(self, acquireCommandBuffer);
+    CopyPass *copyPass = $(commands, beginCopyPass);
 
     const SDL_GPUTextureTransferInfo src = {
       .transfer_buffer = tbuf,
@@ -234,8 +234,8 @@ static SDL_GPUTexture *createTexture(const RenderDevice *self, const SDL_GPUText
     $(copyPass, uploadTexture, &src, &dst, false);
 
     release(copyPass);
-    $(self, submit, cmd);
-    release(cmd);
+    $(self, submit, commands);
+    release(commands);
     SDL_ReleaseGPUTransferBuffer(self->device, tbuf);
   }
 
@@ -645,21 +645,21 @@ static void setWindow(RenderDevice *self, SDL_Window *window) {
 }
 
 /**
- * @fn void RenderDevice::submit(const RenderDevice *self, CommandBuffer *cmd)
+ * @fn void RenderDevice::submit(const RenderDevice *self, CommandBuffer *commands)
  * @memberof RenderDevice
  */
-static void submit(const RenderDevice *self, CommandBuffer *cmd) {
-  const bool ok = SDL_SubmitGPUCommandBuffer(cmd->cmd);
+static void submit(const RenderDevice *self, CommandBuffer *commands) {
+  const bool ok = SDL_SubmitGPUCommandBuffer(commands->commands);
   GPU_Assert(ok, "SDL_SubmitGPUCommandBuffer");
 }
 
 /**
- * @fn SDL_GPUFence *RenderDevice::submitAndFence(const RenderDevice *self, CommandBuffer *cmd)
+ * @fn SDL_GPUFence *RenderDevice::submitAndFence(const RenderDevice *self, CommandBuffer *commands)
  * @memberof RenderDevice
  */
-static SDL_GPUFence *submitAndFence(const RenderDevice *self, CommandBuffer *cmd) {
+static SDL_GPUFence *submitAndFence(const RenderDevice *self, CommandBuffer *commands) {
 
-  SDL_GPUFence *fence = SDL_SubmitGPUCommandBufferAndAcquireFence(cmd->cmd);
+  SDL_GPUFence *fence = SDL_SubmitGPUCommandBufferAndAcquireFence(commands->commands);
   GPU_Assert(fence, "SDL_SubmitGPUCommandBufferAndAcquireFence");
 
   return fence;
@@ -711,8 +711,8 @@ static void uploadBuffer(const RenderDevice *self, SDL_GPUBuffer *buffer, const 
   memcpy(mapped, data, size);
   SDL_UnmapGPUTransferBuffer(self->device, tbuf);
 
-  CommandBuffer *cmd = $(self, acquireCommandBuffer);
-  CopyPass *copyPass = $(cmd, beginCopyPass);
+  CommandBuffer *commands = $(self, acquireCommandBuffer);
+  CopyPass *copyPass = $(commands, beginCopyPass);
 
   $(copyPass, uploadBuffer,
     &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf },
@@ -720,8 +720,8 @@ static void uploadBuffer(const RenderDevice *self, SDL_GPUBuffer *buffer, const 
     cycle);
 
   release(copyPass);
-  $(self, submit, cmd);
-  release(cmd);
+  $(self, submit, commands);
+  release(commands);
   SDL_ReleaseGPUTransferBuffer(self->device, tbuf);
 }
 

@@ -80,15 +80,15 @@ static void downloadTexture(const CopyPass *self, const SDL_GPUTextureRegion *sr
 }
 
 /**
- * @fn CopyPass *CopyPass::init(CopyPass *self, CommandBuffer *cmd, SDL_GPUCopyPass *pass)
+ * @fn CopyPass *CopyPass::init(CopyPass *self, CommandBuffer *commands, SDL_GPUCopyPass *pass)
  * @memberof CopyPass
  */
-static CopyPass *init(CopyPass *self, CommandBuffer *cmd, SDL_GPUCopyPass *pass) {
+static CopyPass *init(CopyPass *self, CommandBuffer *commands, SDL_GPUCopyPass *pass) {
 
   self = (CopyPass *) super(Object, self, init);
   if (self) {
-    self->cmd = cmd;
-    assert(self->cmd);
+    self->commands = commands;
+    assert(self->commands);
     self->pass = pass;
     assert(self->pass);
   }
@@ -114,24 +114,24 @@ static void uploadData(const CopyPass *self, SDL_GPUBuffer *dst, const void *dat
   assert(data);
   assert(size);
 
-  SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->cmd->device->device, &(SDL_GPUTransferBufferCreateInfo) {
+  SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->commands->device->device, &(SDL_GPUTransferBufferCreateInfo) {
     .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
     .size = size,
   });
   GPU_Assert(tbuf, "SDL_CreateGPUTransferBuffer");
 
-  void *mapped = SDL_MapGPUTransferBuffer(self->cmd->device->device, tbuf, cycle);
+  void *mapped = SDL_MapGPUTransferBuffer(self->commands->device->device, tbuf, cycle);
   GPU_Assert(mapped, "SDL_MapGPUTransferBuffer");
 
   memcpy(mapped, data, size);
-  SDL_UnmapGPUTransferBuffer(self->cmd->device->device, tbuf);
+  SDL_UnmapGPUTransferBuffer(self->commands->device->device, tbuf);
 
   SDL_UploadToGPUBuffer(self->pass,
     &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf },
     &(SDL_GPUBufferRegion) { .buffer = dst, .offset = offset, .size = size },
     cycle);
 
-  SDL_ReleaseGPUTransferBuffer(self->cmd->device->device, tbuf);
+  SDL_ReleaseGPUTransferBuffer(self->commands->device->device, tbuf);
 }
 
 /**

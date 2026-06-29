@@ -62,7 +62,7 @@ typedef struct FramebufferInterface FramebufferInterface;
  *   SDL_GPUDepthStencilTargetInfo depth = $(fb, depthTargetInfo,
  *     SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_DONT_CARE, 1.f);
  *
- *   RenderPass *pass = $(cmd, beginRenderPass, &color, 1, &depth);
+ *   RenderPass *pass = $(commands, beginRenderPass, &color, 1, &depth);
  *   // ...
  *   release(pass);
  *   release(fb);

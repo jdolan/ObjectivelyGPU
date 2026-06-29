@@ -142,19 +142,20 @@ int main(int argc, char **argv) {
 			}
 		}
 
-		CommandBuffer *cmd = $(renderDevice, acquireCommandBuffer);
-		SwapchainTexture swapchain = { 0 };
-		$(cmd, waitAndAcquireSwapchainTexture, &swapchain);
+		CommandBuffer *commands = $(renderDevice, acquireCommandBuffer);
+
+    SwapchainTexture swapchain = { 0 };
+		$(commands, waitAndAcquireSwapchainTexture, &swapchain);
 
 		float time = (float) (SDL_GetTicks() - startTicks) / 1000.0f;
-		$(cmd, pushComputeUniformData, 0, &time, sizeof(time));
+		$(commands, pushComputeUniformData, 0, &time, sizeof(time));
 
 		SDL_GPUStorageBufferReadWriteBinding storageBuffer = {
 			.buffer = particleBuffer,
 			.cycle = false,
 		};
 
-		ComputePass *computePass = $(cmd, beginComputePass, NULL, 0, &storageBuffer, 1);
+		ComputePass *computePass = $(commands, beginComputePass, NULL, 0, &storageBuffer, 1);
 		$(computePass, bindPipeline, computePipeline);
 		$(computePass, dispatchCompute, 1, 1, 1);
 		release(computePass);
@@ -166,15 +167,15 @@ int main(int argc, char **argv) {
 			.store_op = SDL_GPU_STOREOP_STORE,
 		};
 
-		RenderPass *renderPass = $(cmd, beginRenderPass, &colorTarget, 1, NULL);
+		RenderPass *renderPass = $(commands, beginRenderPass, &colorTarget, 1, NULL);
 		SDL_GPUBuffer *vertexStorageBuffers[] = { particleBuffer };
 		$(renderPass, bindPipeline, graphicsPipeline);
 		$(renderPass, bindVertexStorageBuffers, 0, vertexStorageBuffers, 1);
 		$(renderPass, drawPrimitives, NUM_PARTICLES, 1, 0, 0);
 		release(renderPass);
 
-		$(cmd, submit);
-		release(cmd);
+		$(commands, submit);
+		release(commands);
 	}
 
 	status = EXIT_SUCCESS;
