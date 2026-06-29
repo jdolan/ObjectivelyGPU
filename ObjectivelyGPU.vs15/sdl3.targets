@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+    Fetches the official SDL3 VC development libraries from libsdl.org and wires
+    them into the compiler and linker search paths.  This mirrors what CI does,
+    so local developers and CI share a single code path: the libraries are
+    downloaded once, on demand, and cached under libs/ (which is .gitignored).
+    Bump SDL3Version to upgrade; delete libs/ to force a re-download.
+  -->
+  <PropertyGroup>
+    <SDL3Version>3.4.2</SDL3Version>
+    <SDL3Dir>$(MSBuildThisFileDirectory)libs\SDL3-$(SDL3Version)\</SDL3Dir>
+    <SDL3LibArch Condition="'$(Platform)' == 'Win32'">x86</SDL3LibArch>
+    <SDL3LibArch Condition="'$(SDL3LibArch)' == ''">x64</SDL3LibArch>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludePath>$(SDL3Dir)include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SDL3Dir)lib\$(SDL3LibArch)\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+
+  <Target Name="DownloadSDL3"
+          BeforeTargets="ClCompile"
+          Condition="!Exists('$(SDL3Dir)include\SDL3\SDL.h')">
+    <Message Importance="high" Text="Downloading SDL3 $(SDL3Version) development libraries..." />
+    <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
+          Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;$ErrorActionPreference = 'Stop'; New-Item -ItemType Directory -Force libs | Out-Null; Invoke-WebRequest -Uri 'https://github.com/libsdl-org/SDL/releases/download/release-$(SDL3Version)/SDL3-devel-$(SDL3Version)-VC.zip' -OutFile 'libs\sdl3.zip'; Expand-Archive -Force 'libs\sdl3.zip' 'libs'; Remove-Item 'libs\sdl3.zip'&quot;" />
+  </Target>
+
+</Project>

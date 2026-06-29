@@ -18,6 +18,7 @@ Examples/HelloCompute
 Frameworks/
 Makefile
 Makefile.in
+ObjectivelyGPU.vs15/libs/
 aclocal.m4
 autom4te.cache/
 build/
