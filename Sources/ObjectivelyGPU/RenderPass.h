@@ -66,18 +66,6 @@ struct RenderPass {
   RenderPassInterface *interface;
 
   /**
-   * @brief When true, the render pass clears to @c clear_color before drawing.
-   * @details Defaults to `true` (clear to opaque black).
-   */
-  bool clear;
-
-  /**
-   * @brief The color used to clear the swapchain texture when @c clear is true.
-   * @details Defaults to opaque black `{0, 0, 0, 1}`.
-   */
-  SDL_FColor clearColor;
-
-  /**
    * @brief The CommandBuffer this pass was begun from.
    * @private
    */
