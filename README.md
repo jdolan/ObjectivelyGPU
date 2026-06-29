@@ -1,8 +1,11 @@
+[![Build](https://github.com/jdolan/ObjectivelyGPU/actions/workflows/build.yml/badge.svg)](https://github.com/jdolan/ObjectivelyGPU/actions/workflows/build.yml)
+[![Zlib License](https://img.shields.io/badge/license-Zlib-brightgreen.svg)](https://opensource.org/licenses/Zlib)
+![Beta](https://img.shields.io/badge/maturity-beta-yellow.svg)
+
 # ObjectivelyGPU
+Object oriented framework for modern cross-platform graphics with SDL3 and C.
 
-## Object oriented framework for modern cross-platform graphics with SDL3 and GNU C
-
-ObjectivelyGL is a cross-platform graphics framework for [SDL3](https://wiki.libsdl.org/SDL3/CategoryGPU). It is built on [Objectively](https://github.com/jdolan/Objectively), written in GNU C, and requires gcc or clang.
+Zlib [license](./COPYING).
 
 ## Dependencies
 
@@ -15,7 +18,7 @@ ObjectivelyGPU uses a **GLSL → SPIR-V → MSL** pipeline for cross-platform sh
 
 * **GLSL** (Vulkan 4.5) is the source language for all shaders
 * **glslc** (from [shaderc](https://github.com/google/shaderc)) compiles GLSL to SPIR-V
-* **shadercross** (from [SDL_shadercross](https://github.com/libsdl-org/SDL_shadercross)) converts SPIR-V to MSL, using SDL3-aware buffer slot assignments
+* **shadercross** (from [SDL_shadercross](https://github.com/libsdl-org/SDL_shadercross)) converts SPIR-V to MSL, using SDL3-aware buffer assignments
 
 Both SPIR-V and MSL blobs are versioned in the repository. Normal builds never invoke these tools. Run `make shaders` after editing a `.glsl` file to regenerate the blobs.
 
