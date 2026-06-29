@@ -109,6 +109,10 @@ static bool resize(Framebuffer *self, const SDL_Size *size) {
 
   assert(size);
 
+  if (self->size.w == size->w && self->size.h == size->h) {
+    return false;
+  }
+
   $(self->device, releaseTexture, self->colorTexture);
   $(self->device, releaseTexture, self->depthTexture);
 

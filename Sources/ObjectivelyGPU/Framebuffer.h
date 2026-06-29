@@ -100,7 +100,6 @@ struct Framebuffer {
 
   /**
    * @brief The color attachment texture.
-   * @private
    */
   SDL_GPUTexture *colorTexture;
 
