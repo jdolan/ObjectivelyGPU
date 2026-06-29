@@ -45,11 +45,11 @@ int main(int argc, char **argv) {
 	int status = EXIT_FAILURE;
 	SDL_Window *window = NULL;
 	RenderDevice *renderDevice = NULL;
-	SDL_GPUBuffer *particleBuffer = NULL;
-	SDL_GPUShader *vertexShader = NULL;
-	SDL_GPUShader *fragmentShader = NULL;
-	SDL_GPUGraphicsPipeline *graphicsPipeline = NULL;
-	SDL_GPUComputePipeline *computePipeline = NULL;
+	Buffer *particleBuffer = NULL;
+	Shader *vertexShader = NULL;
+	Shader *fragmentShader = NULL;
+	GraphicsPipeline *graphicsPipeline = NULL;
+	ComputePipeline *computePipeline = NULL;
 
 	if (!SDL_Init(SDL_INIT_VIDEO)) {
 		log_sdl_error("SDL_Init");
@@ -100,8 +100,8 @@ int main(int argc, char **argv) {
 	};
 
 	graphicsPipeline = $(renderDevice, createGraphicsPipeline, &(SDL_GPUGraphicsPipelineCreateInfo) {
-		.vertex_shader = vertexShader,
-		.fragment_shader = fragmentShader,
+		.vertex_shader = vertexShader->shader,
+		.fragment_shader = fragmentShader->shader,
 		.primitive_type = SDL_GPU_PRIMITIVETYPE_POINTLIST,
 		.rasterizer_state = {
 			.fill_mode = SDL_GPU_FILLMODE_FILL,
@@ -116,9 +116,9 @@ int main(int argc, char **argv) {
 		},
 	});
 
-	$(renderDevice, releaseShader, vertexShader);
+	release(vertexShader);
 	vertexShader = NULL;
-	$(renderDevice, releaseShader, fragmentShader);
+	release(fragmentShader);
 	fragmentShader = NULL;
 
 	bool running = true;
@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
 		$(commands, pushComputeUniformData, 0, &time, sizeof(time));
 
 		SDL_GPUStorageBufferReadWriteBinding storageBuffer = {
-			.buffer = particleBuffer,
+			.buffer = particleBuffer->buffer,
 			.cycle = false,
 		};
 
@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
 		};
 
 		RenderPass *renderPass = $(commands, beginRenderPass, &colorTarget, 1, NULL);
-		SDL_GPUBuffer *vertexStorageBuffers[] = { particleBuffer };
+		SDL_GPUBuffer *vertexStorageBuffers[] = { particleBuffer->buffer };
 		$(renderPass, bindPipeline, graphicsPipeline);
 		$(renderPass, bindVertexStorageBuffers, 0, vertexStorageBuffers, 1);
 		$(renderPass, drawPrimitives, NUM_PARTICLES, 1, 0, 0);
@@ -185,24 +185,13 @@ cleanup:
 		$(renderDevice, waitForIdle);
 	}
 
-	if (graphicsPipeline) {
-		$(renderDevice, releaseGraphicsPipeline, graphicsPipeline);
-	}
-	if (computePipeline) {
-		$(renderDevice, releaseComputePipeline, computePipeline);
-	}
-	if (vertexShader) {
-		$(renderDevice, releaseShader, vertexShader);
-	}
-	if (fragmentShader) {
-		$(renderDevice, releaseShader, fragmentShader);
-	}
-	if (particleBuffer) {
-		$(renderDevice, releaseBuffer, particleBuffer);
-	}
-	if (renderDevice) {
-		release(renderDevice);
-	}
+	release(graphicsPipeline);
+	release(computePipeline);
+	release(vertexShader);
+	release(fragmentShader);
+	release(particleBuffer);
+	release(renderDevice);
+
 	if (window) {
 		SDL_DestroyWindow(window);
 	}

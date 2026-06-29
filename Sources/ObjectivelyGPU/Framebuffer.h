@@ -37,6 +37,7 @@
 typedef struct RenderDevice RenderDevice;
 typedef struct Framebuffer Framebuffer;
 typedef struct FramebufferInterface FramebufferInterface;
+typedef struct Texture Texture;
 
 /**
  * @brief An off-screen render target grouping a color and/or depth texture.
@@ -99,15 +100,15 @@ struct Framebuffer {
   SDL_GPUTextureFormat depthFormat;
 
   /**
-   * @brief The color attachment texture.
+   * @brief The color attachment texture, or `NULL` if `colorFormat` is invalid.
    */
-  SDL_GPUTexture *colorTexture;
+  Texture *colorTexture;
 
   /**
-   * @brief The depth attachment texture.
+   * @brief The depth attachment texture, or `NULL` if `depthFormat` is invalid.
    * @private
    */
-  SDL_GPUTexture *depthTexture;
+  Texture *depthTexture;
 
   /**
    * @brief The owning RenderDevice, used for texture allocation and dealloc.

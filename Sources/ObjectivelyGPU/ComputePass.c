@@ -25,6 +25,7 @@
 
 #include "CommandBuffer.h"
 #include "ComputePass.h"
+#include "ComputePipeline.h"
 
 #define _Class _ComputePass
 
@@ -46,14 +47,16 @@ static void dealloc(Object *self) {
 #pragma mark - ComputePass
 
 /**
- * @fn void ComputePass::bindPipeline(const ComputePass *self, SDL_GPUComputePipeline *pipeline)
+ * @fn void ComputePass::bindPipeline(ComputePass *self, ComputePipeline *pipeline)
  * @memberof ComputePass
  */
-static void bindPipeline(const ComputePass *self, SDL_GPUComputePipeline *pipeline) {
+static void bindPipeline(ComputePass *self, ComputePipeline *pipeline) {
 
-  ((ComputePass *) self)->pipeline = pipeline;
+  assert(pipeline);
 
-  SDL_BindGPUComputePipeline(self->pass, pipeline);
+  self->pipeline = pipeline;
+
+  SDL_BindGPUComputePipeline(self->pass, pipeline->pipeline);
 }
 
 /**

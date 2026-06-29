@@ -23,10 +23,16 @@
 
 #pragma once
 
+#include <ObjectivelyGPU/Buffer.h>
 #include <ObjectivelyGPU/CommandBuffer.h>
 #include <ObjectivelyGPU/ComputePass.h>
+#include <ObjectivelyGPU/ComputePipeline.h>
 #include <ObjectivelyGPU/CopyPass.h>
 #include <ObjectivelyGPU/Framebuffer.h>
+#include <ObjectivelyGPU/GraphicsPipeline.h>
 #include <ObjectivelyGPU/Mathlib.h>
 #include <ObjectivelyGPU/RenderDevice.h>
 #include <ObjectivelyGPU/RenderPass.h>
+#include <ObjectivelyGPU/Sampler.h>
+#include <ObjectivelyGPU/Shader.h>
+#include <ObjectivelyGPU/Texture.h>

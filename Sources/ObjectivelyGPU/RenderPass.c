@@ -24,6 +24,7 @@
 #include <assert.h>
 
 #include "CommandBuffer.h"
+#include "GraphicsPipeline.h"
 #include "RenderPass.h"
 
 #define _Class _RenderPass
@@ -78,14 +79,16 @@ static void bindIndexBuffer(const RenderPass *self, const SDL_GPUBufferBinding *
 }
 
 /**
- * @fn void RenderPass::bindPipeline(const RenderPass *self, SDL_GPUGraphicsPipeline *pipeline)
+ * @fn void RenderPass::bindPipeline(RenderPass *self, GraphicsPipeline *pipeline)
  * @memberof RenderPass
  */
-static void bindPipeline(const RenderPass *self, SDL_GPUGraphicsPipeline *pipeline) {
+static void bindPipeline(RenderPass *self, GraphicsPipeline *pipeline) {
 
-  ((RenderPass *) self)->pipeline = pipeline;
+  assert(pipeline);
 
-  SDL_BindGPUGraphicsPipeline(self->pass, pipeline);
+  self->pipeline = pipeline;
+
+  SDL_BindGPUGraphicsPipeline(self->pass, pipeline->pipeline);
 }
 
 /**

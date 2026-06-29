@@ -7,24 +7,36 @@ noinst_HEADERS = \
 pkgincludedir = $(includedir)/$(PACKAGE_NAME)
 
 pkginclude_HEADERS = \
+    Buffer.h \
     CommandBuffer.h \
     ComputePass.h \
+    ComputePipeline.h \
     CopyPass.h \
     Framebuffer.h \
+    GraphicsPipeline.h \
     Mathlib.h \
     RenderDevice.h \
     RenderPass.h \
+    Sampler.h \
+    Shader.h \
+    Texture.h \
     Types.h
 
 lib_LTLIBRARIES = libObjectivelyGPU.la
 
 libObjectivelyGPU_la_SOURCES = \
+    Buffer.c \
     CommandBuffer.c \
     ComputePass.c \
+    ComputePipeline.c \
     CopyPass.c \
     Framebuffer.c \
+    GraphicsPipeline.c \
     RenderDevice.c \
-    RenderPass.c
+    RenderPass.c \
+    Sampler.c \
+    Shader.c \
+    Texture.c
 
 libObjectivelyGPU_la_CFLAGS = \
     $(OBJECTIVELY_CFLAGS) \

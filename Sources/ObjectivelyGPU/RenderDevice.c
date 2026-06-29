@@ -29,9 +29,15 @@
 #include <Objectively/Data.h>
 #include <Objectively/Resource.h>
 
+#include "Buffer.h"
 #include "CommandBuffer.h"
+#include "ComputePipeline.h"
 #include "CopyPass.h"
+#include "GraphicsPipeline.h"
 #include "RenderDevice.h"
+#include "Sampler.h"
+#include "Shader.h"
+#include "Texture.h"
 
 #define _Class _RenderDevice
 
@@ -43,13 +49,6 @@
 static void dealloc(Object *self) {
 
   RenderDevice *this = (RenderDevice *) self;
-
-  if (this->device) {
-    SDL_ReleaseGPUSampler(this->device, this->_samplerNearest);
-    SDL_ReleaseGPUSampler(this->device, this->_samplerLinear);
-    SDL_ReleaseGPUSampler(this->device, this->_samplerLinearClamp);
-    SDL_ReleaseGPUSampler(this->device, this->_samplerAnisotropic);
-  }
 
   if (this->window && this->device) {
     SDL_ReleaseWindowFromGPUDevice(this->device, this->window);
@@ -77,169 +76,75 @@ static CommandBuffer *acquireCommandBuffer(const RenderDevice *self) {
 }
 
 /**
- * @fn SDL_GPUBuffer *RenderDevice::createBuffer(const RenderDevice *self, const SDL_GPUBufferCreateInfo *info)
+ * @fn Buffer *RenderDevice::createBuffer(RenderDevice *self, const SDL_GPUBufferCreateInfo *info)
  * @memberof RenderDevice
  */
-static SDL_GPUBuffer *createBuffer(const RenderDevice *self, const SDL_GPUBufferCreateInfo *info) {
+static Buffer *createBuffer(RenderDevice *self, const SDL_GPUBufferCreateInfo *info) {
 
-  SDL_GPUBuffer *buffer = SDL_CreateGPUBuffer(self->device, info);
-  GPU_Assert(buffer, "SDL_CreateGPUBuffer");
-
-  return buffer;
+  return $(alloc(Buffer), initWithDevice, self, info);
 }
 
 /**
- * @fn SDL_GPUBuffer *RenderDevice::createBufferWithConstMem(const RenderDevice *self, SDL_GPUBufferUsageFlags usage, const void *mem, Uint32 size)
+ * @fn Buffer *RenderDevice::createBufferWithConstMem(RenderDevice *self, SDL_GPUBufferUsageFlags usage, const void *mem, Uint32 size)
  * @memberof RenderDevice
  */
-static SDL_GPUBuffer *createBufferWithConstMem(const RenderDevice *self, SDL_GPUBufferUsageFlags usage, const void *mem, Uint32 size) {
-  assert(self);
-  assert(mem);
-  assert(size);
+static Buffer *createBufferWithConstMem(RenderDevice *self, SDL_GPUBufferUsageFlags usage, const void *mem, Uint32 size) {
 
-  SDL_GPUBuffer *buffer = $(self, createBuffer, &(SDL_GPUBufferCreateInfo) {
-    .usage = usage,
-    .size = size,
-  });
-
-  SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->device, &(SDL_GPUTransferBufferCreateInfo) {
-    .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-    .size = size,
-  });
-  GPU_Assert(tbuf, "SDL_CreateGPUTransferBuffer");
-
-  void *mapped = SDL_MapGPUTransferBuffer(self->device, tbuf, false);
-  GPU_Assert(mapped, "SDL_MapGPUTransferBuffer");
-
-  memcpy(mapped, mem, size);
-  SDL_UnmapGPUTransferBuffer(self->device, tbuf);
-
-  CommandBuffer *commands = $(self, acquireCommandBuffer);
-  CopyPass *copyPass = $(commands, beginCopyPass);
-
-  $(copyPass, uploadBuffer,
-    &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf },
-    &(SDL_GPUBufferRegion) { .buffer = buffer, .size = size },
-    false);
-
-  release(copyPass);
-  $(self, submit, commands);
-  release(commands);
-  SDL_ReleaseGPUTransferBuffer(self->device, tbuf);
-
-  return buffer;
+  return $(alloc(Buffer), initWithConstMem, self, usage, mem, size);
 }
 
 /**
- * @fn SDL_GPUBuffer *RenderDevice::createBufferWithData(const RenderDevice *self, SDL_GPUBufferUsageFlags usage, const Data *data)
+ * @fn Buffer *RenderDevice::createBufferWithData(RenderDevice *self, SDL_GPUBufferUsageFlags usage, const Data *data)
  * @memberof RenderDevice
  */
-static SDL_GPUBuffer *createBufferWithData(const RenderDevice *self, SDL_GPUBufferUsageFlags usage, const Data *data) {
-  assert(self);
-  assert(data);
+static Buffer *createBufferWithData(RenderDevice *self, SDL_GPUBufferUsageFlags usage, const Data *data) {
 
-  return $(self, createBufferWithConstMem, usage, data->bytes, (Uint32) data->length);
+  return $(alloc(Buffer), initWithData, self, usage, data);
 }
 
 /**
- * @fn SDL_GPUComputePipeline *RenderDevice::createComputePipeline(const RenderDevice *self, const SDL_GPUComputePipelineCreateInfo *info)
+ * @fn ComputePipeline *RenderDevice::createComputePipeline(RenderDevice *self, const SDL_GPUComputePipelineCreateInfo *info)
  * @memberof RenderDevice
  */
-static SDL_GPUComputePipeline *createComputePipeline(const RenderDevice *self, const SDL_GPUComputePipelineCreateInfo *info) {
+static ComputePipeline *createComputePipeline(RenderDevice *self, const SDL_GPUComputePipelineCreateInfo *info) {
 
-  SDL_GPUComputePipeline *pipeline = SDL_CreateGPUComputePipeline(self->device, info);
-  GPU_Assert(pipeline, "SDL_CreateGPUComputePipeline");
-
-  return pipeline;
+  return $(alloc(ComputePipeline), initWithDevice, self, info);
 }
 
 /**
- * @fn SDL_GPUGraphicsPipeline *RenderDevice::createGraphicsPipeline(const RenderDevice *self, const SDL_GPUGraphicsPipelineCreateInfo *info)
+ * @fn GraphicsPipeline *RenderDevice::createGraphicsPipeline(RenderDevice *self, const SDL_GPUGraphicsPipelineCreateInfo *info)
  * @memberof RenderDevice
  */
-static SDL_GPUGraphicsPipeline *createGraphicsPipeline(const RenderDevice *self, const SDL_GPUGraphicsPipelineCreateInfo *info) {
+static GraphicsPipeline *createGraphicsPipeline(RenderDevice *self, const SDL_GPUGraphicsPipelineCreateInfo *info) {
 
-  SDL_GPUGraphicsPipeline *pipeline = SDL_CreateGPUGraphicsPipeline(self->device, info);
-  GPU_Assert(pipeline, "SDL_CreateGPUGraphicsPipeline");
-
-  return pipeline;
+  return $(alloc(GraphicsPipeline), initWithDevice, self, info);
 }
 
 /**
- * @fn SDL_GPUSampler *RenderDevice::createSampler(const RenderDevice *self, const SDL_GPUSamplerCreateInfo *info)
+ * @fn Sampler *RenderDevice::createSampler(RenderDevice *self, const SDL_GPUSamplerCreateInfo *info)
  * @memberof RenderDevice
  */
-static SDL_GPUSampler *createSampler(const RenderDevice *self, const SDL_GPUSamplerCreateInfo *info) {
+static Sampler *createSampler(RenderDevice *self, const SDL_GPUSamplerCreateInfo *info) {
 
-  SDL_GPUSampler *sampler = SDL_CreateGPUSampler(self->device, info);
-  GPU_Assert(sampler, "SDL_CreateGPUSampler");
-
-  return sampler;
+  return $(alloc(Sampler), initWithDevice, self, info);
 }
 
 /**
- * @fn SDL_GPUShader *RenderDevice::createShader(const RenderDevice *self, const SDL_GPUShaderCreateInfo *info)
+ * @fn Shader *RenderDevice::createShader(RenderDevice *self, const SDL_GPUShaderCreateInfo *info)
  * @memberof RenderDevice
  */
-static SDL_GPUShader *createShader(const RenderDevice *self, const SDL_GPUShaderCreateInfo *info) {
+static Shader *createShader(RenderDevice *self, const SDL_GPUShaderCreateInfo *info) {
 
-  SDL_GPUShader *shader = SDL_CreateGPUShader(self->device, info);
-  GPU_Assert(shader, "SDL_CreateGPUShader");
-
-  return shader;
+  return $(alloc(Shader), initWithDevice, self, info);
 }
 
 /**
- * @fn SDL_GPUTexture *RenderDevice::createTexture(const RenderDevice *self, const SDL_GPUTextureCreateInfo *info, const void *pixels)
+ * @fn Texture *RenderDevice::createTexture(RenderDevice *self, const SDL_GPUTextureCreateInfo *info, const void *pixels)
  * @memberof RenderDevice
  */
-static SDL_GPUTexture *createTexture(const RenderDevice *self, const SDL_GPUTextureCreateInfo *info, const void *pixels) {
+static Texture *createTexture(RenderDevice *self, const SDL_GPUTextureCreateInfo *info, const void *pixels) {
 
-  SDL_GPUTexture *texture = SDL_CreateGPUTexture(self->device, info);
-  GPU_Assert(texture, "SDL_CreateGPUTexture");
-
-  if (pixels) {
-    const Uint32 bytesPerTexel = SDL_GPUTextureFormatTexelBlockSize(info->format);
-    const Uint32 totalBytes = info->width * info->height * info->layer_count_or_depth * bytesPerTexel;
-
-    const SDL_GPUTransferBufferCreateInfo tbufInfo = {
-      .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-      .size = totalBytes,
-    };
-
-    SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->device, &tbufInfo);
-    GPU_Assert(tbuf, "SDL_CreateGPUTransferBuffer");
-
-    void *mapped = SDL_MapGPUTransferBuffer(self->device, tbuf, false);
-    GPU_Assert(mapped, "SDL_MapGPUTransferBuffer");
-
-    memcpy(mapped, pixels, totalBytes);
-    SDL_UnmapGPUTransferBuffer(self->device, tbuf);
-
-    CommandBuffer *commands = $(self, acquireCommandBuffer);
-    CopyPass *copyPass = $(commands, beginCopyPass);
-
-    const SDL_GPUTextureTransferInfo src = {
-      .transfer_buffer = tbuf,
-      .offset = 0,
-      .pixels_per_row = info->width,
-      .rows_per_layer = info->height,
-    };
-    const SDL_GPUTextureRegion dst = {
-      .texture = texture,
-      .w = info->width,
-      .h = info->height,
-      .d = info->layer_count_or_depth,
-    };
-    $(copyPass, uploadTexture, &src, &dst, false);
-
-    release(copyPass);
-    $(self, submit, commands);
-    release(commands);
-    SDL_ReleaseGPUTransferBuffer(self->device, tbuf);
-  }
-
-  return texture;
+  return $(alloc(Texture), initWithDevice, self, info, pixels);
 }
 
 /**
@@ -255,34 +160,12 @@ static SDL_GPUTransferBuffer *createTransferBuffer(const RenderDevice *self, con
 }
 
 /**
- * @fn SDL_GPUTexture *RenderDevice::createTextureFromSurface(const RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage)
+ * @fn Texture *RenderDevice::createTextureFromSurface(RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage)
  * @memberof RenderDevice
  */
-static SDL_GPUTexture *createTextureFromSurface(const RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage) {
-  assert(self);
-  assert(surface);
+static Texture *createTextureFromSurface(RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage) {
 
-  SDL_Surface *rgba = surface->format == SDL_PIXELFORMAT_RGBA32
-    ? surface
-    : SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
-  GPU_Assert(rgba, "SDL_ConvertSurface");
-
-  SDL_GPUTexture *texture = $(self, createTexture, &(SDL_GPUTextureCreateInfo) {
-    .type = SDL_GPU_TEXTURETYPE_2D,
-    .format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-    .usage = usage,
-    .width = (Uint32) rgba->w,
-    .height = (Uint32) rgba->h,
-    .layer_count_or_depth = 1,
-    .num_levels = 1,
-    .sample_count = SDL_GPU_SAMPLECOUNT_1,
-  }, rgba->pixels);
-
-  if (rgba != surface) {
-    SDL_DestroySurface(rgba);
-  }
-
-  return texture;
+  return $(alloc(Texture), initWithSurface, self, surface, usage);
 }
 static SDL_GPUTextureFormat getSwapchainTextureFormat(const RenderDevice *self, SDL_Window *window) {
   return SDL_GetGPUSwapchainTextureFormat(self->device, window);
@@ -323,101 +206,21 @@ static RenderDevice *initWithWindow(RenderDevice *self, SDL_Window *window) {
 }
 
 /**
- * @fn SDL_GPUShader *RenderDevice::loadShader(const RenderDevice *self, const char *name, const SDL_GPUShaderCreateInfo *info)
+ * @fn Shader *RenderDevice::loadShader(RenderDevice *self, const char *name, const SDL_GPUShaderCreateInfo *info)
  * @memberof RenderDevice
  */
-static SDL_GPUShader *loadShader(const RenderDevice *self, const char *name, const SDL_GPUShaderCreateInfo *info) {
+static Shader *loadShader(RenderDevice *self, const char *name, const SDL_GPUShaderCreateInfo *info) {
 
-  static const struct {
-    SDL_GPUShaderFormat format;
-    const char *ext;
-  } formats[] = {
-    { SDL_GPU_SHADERFORMAT_MSL,  ".msl"  },
-    { SDL_GPU_SHADERFORMAT_DXIL, ".dxil" },
-    { SDL_GPU_SHADERFORMAT_SPIRV,".spv"  },
-  };
-
-  const SDL_GPUShaderFormat supported = SDL_GetGPUShaderFormats(self->device);
-
-  for (size_t i = 0; i < SDL_arraysize(formats); i++) {
-    if (!(supported & formats[i].format)) {
-      continue;
-    }
-
-    char path[256];
-    SDL_snprintf(path, sizeof(path), "%s%s", name, formats[i].ext);
-
-    Resource *res = $$(Resource, resourceWithName, path);
-    if (!res) {
-      continue;
-    }
-
-    SDL_GPUShaderCreateInfo filled = *info;
-    filled.code = res->data->bytes;
-    filled.code_size = res->data->length;
-    filled.format = formats[i].format;
-
-    if (!filled.entrypoint) {
-      filled.entrypoint = (formats[i].format == SDL_GPU_SHADERFORMAT_MSL) ? "main0" : "main";
-    }
-
-    SDL_GPUShader *shader = $(self, createShader, &filled);
-    release(res);
-    return shader;
-  }
-
-  GPU_Assert(false, "loadShader: no supported format found for '%s'\n", name);
-  return NULL;
+  return $(alloc(Shader), initWithResource, self, name, info);
 }
 
 /**
- * @fn SDL_GPUComputePipeline *RenderDevice::loadComputePipeline(const RenderDevice *self, const char *name, const SDL_GPUComputePipelineCreateInfo *info)
+ * @fn ComputePipeline *RenderDevice::loadComputePipeline(RenderDevice *self, const char *name, const SDL_GPUComputePipelineCreateInfo *info)
  * @memberof RenderDevice
  */
-static SDL_GPUComputePipeline *loadComputePipeline(const RenderDevice *self, const char *name, const SDL_GPUComputePipelineCreateInfo *info) {
+static ComputePipeline *loadComputePipeline(RenderDevice *self, const char *name, const SDL_GPUComputePipelineCreateInfo *info) {
 
-  static const struct {
-    SDL_GPUShaderFormat format;
-    const char *ext;
-  } formats[] = {
-    { SDL_GPU_SHADERFORMAT_MSL,  ".msl"  },
-    { SDL_GPU_SHADERFORMAT_DXIL, ".dxil" },
-    { SDL_GPU_SHADERFORMAT_SPIRV,".spv"  },
-  };
-
-  const SDL_GPUShaderFormat supported = SDL_GetGPUShaderFormats(self->device);
-
-  for (size_t i = 0; i < SDL_arraysize(formats); i++) {
-
-    if (!(supported & formats[i].format)) {
-      continue;
-    }
-
-    char path[256];
-    SDL_snprintf(path, sizeof(path), "%s%s", name, formats[i].ext);
-
-    Resource *res = $$(Resource, resourceWithName, path);
-    if (!res) {
-      continue;
-    }
-
-    if (!res->data || res->data->length == 0) {
-      release(res);
-      continue;
-    }
-
-    SDL_GPUComputePipelineCreateInfo filled = *info;
-    filled.code = res->data->bytes;
-    filled.code_size = res->data->length;
-    filled.format = formats[i].format;
-
-    SDL_GPUComputePipeline *pipeline = $(self, createComputePipeline, &filled);
-    release(res);
-    return pipeline;
-  }
-
-  GPU_Assert(false, "loadComputePipeline: no shader blob found for '%s' in any supported format", name);
-  return NULL;
+  return $(alloc(ComputePipeline), initWithResource, self, name, info);
 }
 
 /**
@@ -441,59 +244,11 @@ static bool queryFence(const RenderDevice *self, SDL_GPUFence *fence) {
 }
 
 /**
- * @fn void RenderDevice::releaseBuffer(const RenderDevice *self, SDL_GPUBuffer *buffer)
- * @memberof RenderDevice
- */
-static void releaseBuffer(const RenderDevice *self, SDL_GPUBuffer *buffer) {
-  SDL_ReleaseGPUBuffer(self->device, buffer);
-}
-
-/**
- * @fn void RenderDevice::releaseComputePipeline(const RenderDevice *self, SDL_GPUComputePipeline *pipeline)
- * @memberof RenderDevice
- */
-static void releaseComputePipeline(const RenderDevice *self, SDL_GPUComputePipeline *pipeline) {
-  SDL_ReleaseGPUComputePipeline(self->device, pipeline);
-}
-
-/**
  * @fn void RenderDevice::releaseFence(const RenderDevice *self, SDL_GPUFence *fence)
  * @memberof RenderDevice
  */
 static void releaseFence(const RenderDevice *self, SDL_GPUFence *fence) {
   SDL_ReleaseGPUFence(self->device, fence);
-}
-
-/**
- * @fn void RenderDevice::releaseGraphicsPipeline(const RenderDevice *self, SDL_GPUGraphicsPipeline *pipeline)
- * @memberof RenderDevice
- */
-static void releaseGraphicsPipeline(const RenderDevice *self, SDL_GPUGraphicsPipeline *pipeline) {
-  SDL_ReleaseGPUGraphicsPipeline(self->device, pipeline);
-}
-
-/**
- * @fn void RenderDevice::releaseSampler(const RenderDevice *self, SDL_GPUSampler *sampler)
- * @memberof RenderDevice
- */
-static void releaseSampler(const RenderDevice *self, SDL_GPUSampler *sampler) {
-  SDL_ReleaseGPUSampler(self->device, sampler);
-}
-
-/**
- * @fn void RenderDevice::releaseShader(const RenderDevice *self, SDL_GPUShader *shader)
- * @memberof RenderDevice
- */
-static void releaseShader(const RenderDevice *self, SDL_GPUShader *shader) {
-  SDL_ReleaseGPUShader(self->device, shader);
-}
-
-/**
- * @fn void RenderDevice::releaseTexture(const RenderDevice *self, SDL_GPUTexture *texture)
- * @memberof RenderDevice
- */
-static void releaseTexture(const RenderDevice *self, SDL_GPUTexture *texture) {
-  SDL_ReleaseGPUTexture(self->device, texture);
 }
 
 /**
@@ -505,92 +260,6 @@ static void releaseTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffe
 }
 
 /**
- * @fn SDL_GPUSampler *RenderDevice::samplerAnisotropic(const RenderDevice *self)
- * @memberof RenderDevice
- */
-static SDL_GPUSampler *samplerAnisotropic(const RenderDevice *self) {
-  assert(self);
-
-  RenderDevice *this = (RenderDevice *) self;
-  if (!this->_samplerAnisotropic) {
-    this->_samplerAnisotropic = $(self, createSampler, &(SDL_GPUSamplerCreateInfo) {
-      .min_filter = SDL_GPU_FILTER_LINEAR,
-      .mag_filter = SDL_GPU_FILTER_LINEAR,
-      .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_LINEAR,
-      .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-      .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-      .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-      .enable_anisotropy = true,
-      .max_anisotropy = 16.f,
-    });
-  }
-  return this->_samplerAnisotropic;
-}
-
-/**
- * @fn SDL_GPUSampler *RenderDevice::samplerLinear(const RenderDevice *self)
- * @memberof RenderDevice
- */
-static SDL_GPUSampler *samplerLinear(const RenderDevice *self) {
-  assert(self);
-
-  RenderDevice *this = (RenderDevice *) self;
-  if (!this->_samplerLinear) {
-    this->_samplerLinear = $(self, createSampler, &(SDL_GPUSamplerCreateInfo) {
-      .min_filter = SDL_GPU_FILTER_LINEAR,
-      .mag_filter = SDL_GPU_FILTER_LINEAR,
-      .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_LINEAR,
-      .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-      .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-      .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-    });
-  }
-  return this->_samplerLinear;
-}
-
-/**
- * @fn SDL_GPUSampler *RenderDevice::samplerLinearClamp(const RenderDevice *self)
- * @memberof RenderDevice
- */
-static SDL_GPUSampler *samplerLinearClamp(const RenderDevice *self) {
-  assert(self);
-
-  RenderDevice *this = (RenderDevice *) self;
-  if (!this->_samplerLinearClamp) {
-    this->_samplerLinearClamp = $(self, createSampler, &(SDL_GPUSamplerCreateInfo) {
-      .min_filter = SDL_GPU_FILTER_LINEAR,
-      .mag_filter = SDL_GPU_FILTER_LINEAR,
-      .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
-      .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
-      .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
-      .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
-    });
-  }
-  return this->_samplerLinearClamp;
-}
-
-/**
- * @fn SDL_GPUSampler *RenderDevice::samplerNearest(const RenderDevice *self)
- * @memberof RenderDevice
- */
-static SDL_GPUSampler *samplerNearest(const RenderDevice *self) {
-  assert(self);
-
-  RenderDevice *this = (RenderDevice *) self;
-  if (!this->_samplerNearest) {
-    this->_samplerNearest = $(self, createSampler, &(SDL_GPUSamplerCreateInfo) {
-      .min_filter = SDL_GPU_FILTER_NEAREST,
-      .mag_filter = SDL_GPU_FILTER_NEAREST,
-      .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
-      .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
-      .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
-      .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
-    });
-  }
-  return this->_samplerNearest;
-}
-
-/**
  * @fn bool RenderDevice::setAllowedFramesInFlight(const RenderDevice *self, Uint32 allowed)
  * @memberof RenderDevice
  */
@@ -599,27 +268,11 @@ static bool setAllowedFramesInFlight(const RenderDevice *self, Uint32 allowed) {
 }
 
 /**
- * @fn void RenderDevice::setBufferName(const RenderDevice *self, SDL_GPUBuffer *buffer, const char *name)
- * @memberof RenderDevice
- */
-static void setBufferName(const RenderDevice *self, SDL_GPUBuffer *buffer, const char *name) {
-  SDL_SetGPUBufferName(self->device, buffer, name);
-}
-
-/**
  * @fn bool RenderDevice::setSwapchainParameters(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition, SDL_GPUPresentMode mode)
  * @memberof RenderDevice
  */
 static bool setSwapchainParameters(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition, SDL_GPUPresentMode mode) {
   return SDL_SetGPUSwapchainParameters(self->device, window, composition, mode);
-}
-
-/**
- * @fn void RenderDevice::setTextureName(const RenderDevice *self, SDL_GPUTexture *texture, const char *name)
- * @memberof RenderDevice
- */
-static void setTextureName(const RenderDevice *self, SDL_GPUTexture *texture, const char *name) {
-  SDL_SetGPUTextureName(self->device, texture, name);
 }
 
 /**
@@ -690,42 +343,6 @@ static void unmapTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffer 
 }
 
 /**
- * @fn void RenderDevice::uploadBuffer(const RenderDevice *self, SDL_GPUBuffer *buffer, const void *data, Uint32 size, Uint32 offset, bool cycle)
- * @memberof RenderDevice
- */
-static void uploadBuffer(const RenderDevice *self, SDL_GPUBuffer *buffer, const void *data, Uint32 size, Uint32 offset, bool cycle) {
-  assert(self);
-  assert(buffer);
-  assert(data);
-  assert(size);
-
-  SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->device, &(SDL_GPUTransferBufferCreateInfo) {
-    .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-    .size = size,
-  });
-  GPU_Assert(tbuf, "SDL_CreateGPUTransferBuffer");
-
-  void *mapped = SDL_MapGPUTransferBuffer(self->device, tbuf, cycle);
-  GPU_Assert(mapped, "SDL_MapGPUTransferBuffer");
-
-  memcpy(mapped, data, size);
-  SDL_UnmapGPUTransferBuffer(self->device, tbuf);
-
-  CommandBuffer *commands = $(self, acquireCommandBuffer);
-  CopyPass *copyPass = $(commands, beginCopyPass);
-
-  $(copyPass, uploadBuffer,
-    &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf },
-    &(SDL_GPUBufferRegion) { .buffer = buffer, .offset = offset, .size = size },
-    cycle);
-
-  release(copyPass);
-  $(self, submit, commands);
-  release(commands);
-  SDL_ReleaseGPUTransferBuffer(self->device, tbuf);
-}
-
-/**
  * @fn bool RenderDevice::waitForFences(const RenderDevice *self, bool wait_all, SDL_GPUFence *const *fences, Uint32 num_fences)
  * @memberof RenderDevice
  */
@@ -792,29 +409,16 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->loadComputePipeline = loadComputePipeline;
   ((RenderDeviceInterface *) clazz->interface)->mapTransferBuffer = mapTransferBuffer;
   ((RenderDeviceInterface *) clazz->interface)->queryFence = queryFence;
-  ((RenderDeviceInterface *) clazz->interface)->releaseBuffer = releaseBuffer;
-  ((RenderDeviceInterface *) clazz->interface)->releaseComputePipeline = releaseComputePipeline;
   ((RenderDeviceInterface *) clazz->interface)->releaseFence = releaseFence;
-  ((RenderDeviceInterface *) clazz->interface)->releaseGraphicsPipeline = releaseGraphicsPipeline;
-  ((RenderDeviceInterface *) clazz->interface)->releaseSampler = releaseSampler;
-  ((RenderDeviceInterface *) clazz->interface)->releaseShader = releaseShader;
-  ((RenderDeviceInterface *) clazz->interface)->releaseTexture = releaseTexture;
   ((RenderDeviceInterface *) clazz->interface)->releaseTransferBuffer = releaseTransferBuffer;
-  ((RenderDeviceInterface *) clazz->interface)->samplerAnisotropic = samplerAnisotropic;
-  ((RenderDeviceInterface *) clazz->interface)->samplerLinear = samplerLinear;
-  ((RenderDeviceInterface *) clazz->interface)->samplerLinearClamp = samplerLinearClamp;
-  ((RenderDeviceInterface *) clazz->interface)->samplerNearest = samplerNearest;
   ((RenderDeviceInterface *) clazz->interface)->setAllowedFramesInFlight = setAllowedFramesInFlight;
-  ((RenderDeviceInterface *) clazz->interface)->setBufferName = setBufferName;
   ((RenderDeviceInterface *) clazz->interface)->setSwapchainParameters = setSwapchainParameters;
-  ((RenderDeviceInterface *) clazz->interface)->setTextureName = setTextureName;
   ((RenderDeviceInterface *) clazz->interface)->setWindow = setWindow;
   ((RenderDeviceInterface *) clazz->interface)->submit = submit;
   ((RenderDeviceInterface *) clazz->interface)->submitAndFence = submitAndFence;
   ((RenderDeviceInterface *) clazz->interface)->textureSupportsFormat = textureSupportsFormat;
   ((RenderDeviceInterface *) clazz->interface)->textureSupportsSampleCount = textureSupportsSampleCount;
   ((RenderDeviceInterface *) clazz->interface)->unmapTransferBuffer = unmapTransferBuffer;
-  ((RenderDeviceInterface *) clazz->interface)->uploadBuffer = uploadBuffer;
   ((RenderDeviceInterface *) clazz->interface)->waitForFences = waitForFences;
   ((RenderDeviceInterface *) clazz->interface)->waitForIdle = waitForIdle;
   ((RenderDeviceInterface *) clazz->interface)->waitForSwapchain = waitForSwapchain;

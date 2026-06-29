@@ -45,6 +45,17 @@
 		AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
 		CCCB11DB70E4A962360A2119 /* CopyPass.c in Sources */ = {isa = PBXBuildFile; fileRef = C862954A9DD435C1FF7CD31D /* CopyPass.c */; };
 		CEA0030000000000000000F1 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
+		CEBA3F602FF30F1E00758CA6 /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = CEBA3F5E2FF30F1E00758CA6 /* Texture.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CEBA3F612FF30F1E00758CA6 /* Texture.c in Sources */ = {isa = PBXBuildFile; fileRef = CEBA3F5F2FF30F1E00758CA6 /* Texture.c */; };
+		CEBA3F6B2FF3211F00758CA6 /* GraphicsPipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = CEBA3F652FF3211F00758CA6 /* GraphicsPipeline.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CEBA3F6C2FF3211F00758CA6 /* Sampler.h in Headers */ = {isa = PBXBuildFile; fileRef = CEBA3F672FF3211F00758CA6 /* Sampler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CEBA3F6D2FF3211F00758CA6 /* ComputePipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = CEBA3F642FF3211F00758CA6 /* ComputePipeline.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CEBA3F6E2FF3211F00758CA6 /* Shader.h in Headers */ = {isa = PBXBuildFile; fileRef = CEBA3F692FF3211F00758CA6 /* Shader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CEBA3F6F2FF3211F00758CA6 /* Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CEBA3F622FF3211F00758CA6 /* Buffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CEBA3F702FF3211F00758CA6 /* GraphicsPipeline.c in Sources */ = {isa = PBXBuildFile; fileRef = CEBA3F662FF3211F00758CA6 /* GraphicsPipeline.c */; };
+		CEBA3F712FF3211F00758CA6 /* Buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = CEBA3F632FF3211F00758CA6 /* Buffer.c */; };
+		CEBA3F722FF3211F00758CA6 /* Shader.c in Sources */ = {isa = PBXBuildFile; fileRef = CEBA3F6A2FF3211F00758CA6 /* Shader.c */; };
+		CEBA3F732FF3211F00758CA6 /* Sampler.c in Sources */ = {isa = PBXBuildFile; fileRef = CEBA3F682FF3211F00758CA6 /* Sampler.c */; };
 		CECF83982FEF6A7200CB0CCA /* Mathlib.h in Headers */ = {isa = PBXBuildFile; fileRef = CECF83972FEF6A7200CB0CCA /* Mathlib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CECF83B52FEF765400CB0CCA /* Hello.frag.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A42FEF712F00CB0CCA /* Hello.frag.glsl */; };
 		CECF83B62FEF765400CB0CCA /* Hello.frag.msl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A52FEF712F00CB0CCA /* Hello.frag.msl */; };
@@ -62,7 +73,7 @@
 		CECF83C22FEF765400CB0CCA /* HelloCompute.vert.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83B02FEF712F00CB0CCA /* HelloCompute.vert.glsl */; };
 		CECF83C32FEF765400CB0CCA /* HelloCompute.vert.msl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83B12FEF712F00CB0CCA /* HelloCompute.vert.msl */; };
 		CECF83C42FEF765400CB0CCA /* HelloCompute.vert.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83B22FEF712F00CB0CCA /* HelloCompute.vert.spv */; };
-		CECF83C72FF03A3500CB0CCA /* Framebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CECF83C52FF03A3500CB0CCA /* Framebuffer.h */; };
+		CECF83C72FF03A3500CB0CCA /* Framebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CECF83C52FF03A3500CB0CCA /* Framebuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CECF83C82FF03A3500CB0CCA /* Framebuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = CECF83C62FF03A3500CB0CCA /* Framebuffer.c */; };
 		DF73824CC25298378B451056 /* CopyPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 59334BDAED542AB6DE565EDD /* CopyPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EE00100000000000000000B1 /* Hello.c in Sources */ = {isa = PBXBuildFile; fileRef = EE00010000000000000000B1 /* Hello.c */; };
@@ -175,6 +186,17 @@
 		C16D60B0E94469E649953EC5 /* ObjectivelyGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectivelyGPU.h; sourceTree = "<group>"; };
 		C862954A9DD435C1FF7CD31D /* CopyPass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CopyPass.c; sourceTree = "<group>"; };
 		CEA0030000000000000000F0 /* Objectively.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Objectively.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEBA3F5E2FF30F1E00758CA6 /* Texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
+		CEBA3F5F2FF30F1E00758CA6 /* Texture.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Texture.c; sourceTree = "<group>"; };
+		CEBA3F622FF3211F00758CA6 /* Buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
+		CEBA3F632FF3211F00758CA6 /* Buffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Buffer.c; sourceTree = "<group>"; };
+		CEBA3F642FF3211F00758CA6 /* ComputePipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComputePipeline.h; sourceTree = "<group>"; };
+		CEBA3F652FF3211F00758CA6 /* GraphicsPipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsPipeline.h; sourceTree = "<group>"; };
+		CEBA3F662FF3211F00758CA6 /* GraphicsPipeline.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GraphicsPipeline.c; sourceTree = "<group>"; };
+		CEBA3F672FF3211F00758CA6 /* Sampler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sampler.h; sourceTree = "<group>"; };
+		CEBA3F682FF3211F00758CA6 /* Sampler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Sampler.c; sourceTree = "<group>"; };
+		CEBA3F692FF3211F00758CA6 /* Shader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
+		CEBA3F6A2FF3211F00758CA6 /* Shader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Shader.c; sourceTree = "<group>"; };
 		CECF83942FEF65EB00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83952FEF65FF00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83962FEF65FF00CB0CCA /* ObjectivelyGPU.pc.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ObjectivelyGPU.pc.in; sourceTree = "<group>"; };
@@ -290,20 +312,31 @@
 		AFF3775B279FC0FE4D348FBA /* ObjectivelyGPU */ = {
 			isa = PBXGroup;
 			children = (
-				338EC7DCAE74C1B8C397D189 /* Config.h */,
-				6C38B23048C269B804E75F03 /* CommandBuffer.c */,
+				CEBA3F622FF3211F00758CA6 /* Buffer.h */,
+				CEBA3F632FF3211F00758CA6 /* Buffer.c */,
 				E71C479F7B60345FDDA44201 /* CommandBuffer.h */,
-				ED8024CA4186E352C1EC4CA1 /* ComputePass.c */,
+				6C38B23048C269B804E75F03 /* CommandBuffer.c */,
 				09B8DD26CDB7926D89445C91 /* ComputePass.h */,
-				C862954A9DD435C1FF7CD31D /* CopyPass.c */,
+				ED8024CA4186E352C1EC4CA1 /* ComputePass.c */,
+				CEBA3F642FF3211F00758CA6 /* ComputePipeline.h */,
+				338EC7DCAE74C1B8C397D189 /* Config.h */,
 				59334BDAED542AB6DE565EDD /* CopyPass.h */,
-				CECF83C62FF03A3500CB0CCA /* Framebuffer.c */,
+				C862954A9DD435C1FF7CD31D /* CopyPass.c */,
 				CECF83C52FF03A3500CB0CCA /* Framebuffer.h */,
+				CECF83C62FF03A3500CB0CCA /* Framebuffer.c */,
+				CEBA3F652FF3211F00758CA6 /* GraphicsPipeline.h */,
+				CEBA3F662FF3211F00758CA6 /* GraphicsPipeline.c */,
 				CECF83972FEF6A7200CB0CCA /* Mathlib.h */,
-				77315F9BC357C97B885E883C /* RenderDevice.c */,
 				9220C57BBAA3C951D8083799 /* RenderDevice.h */,
-				669BE73362E651792735CB1C /* RenderPass.c */,
+				77315F9BC357C97B885E883C /* RenderDevice.c */,
 				206D63692B601BD90F377BF5 /* RenderPass.h */,
+				669BE73362E651792735CB1C /* RenderPass.c */,
+				CEBA3F672FF3211F00758CA6 /* Sampler.h */,
+				CEBA3F682FF3211F00758CA6 /* Sampler.c */,
+				CEBA3F692FF3211F00758CA6 /* Shader.h */,
+				CEBA3F6A2FF3211F00758CA6 /* Shader.c */,
+				CEBA3F5E2FF30F1E00758CA6 /* Texture.h */,
+				CEBA3F5F2FF30F1E00758CA6 /* Texture.c */,
 				38F069D0DBE26C7E00B5B5EE /* Types.h */,
 				CECF83942FEF65EB00CB0CCA /* Makefile.am */,
 			);
@@ -375,15 +408,21 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEBA3F6F2FF3211F00758CA6 /* Buffer.h in Headers */,
 				6F351DFD232DA78A42D8B494 /* Config.h in Headers */,
-				2A17F0E01E5CC25A431FFBAD /* CommandBuffer.h in Headers */,
-				CECF83C72FF03A3500CB0CCA /* Framebuffer.h in Headers */,
+				CEBA3F6D2FF3211F00758CA6 /* ComputePipeline.h in Headers */,
 				034285033FECAB2D6BD6AE5B /* ComputePass.h in Headers */,
 				DF73824CC25298378B451056 /* CopyPass.h in Headers */,
-				CECF83982FEF6A7200CB0CCA /* Mathlib.h in Headers */,
+				2A17F0E01E5CC25A431FFBAD /* CommandBuffer.h in Headers */,
+				CECF83C72FF03A3500CB0CCA /* Framebuffer.h in Headers */,
+				CEBA3F6B2FF3211F00758CA6 /* GraphicsPipeline.h in Headers */,
 				A09AD953AC672E0DE9D1E26D /* ObjectivelyGPU.h in Headers */,
+				CECF83982FEF6A7200CB0CCA /* Mathlib.h in Headers */,
 				59897FC7BCC194032E971A9B /* RenderDevice.h in Headers */,
 				683F683E23149C267D613EA0 /* RenderPass.h in Headers */,
+				CEBA3F6C2FF3211F00758CA6 /* Sampler.h in Headers */,
+				CEBA3F6E2FF3211F00758CA6 /* Shader.h in Headers */,
+				CEBA3F602FF30F1E00758CA6 /* Texture.h in Headers */,
 				90C29A39257729BE8D4FDDF8 /* Types.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -577,12 +616,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEBA3F712FF3211F00758CA6 /* Buffer.c in Sources */,
 				36FBB92ACB08F2078D50C84D /* CommandBuffer.c in Sources */,
 				F73340493879CD8034F99D51 /* ComputePass.c in Sources */,
 				CCCB11DB70E4A962360A2119 /* CopyPass.c in Sources */,
 				CECF83C82FF03A3500CB0CCA /* Framebuffer.c in Sources */,
+				CEBA3F702FF3211F00758CA6 /* GraphicsPipeline.c in Sources */,
+				CEBA3F732FF3211F00758CA6 /* Sampler.c in Sources */,
+				CEBA3F722FF3211F00758CA6 /* Shader.c in Sources */,
 				86E5132F5DCCB6B674151343 /* RenderDevice.c in Sources */,
 				FF30FF2D56F9E4EA3C492CBB /* RenderPass.c in Sources */,
+				CEBA3F612FF30F1E00758CA6 /* Texture.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

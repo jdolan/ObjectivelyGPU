@@ -33,6 +33,7 @@
  */
 
 typedef struct CommandBuffer CommandBuffer;
+typedef struct GraphicsPipeline GraphicsPipeline;
 typedef struct RenderPass RenderPass;
 typedef struct RenderPassInterface RenderPassInterface;
 
@@ -84,9 +85,9 @@ struct RenderPass {
   SDL_GPURenderPass *pass;
 
   /**
-   * @brief The currentl pipeline, or `NULL`.
+   * @brief The currently bound pipeline, or `NULL`.
    */
-  SDL_GPUGraphicsPipeline *pipeline;
+  GraphicsPipeline *pipeline;
 
   /**
    * @brief The current scissor.
@@ -136,11 +137,11 @@ struct RenderPassInterface {
   void (*bindFragmentStorageTextures)(const RenderPass *self, Uint32 firstSlot, SDL_GPUTexture *const *textures, Uint32 num);
 
   /**
-   * @fn void RenderPass::bindPipeline(const RenderPass *self, SDL_GPUGraphicsPipeline *pipeline)
+   * @fn void RenderPass::bindPipeline(RenderPass *self, GraphicsPipeline *pipeline)
    * @brief Binds a graphics pipeline for subsequent draw calls.
    * @memberof RenderPass
    */
-  void (*bindPipeline)(const RenderPass *self, SDL_GPUGraphicsPipeline *pipeline);
+  void (*bindPipeline)(RenderPass *self, GraphicsPipeline *pipeline);
 
   /**
    * @fn void RenderPass::bindIndexBuffer(const RenderPass *self, const SDL_GPUBufferBinding *binding, SDL_GPUIndexElementSize indexElementSize)

@@ -35,6 +35,7 @@
 typedef struct CommandBuffer CommandBuffer;
 typedef struct ComputePass ComputePass;
 typedef struct ComputePassInterface ComputePassInterface;
+typedef struct ComputePipeline ComputePipeline;
 
 /**
  * @brief A scoped compute pass for recording GPU compute dispatches.
@@ -81,7 +82,7 @@ struct ComputePass {
   /**
    * @brief The currently bound pipeline, or `NULL`.
    */
-  SDL_GPUComputePipeline *pipeline;
+  ComputePipeline *pipeline;
 };
 
 /**
@@ -95,11 +96,11 @@ struct ComputePassInterface {
   ObjectInterface objectInterface;
 
   /**
-   * @fn void ComputePass::bindPipeline(const ComputePass *self, SDL_GPUComputePipeline *pipeline)
+   * @fn void ComputePass::bindPipeline(ComputePass *self, ComputePipeline *pipeline)
    * @brief Binds a compute pipeline for subsequent dispatches.
    * @memberof ComputePass
    */
-  void (*bindPipeline)(const ComputePass *self, SDL_GPUComputePipeline *pipeline);
+  void (*bindPipeline)(ComputePass *self, ComputePipeline *pipeline);
 
   /**
    * @fn void ComputePass::bindSamplers(const ComputePass *self, Uint32 firstSlot, const SDL_GPUTextureSamplerBinding *bindings, Uint32 num)

@@ -25,6 +25,7 @@
 
 #include "Framebuffer.h"
 #include "RenderDevice.h"
+#include "Texture.h"
 
 #define _Class _Framebuffer
 
@@ -37,8 +38,8 @@ static void dealloc(Object *self) {
 
   Framebuffer *this = (Framebuffer *) self;
 
-  $(this->device, releaseTexture, this->colorTexture);
-  $(this->device, releaseTexture, this->depthTexture);
+  release(this->colorTexture);
+  release(this->depthTexture);
 
   release(this->device);
 
@@ -56,7 +57,7 @@ static SDL_GPUColorTargetInfo colorTargetInfo(const Framebuffer *self, SDL_GPULo
   assert(self->colorTexture);
 
   return (SDL_GPUColorTargetInfo) {
-    .texture = self->colorTexture,
+    .texture = self->colorTexture->texture,
     .load_op = loadOp,
     .store_op = storeOp,
     .clear_color = clearColor ? *clearColor : (SDL_FColor) { 0.f, 0.f, 0.f, 1.f },
@@ -72,7 +73,7 @@ static SDL_GPUDepthStencilTargetInfo depthTargetInfo(const Framebuffer *self, SD
   assert(self->depthTexture);
 
   return (SDL_GPUDepthStencilTargetInfo) {
-    .texture = self->depthTexture,
+    .texture = self->depthTexture->texture,
     .load_op = loadOp,
     .store_op = storeOp,
     .clear_depth = clearDepth,
@@ -113,8 +114,8 @@ static bool resize(Framebuffer *self, const SDL_Size *size) {
     return false;
   }
 
-  $(self->device, releaseTexture, self->colorTexture);
-  $(self->device, releaseTexture, self->depthTexture);
+  release(self->colorTexture);
+  release(self->depthTexture);
 
   self->size = *size;
 
