@@ -1,5 +1,5 @@
 /*
- * ObjectivelyGPU: SDL3 GPU API wrapper for GNU C.
+ * ObjectivelyGPU: Object oriented graphics framework for SDL3 and C.
  * Copyright (C) 2014 Jay Dolan <jay@jaydolan.com>
  *
  * This software is provided 'as-is', without any express or implied

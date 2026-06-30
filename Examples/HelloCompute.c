@@ -1,5 +1,5 @@
 /*
- * ObjectivelyGPU: Object oriented GPU layer for SDL3 and GNU C.
+ * ObjectivelyGPU: Object oriented graphics framework for SDL3 and C.
  * Copyright (C) 2026 Jay Dolan <jay@jaydolan.com>
  *
  * This software is provided 'as-is', without any express or implied

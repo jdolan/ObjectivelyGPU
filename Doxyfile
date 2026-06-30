@@ -1,7 +1,7 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "ObjectivelyGPU"
 PROJECT_NUMBER         =
-PROJECT_BRIEF          = "Object oriented GPU framework for SDL3 and GNU C"
+PROJECT_BRIEF          = "Object oriented graphics framework for SDL3 and C"
 PROJECT_LOGO           =
 OUTPUT_DIRECTORY       = Documentation
 OUTPUT_LANGUAGE        = English
@@ -16,6 +16,7 @@ GENERATE_BUGLIST       = YES
 GENERATE_DEPRECATEDLIST= YES
 INPUT                  = Documentation/index.md Sources
 INPUT_ENCODING         = UTF-8
+IMAGE_PATH             = Documentation
 RECURSIVE              = YES
 EXCLUDE_SYMBOLS        = *Interface
 USE_MDFILE_AS_MAINPAGE = Documentation/index.md
