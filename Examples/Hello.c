@@ -240,7 +240,7 @@ SDL_AppResult SDL_AppInit(void **appState, int argc, char *argv[]) {
   int w = 0, h = 0;
   SDL_GetWindowSizeInPixels(app->window, &w, &h);
 
-  const SDL_GPUTextureFormat colorFormat = $(app->renderDevice, getSwapchainTextureFormat, app->window);
+  const SDL_GPUTextureFormat colorFormat = $(app->renderDevice, getSwapchainTextureFormat);
   app->framebuffer = $(app->renderDevice, createFramebuffer, &(GPU_FramebufferCreateInfo) {
     .size = MakeSize(w, h),
     .colorFormat = colorFormat,

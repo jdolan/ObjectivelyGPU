@@ -109,7 +109,7 @@ static Texture *initWithDevice(Texture *self, RenderDevice *device, const SDL_GP
         false);
 
       release(copyPass);
-      $(device, submit, commands);
+      $(commands, submit);
       release(commands);
       SDL_ReleaseGPUTransferBuffer(device->device, tbuf);
     }

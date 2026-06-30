@@ -295,16 +295,15 @@ struct RenderDeviceInterface {
   void (*endFrame)(RenderDevice *self);
 
   /**
-   * @fn SDL_GPUTextureFormat RenderDevice::getSwapchainTextureFormat(const RenderDevice *self, SDL_Window *window)
-   * @brief Returns the pixel format of the swapchain for the given window.
+   * @fn SDL_GPUTextureFormat RenderDevice::getSwapchainTextureFormat(const RenderDevice *self)
+   * @brief Returns the pixel format of this device's swapchain.
    * @details Useful for configuring render-pass colour target formats or creating
-   *   pipelines that write to the swapchain.
+   *   pipelines that write to the swapchain. The device must have a window claimed.
    * @param self The RenderDevice.
-   * @param window The window whose swapchain format to query.
    * @return The `SDL_GPUTextureFormat` of the window's swapchain.
    * @memberof RenderDevice
    */
-  SDL_GPUTextureFormat (*getSwapchainTextureFormat)(const RenderDevice *self, SDL_Window *window);
+  SDL_GPUTextureFormat (*getSwapchainTextureFormat)(const RenderDevice *self);
 
   /**
    * @fn RenderDevice *RenderDevice::init(RenderDevice *self)
@@ -436,18 +435,17 @@ struct RenderDeviceInterface {
   void (*setFramebuffer)(RenderDevice *self, Framebuffer *framebuffer);
 
   /**
-   * @fn bool RenderDevice::setSwapchainParameters(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition, SDL_GPUPresentMode mode)
-   * @brief Configures swapchain composition and present mode for a window.
-   * @details Use `windowSupportsSwapchainComposition` and `windowSupportsPresentMode`
+   * @fn bool RenderDevice::setSwapchainParameters(const RenderDevice *self, SDL_GPUSwapchainComposition composition, SDL_GPUPresentMode mode)
+   * @brief Configures swapchain composition and present mode for this device's window.
+   * @details Use `supportsSwapchainComposition` and `supportsPresentMode`
    *   to guard against unsupported combinations before calling this.
    * @param self The RenderDevice.
-   * @param window The window whose swapchain to configure.
    * @param composition Colour space / HDR composition mode.
    * @param mode Presentation mode (vsync, mailbox, immediate, etc.).
    * @return `true` on success, `false` if the combination is unsupported.
    * @memberof RenderDevice
    */
-  bool (*setSwapchainParameters)(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition, SDL_GPUPresentMode mode);
+  bool (*setSwapchainParameters)(const RenderDevice *self, SDL_GPUSwapchainComposition composition, SDL_GPUPresentMode mode);
 
   /**
    * @fn void RenderDevice::setWindow(RenderDevice *self, SDL_Window *window)
@@ -462,28 +460,24 @@ struct RenderDeviceInterface {
   void (*setWindow)(RenderDevice *self, SDL_Window *window);
 
   /**
-   * @fn void RenderDevice::submit(const RenderDevice *self, CommandBuffer *commands)
-   * @brief Submits a recorded CommandBuffer to the GPU for execution.
-   * @details The CommandBuffer's underlying `SDL_GPUCommandBuffer` is consumed;
-   *   the caller must still `release` the CommandBuffer object.
+   * @fn bool RenderDevice::supportsPresentMode(const RenderDevice *self, SDL_GPUPresentMode mode)
+   * @brief Queries whether this device's swapchain supports the given present mode.
    * @param self The RenderDevice.
-   * @param commands The CommandBuffer to submit.
+   * @param mode The present mode to test.
+   * @return `true` if the present mode is supported.
    * @memberof RenderDevice
    */
-  void (*submit)(const RenderDevice *self, CommandBuffer *commands);
+  bool (*supportsPresentMode)(const RenderDevice *self, SDL_GPUPresentMode mode);
 
   /**
-   * @fn SDL_GPUFence *RenderDevice::submitAndFence(const RenderDevice *self, CommandBuffer *commands)
-   * @brief Submits a CommandBuffer and returns a fence for CPU synchronisation.
-   * @details The fence becomes signaled when all GPU work in @p commands has completed.
-   *   Use `queryFence` or `waitForFences` to poll or block on it, then release it
-   *   with `releaseFence`.
+   * @fn bool RenderDevice::supportsSwapchainComposition(const RenderDevice *self, SDL_GPUSwapchainComposition composition)
+   * @brief Queries whether this device's swapchain supports the given composition (colour space / HDR mode).
    * @param self The RenderDevice.
-   * @param commands The CommandBuffer to submit.
-   * @return A new `SDL_GPUFence`. GPU_Asserts on failure. Release with `releaseFence`.
+   * @param composition The swapchain composition to test.
+   * @return `true` if the composition is supported.
    * @memberof RenderDevice
    */
-  SDL_GPUFence *(*submitAndFence)(const RenderDevice *self, CommandBuffer *commands);
+  bool (*supportsSwapchainComposition)(const RenderDevice *self, SDL_GPUSwapchainComposition composition);
 
   /**
    * @fn bool RenderDevice::textureSupportsFormat(const RenderDevice *self, SDL_GPUTextureFormat format, SDL_GPUTextureType type, SDL_GPUTextureUsageFlags usage)
@@ -543,36 +537,13 @@ struct RenderDeviceInterface {
   bool (*waitForIdle)(const RenderDevice *self);
 
   /**
-   * @fn bool RenderDevice::waitForSwapchain(const RenderDevice *self, SDL_Window *window)
-   * @brief Blocks until the swapchain for @p window is available for the next frame.
+   * @fn bool RenderDevice::waitForSwapchain(const RenderDevice *self)
+   * @brief Blocks until this device's swapchain is available for the next frame.
    * @param self The RenderDevice.
-   * @param window The window whose swapchain to wait for.
    * @return `true` on success, `false` on error.
    * @memberof RenderDevice
    */
-  bool (*waitForSwapchain)(const RenderDevice *self, SDL_Window *window);
-
-  /**
-   * @fn bool RenderDevice::windowSupportsPresentMode(const RenderDevice *self, SDL_Window *window, SDL_GPUPresentMode mode)
-   * @brief Queries whether a window's swapchain supports the given present mode.
-   * @param self The RenderDevice.
-   * @param window The window to query.
-   * @param mode The present mode to test.
-   * @return `true` if the present mode is supported for @p window.
-   * @memberof RenderDevice
-   */
-  bool (*windowSupportsPresentMode)(const RenderDevice *self, SDL_Window *window, SDL_GPUPresentMode mode);
-
-  /**
-   * @fn bool RenderDevice::windowSupportsSwapchainComposition(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition)
-   * @brief Queries whether a window supports the given swapchain composition (colour space / HDR mode).
-   * @param self The RenderDevice.
-   * @param window The window to query.
-   * @param composition The swapchain composition to test.
-   * @return `true` if the composition is supported for @p window.
-   * @memberof RenderDevice
-   */
-  bool (*windowSupportsSwapchainComposition)(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition);
+  bool (*waitForSwapchain)(const RenderDevice *self);
 };
 
 /**

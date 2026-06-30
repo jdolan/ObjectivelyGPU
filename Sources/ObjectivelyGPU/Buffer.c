@@ -150,7 +150,7 @@ static void upload(Buffer *self, const void *data, Uint32 size, Uint32 offset, b
     cycle);
 
   release(copyPass);
-  $(self->device, submit, commands);
+  $(commands, submit);
   release(commands);
   SDL_ReleaseGPUTransferBuffer(self->device->device, tbuf);
 }

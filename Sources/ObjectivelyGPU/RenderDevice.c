@@ -40,6 +40,19 @@
 #include "Shader.h"
 #include "Texture.h"
 
+/**
+ * @brief Whether to create the `SDL_GPUDevice` with backend validation/debug layers.
+ * @details Defaults to enabled unless `NDEBUG` is defined (i.e. on for debug builds,
+ *   off for release). Override by defining `GPU_DEBUG` to `true` or `false` at build time.
+ */
+#ifndef GPU_DEBUG
+ #ifdef NDEBUG
+  #define GPU_DEBUG false
+ #else
+  #define GPU_DEBUG true
+ #endif
+#endif
+
 #define _Class _RenderDevice
 
 #pragma mark - Object
@@ -240,8 +253,14 @@ static Texture *createTextureFromSurface(RenderDevice *self, SDL_Surface *surfac
 
   return $(alloc(Texture), initWithSurface, self, surface, usage);
 }
-static SDL_GPUTextureFormat getSwapchainTextureFormat(const RenderDevice *self, SDL_Window *window) {
-  return SDL_GetGPUSwapchainTextureFormat(self->device, window);
+
+/**
+ * @fn SDL_GPUTextureFormat RenderDevice::getSwapchainTextureFormat(const RenderDevice *self)
+ * @memberof RenderDevice
+ */
+static SDL_GPUTextureFormat getSwapchainTextureFormat(const RenderDevice *self) {
+  assert(self->window);
+  return SDL_GetGPUSwapchainTextureFormat(self->device, self->window);
 }
 
 /**
@@ -258,7 +277,7 @@ static RenderDevice *init(RenderDevice *self) {
       SDL_GPU_SHADERFORMAT_SPIRV |
       SDL_GPU_SHADERFORMAT_DXIL;
 
-    self->device = SDL_CreateGPUDevice(formats, false, NULL);
+    self->device = SDL_CreateGPUDevice(formats, GPU_DEBUG, NULL);
     GPU_Assert(self->device, "SDL_CreateGPUDevice");
   }
 
@@ -356,8 +375,9 @@ static void setFramebuffer(RenderDevice *self, Framebuffer *framebuffer) {
  * @fn bool RenderDevice::setSwapchainParameters(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition, SDL_GPUPresentMode mode)
  * @memberof RenderDevice
  */
-static bool setSwapchainParameters(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition, SDL_GPUPresentMode mode) {
-  return SDL_SetGPUSwapchainParameters(self->device, window, composition, mode);
+static bool setSwapchainParameters(const RenderDevice *self, SDL_GPUSwapchainComposition composition, SDL_GPUPresentMode mode) {
+  assert(self->window);
+  return SDL_SetGPUSwapchainParameters(self->device, self->window, composition, mode);
 }
 
 /**
@@ -383,21 +403,21 @@ static void setWindow(RenderDevice *self, SDL_Window *window) {
 }
 
 /**
- * @fn void RenderDevice::submit(const RenderDevice *self, CommandBuffer *commands)
+ * @fn bool RenderDevice::supportsPresentMode(const RenderDevice *self, SDL_GPUPresentMode mode)
  * @memberof RenderDevice
  */
-static void submit(const RenderDevice *self, CommandBuffer *commands) {
-  assert(commands);
-  $(commands, submit);
+static bool supportsPresentMode(const RenderDevice *self, SDL_GPUPresentMode mode) {
+  assert(self->window);
+  return SDL_WindowSupportsGPUPresentMode(self->device, self->window, mode);
 }
 
 /**
- * @fn SDL_GPUFence *RenderDevice::submitAndFence(const RenderDevice *self, CommandBuffer *commands)
+ * @fn bool RenderDevice::supportsSwapchainComposition(const RenderDevice *self, SDL_GPUSwapchainComposition composition)
  * @memberof RenderDevice
  */
-static SDL_GPUFence *submitAndFence(const RenderDevice *self, CommandBuffer *commands) {
-  assert(commands);
-  return $(commands, submitAndFence);
+static bool supportsSwapchainComposition(const RenderDevice *self, SDL_GPUSwapchainComposition composition) {
+  assert(self->window);
+  return SDL_WindowSupportsGPUSwapchainComposition(self->device, self->window, composition);
 }
 
 /**
@@ -441,27 +461,12 @@ static bool waitForIdle(const RenderDevice *self) {
 }
 
 /**
- * @fn bool RenderDevice::waitForSwapchain(const RenderDevice *self, SDL_Window *window)
+ * @fn bool RenderDevice::waitForSwapchain(const RenderDevice *self)
  * @memberof RenderDevice
  */
-static bool waitForSwapchain(const RenderDevice *self, SDL_Window *window) {
-  return SDL_WaitForGPUSwapchain(self->device, window);
-}
-
-/**
- * @fn bool RenderDevice::windowSupportsPresentMode(const RenderDevice *self, SDL_Window *window, SDL_GPUPresentMode mode)
- * @memberof RenderDevice
- */
-static bool windowSupportsPresentMode(const RenderDevice *self, SDL_Window *window, SDL_GPUPresentMode mode) {
-  return SDL_WindowSupportsGPUPresentMode(self->device, window, mode);
-}
-
-/**
- * @fn bool RenderDevice::windowSupportsSwapchainComposition(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition)
- * @memberof RenderDevice
- */
-static bool windowSupportsSwapchainComposition(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition) {
-  return SDL_WindowSupportsGPUSwapchainComposition(self->device, window, composition);
+static bool waitForSwapchain(const RenderDevice *self) {
+  assert(self->window);
+  return SDL_WaitForGPUSwapchain(self->device, self->window);
 }
 
 #pragma mark - Class lifecycle
@@ -500,16 +505,14 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->setFramebuffer = setFramebuffer;
   ((RenderDeviceInterface *) clazz->interface)->setSwapchainParameters = setSwapchainParameters;
   ((RenderDeviceInterface *) clazz->interface)->setWindow = setWindow;
-  ((RenderDeviceInterface *) clazz->interface)->submit = submit;
-  ((RenderDeviceInterface *) clazz->interface)->submitAndFence = submitAndFence;
+  ((RenderDeviceInterface *) clazz->interface)->supportsPresentMode = supportsPresentMode;
+  ((RenderDeviceInterface *) clazz->interface)->supportsSwapchainComposition = supportsSwapchainComposition;
   ((RenderDeviceInterface *) clazz->interface)->textureSupportsFormat = textureSupportsFormat;
   ((RenderDeviceInterface *) clazz->interface)->textureSupportsSampleCount = textureSupportsSampleCount;
   ((RenderDeviceInterface *) clazz->interface)->unmapTransferBuffer = unmapTransferBuffer;
   ((RenderDeviceInterface *) clazz->interface)->waitForFences = waitForFences;
   ((RenderDeviceInterface *) clazz->interface)->waitForIdle = waitForIdle;
   ((RenderDeviceInterface *) clazz->interface)->waitForSwapchain = waitForSwapchain;
-  ((RenderDeviceInterface *) clazz->interface)->windowSupportsPresentMode = windowSupportsPresentMode;
-  ((RenderDeviceInterface *) clazz->interface)->windowSupportsSwapchainComposition = windowSupportsSwapchainComposition;
 }
 
 /**
