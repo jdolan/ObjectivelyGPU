@@ -33,6 +33,12 @@
 		A09AD953AC672E0DE9D1E26D /* ObjectivelyGPU.h in Headers */ = {isa = PBXBuildFile; fileRef = C16D60B0E94469E649953EC5 /* ObjectivelyGPU.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
 		CCCB11DB70E4A962360A2119 /* CopyPass.c in Sources */ = {isa = PBXBuildFile; fileRef = C862954A9DD435C1FF7CD31D /* CopyPass.c */; };
+		CE1643392FF413C000863996 /* HelloCompute.comp.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AB2FEF712F00CB0CCA /* HelloCompute.comp.metal */; };
+		CE16433A2FF413C000863996 /* HelloCompute.comp.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AC2FEF712F00CB0CCA /* HelloCompute.comp.spv */; };
+		CE16433B2FF413C000863996 /* HelloCompute.frag.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AE2FEF712F00CB0CCA /* HelloCompute.frag.metal */; };
+		CE16433C2FF413C000863996 /* HelloCompute.frag.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AF2FEF712F00CB0CCA /* HelloCompute.frag.spv */; };
+		CE16433D2FF413C000863996 /* HelloCompute.vert.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83B12FEF712F00CB0CCA /* HelloCompute.vert.metal */; };
+		CE16433E2FF413C000863996 /* HelloCompute.vert.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83B22FEF712F00CB0CCA /* HelloCompute.vert.spv */; };
 		CEA0030000000000000000F1 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
 		CEBA3F602FF30F1E00758CA6 /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = CEBA3F5E2FF30F1E00758CA6 /* Texture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEBA3F612FF30F1E00758CA6 /* Texture.c in Sources */ = {isa = PBXBuildFile; fileRef = CEBA3F5F2FF30F1E00758CA6 /* Texture.c */; };
@@ -49,22 +55,10 @@
 		CEBA3F772FF3418E00758CA6 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
 		CEBA3F782FF3419100758CA6 /* ObjectivelyGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6251F22589273797656C269E /* ObjectivelyGPU.framework */; };
 		CECF83982FEF6A7200CB0CCA /* Mathlib.h in Headers */ = {isa = PBXBuildFile; fileRef = CECF83972FEF6A7200CB0CCA /* Mathlib.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CECF83B52FEF765400CB0CCA /* Hello.frag.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A42FEF712F00CB0CCA /* Hello.frag.glsl */; };
 		CECF83B62FEF765400CB0CCA /* Hello.frag.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A52FEF712F00CB0CCA /* Hello.frag.metal */; };
 		CECF83B72FEF765400CB0CCA /* Hello.frag.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A62FEF712F00CB0CCA /* Hello.frag.spv */; };
-		CECF83B82FEF765400CB0CCA /* Hello.vert.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A72FEF712F00CB0CCA /* Hello.vert.glsl */; };
 		CECF83B92FEF765400CB0CCA /* Hello.vert.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A82FEF712F00CB0CCA /* Hello.vert.metal */; };
 		CECF83BA2FEF765400CB0CCA /* Hello.vert.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A92FEF712F00CB0CCA /* Hello.vert.spv */; };
-		CECF83BB2FEF765400CB0CCA /* HelloCompute.c in CopyFiles */ = {isa = PBXBuildFile; fileRef = EE00020000000000000000B2 /* HelloCompute.c */; };
-		CECF83BC2FEF765400CB0CCA /* HelloCompute.comp.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AA2FEF712F00CB0CCA /* HelloCompute.comp.glsl */; };
-		CECF83BD2FEF765400CB0CCA /* HelloCompute.comp.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AB2FEF712F00CB0CCA /* HelloCompute.comp.metal */; };
-		CECF83BE2FEF765400CB0CCA /* HelloCompute.comp.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AC2FEF712F00CB0CCA /* HelloCompute.comp.spv */; };
-		CECF83BF2FEF765400CB0CCA /* HelloCompute.frag.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AD2FEF712F00CB0CCA /* HelloCompute.frag.glsl */; };
-		CECF83C02FEF765400CB0CCA /* HelloCompute.frag.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AE2FEF712F00CB0CCA /* HelloCompute.frag.metal */; };
-		CECF83C12FEF765400CB0CCA /* HelloCompute.frag.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AF2FEF712F00CB0CCA /* HelloCompute.frag.spv */; };
-		CECF83C22FEF765400CB0CCA /* HelloCompute.vert.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83B02FEF712F00CB0CCA /* HelloCompute.vert.glsl */; };
-		CECF83C32FEF765400CB0CCA /* HelloCompute.vert.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83B12FEF712F00CB0CCA /* HelloCompute.vert.metal */; };
-		CECF83C42FEF765400CB0CCA /* HelloCompute.vert.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83B22FEF712F00CB0CCA /* HelloCompute.vert.spv */; };
 		CECF83C72FF03A3500CB0CCA /* Framebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CECF83C52FF03A3500CB0CCA /* Framebuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CECF83C82FF03A3500CB0CCA /* Framebuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = CECF83C62FF03A3500CB0CCA /* Framebuffer.c */; };
 		DF73824CC25298378B451056 /* CopyPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 59334BDAED542AB6DE565EDD /* CopyPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -103,6 +97,21 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		CE1643382FF413A800863996 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				CE1643392FF413C000863996 /* HelloCompute.comp.metal in CopyFiles */,
+				CE16433A2FF413C000863996 /* HelloCompute.comp.spv in CopyFiles */,
+				CE16433B2FF413C000863996 /* HelloCompute.frag.metal in CopyFiles */,
+				CE16433C2FF413C000863996 /* HelloCompute.frag.spv in CopyFiles */,
+				CE16433D2FF413C000863996 /* HelloCompute.vert.metal in CopyFiles */,
+				CE16433E2FF413C000863996 /* HelloCompute.vert.spv in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CECF83B32FEF75A400CB0CCA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -118,22 +127,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				CECF83B52FEF765400CB0CCA /* Hello.frag.glsl in CopyFiles */,
 				CECF83B62FEF765400CB0CCA /* Hello.frag.metal in CopyFiles */,
 				CECF83B72FEF765400CB0CCA /* Hello.frag.spv in CopyFiles */,
-				CECF83B82FEF765400CB0CCA /* Hello.vert.glsl in CopyFiles */,
 				CECF83B92FEF765400CB0CCA /* Hello.vert.metal in CopyFiles */,
 				CECF83BA2FEF765400CB0CCA /* Hello.vert.spv in CopyFiles */,
-				CECF83BB2FEF765400CB0CCA /* HelloCompute.c in CopyFiles */,
-				CECF83BC2FEF765400CB0CCA /* HelloCompute.comp.glsl in CopyFiles */,
-				CECF83BD2FEF765400CB0CCA /* HelloCompute.comp.metal in CopyFiles */,
-				CECF83BE2FEF765400CB0CCA /* HelloCompute.comp.spv in CopyFiles */,
-				CECF83BF2FEF765400CB0CCA /* HelloCompute.frag.glsl in CopyFiles */,
-				CECF83C02FEF765400CB0CCA /* HelloCompute.frag.metal in CopyFiles */,
-				CECF83C12FEF765400CB0CCA /* HelloCompute.frag.spv in CopyFiles */,
-				CECF83C22FEF765400CB0CCA /* HelloCompute.vert.glsl in CopyFiles */,
-				CECF83C32FEF765400CB0CCA /* HelloCompute.vert.metal in CopyFiles */,
-				CECF83C42FEF765400CB0CCA /* HelloCompute.vert.spv in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,6 +445,7 @@
 			buildPhases = (
 				EE00500000000000000000B1 /* Sources */,
 				EE00600000000000000000B1 /* Frameworks */,
+				CE1643382FF413A800863996 /* CopyFiles */,
 			);
 			buildRules = (
 			);

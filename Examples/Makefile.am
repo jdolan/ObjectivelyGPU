@@ -19,53 +19,34 @@ LDADD = \
 Hello_SOURCES = Hello.c
 HelloCompute_SOURCES = HelloCompute.c
 
-# All GLSL sources and compiled blobs are versioned in the repository.
-# Normal builds never invoke glslc or shadercross.  Run 'make shaders' after
-# editing a .glsl file to regenerate the platform blobs.
-
-GLSLC = glslc
-SHADERCROSS = shadercross
-
-GLSL_SHADERS = \
+# The compiled .spv/.metal blobs are versioned, so normal builds never need
+# glslc/shadercross. Run 'make shaders' after editing a .glsl.
+EXTRA_DIST = \
 	Hello.vert.glsl \
 	Hello.frag.glsl \
-	HelloCompute.comp.glsl \
-	HelloCompute.vert.glsl \
-	HelloCompute.frag.glsl
-
-METAL_SHADERS = \
 	Hello.vert.metal \
 	Hello.frag.metal \
-	HelloCompute.comp.metal \
-	HelloCompute.vert.metal \
-	HelloCompute.frag.metal
-
-SPIRV_SHADERS = \
 	Hello.vert.spv \
 	Hello.frag.spv \
+	HelloCompute.comp.glsl \
+	HelloCompute.vert.glsl \
+	HelloCompute.frag.glsl \
+	HelloCompute.comp.metal \
+	HelloCompute.vert.metal \
+	HelloCompute.frag.metal \
 	HelloCompute.comp.spv \
 	HelloCompute.vert.spv \
 	HelloCompute.frag.spv
 
-EXTRA_DIST = $(GLSL_SHADERS) $(METAL_SHADERS) $(SPIRV_SHADERS)
-
 .PHONY: shaders
-shaders: $(METAL_SHADERS) $(SPIRV_SHADERS)
-
-$(srcdir)/%.vert.metal: $(srcdir)/%.vert.spv
-	$(SHADERCROSS) $< -s SPIRV -d MSL -t vertex -o $@
-
-$(srcdir)/%.frag.metal: $(srcdir)/%.frag.spv
-	$(SHADERCROSS) $< -s SPIRV -d MSL -t fragment -o $@
-
-$(srcdir)/%.comp.metal: $(srcdir)/%.comp.spv
-	$(SHADERCROSS) $< -s SPIRV -d MSL -t compute -o $@
-
-$(srcdir)/%.vert.spv: $(srcdir)/%.vert.glsl
-	$(GLSLC) -fshader-stage=vert $< -o $@
-
-$(srcdir)/%.frag.spv: $(srcdir)/%.frag.glsl
-	$(GLSLC) -fshader-stage=frag $< -o $@
-
-$(srcdir)/%.comp.spv: $(srcdir)/%.comp.glsl
-	$(GLSLC) -fshader-stage=comp $< -o $@
+shaders:
+	$(GLSLC) -fshader-stage=vert Hello.vert.glsl -o Hello.vert.spv
+	$(GLSLC) -fshader-stage=frag Hello.frag.glsl -o Hello.frag.spv
+	$(GLSLC) -fshader-stage=comp HelloCompute.comp.glsl -o HelloCompute.comp.spv
+	$(GLSLC) -fshader-stage=vert HelloCompute.vert.glsl -o HelloCompute.vert.spv
+	$(GLSLC) -fshader-stage=frag HelloCompute.frag.glsl -o HelloCompute.frag.spv
+	$(SHADERCROSS) Hello.vert.spv -s SPIRV -d MSL -t vertex -o Hello.vert.metal
+	$(SHADERCROSS) Hello.frag.spv -s SPIRV -d MSL -t fragment -o Hello.frag.metal
+	$(SHADERCROSS) HelloCompute.comp.spv -s SPIRV -d MSL -t compute -o HelloCompute.comp.metal
+	$(SHADERCROSS) HelloCompute.vert.spv -s SPIRV -d MSL -t vertex -o HelloCompute.vert.metal
+	$(SHADERCROSS) HelloCompute.frag.spv -s SPIRV -d MSL -t fragment -o HelloCompute.frag.metal
