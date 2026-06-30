@@ -20,20 +20,35 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Sources\ObjectivelyGPU.h" />
+    <ClInclude Include="..\Sources\ObjectivelyGPU\Buffer.h" />
     <ClInclude Include="..\Sources\ObjectivelyGPU\CommandBuffer.h" />
     <ClInclude Include="..\Sources\ObjectivelyGPU\ComputePass.h" />
+    <ClInclude Include="..\Sources\ObjectivelyGPU\ComputePipeline.h" />
     <ClInclude Include="..\Sources\ObjectivelyGPU\CopyPass.h" />
+    <ClInclude Include="..\Sources\ObjectivelyGPU\Framebuffer.h" />
+    <ClInclude Include="..\Sources\ObjectivelyGPU\GraphicsPipeline.h" />
+    <ClInclude Include="..\Sources\ObjectivelyGPU\Mathlib.h" />
     <ClInclude Include="..\Sources\ObjectivelyGPU\RenderDevice.h" />
     <ClInclude Include="..\Sources\ObjectivelyGPU\RenderPass.h" />
+    <ClInclude Include="..\Sources\ObjectivelyGPU\Sampler.h" />
+    <ClInclude Include="..\Sources\ObjectivelyGPU\Shader.h" />
+    <ClInclude Include="..\Sources\ObjectivelyGPU\Texture.h" />
     <ClInclude Include="..\Sources\ObjectivelyGPU\Types.h" />
     <ClInclude Include="Sources\WindowlyGPU.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Sources\ObjectivelyGPU\Buffer.c" />
     <ClCompile Include="..\Sources\ObjectivelyGPU\CommandBuffer.c" />
     <ClCompile Include="..\Sources\ObjectivelyGPU\ComputePass.c" />
+    <ClCompile Include="..\Sources\ObjectivelyGPU\ComputePipeline.c" />
     <ClCompile Include="..\Sources\ObjectivelyGPU\CopyPass.c" />
+    <ClCompile Include="..\Sources\ObjectivelyGPU\Framebuffer.c" />
+    <ClCompile Include="..\Sources\ObjectivelyGPU\GraphicsPipeline.c" />
     <ClCompile Include="..\Sources\ObjectivelyGPU\RenderDevice.c" />
     <ClCompile Include="..\Sources\ObjectivelyGPU\RenderPass.c" />
+    <ClCompile Include="..\Sources\ObjectivelyGPU\Sampler.c" />
+    <ClCompile Include="..\Sources\ObjectivelyGPU\Shader.c" />
+    <ClCompile Include="..\Sources\ObjectivelyGPU\Texture.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Objectively\Objectively.vs15\Objectively.vcxproj">
