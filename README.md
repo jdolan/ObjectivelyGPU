@@ -15,12 +15,40 @@ through a single interface.
 
 ## Features
  * **macOS, iOS, Windows, Linux & Android** cross-platform support via SDL3 (Metal, Direct3D 12, Vulkan)
- * **RenderDevice** with a `beginFrame` / `endFrame` loop over the swapchain
- * **Resource objects**: Buffer, Texture, Sampler, Shader, GraphicsPipeline, ComputePipeline
+ * **RenderDevice** owns the swapchain — drive frames with a simple `beginFrame` / `endFrame` loop
+ * **Resource objects** with automatic lifecycle: Buffer, Texture, Sampler, Shader, GraphicsPipeline, ComputePipeline
  * **Typed passes**: RenderPass, ComputePass, CopyPass with command-lifecycle validation
  * **Framebuffer** with multiple render targets, depth, and MSAA with automatic resolve
- * **Shaders** authored in GLSL and loaded via the Objectively Resource system
+ * **Shaders** in every format SDL3 supports — SPIR-V (Vulkan), MSL (Metal), DXIL (D3D12) — loaded by name with automatic per-backend selection; author them in any language and cross-compile with [SDL_shadercross](https://github.com/libsdl-org/SDL_shadercross), or bring your own blobs
  * **Mathlib**: vector, matrix, and quaternion math for 3D graphics
+
+The verbose, error-prone handle juggling of a raw GPU API collapses into reference-counted objects and a
+handful of methods. A whole frame — acquire the swapchain, clear, draw a multisampled scene, resolve, and
+present — is just this:
+
+```c
+CommandBuffer *commands = $(renderDevice, beginFrame);
+if (commands) {
+
+  const SDL_FColor clearColor = { 0.1f, 0.1f, 0.2f, 1.f };
+  const SDL_GPUColorTargetInfo color = $(framebuffer, colorTargetInfo, 0, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_STORE, &clearColor);
+  const SDL_GPUDepthStencilTargetInfo depth = $(framebuffer, depthTargetInfo, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_DONT_CARE, 1.f);
+
+  RenderPass *pass = $(commands, beginRenderPass, &color, 1, &depth);
+  $(pass, bindPipeline, pipeline);
+  $(pass, bindVertexBuffers, 0, &(SDL_GPUBufferBinding) { .buffer = vertexBuffer->buffer }, 1);
+  $(pass, drawPrimitives, 36, 1, 0, 0);
+  pass = release(pass);
+
+  $(renderDevice, endFrame);
+}
+```
+
+`endFrame` resolves the multisampled `Framebuffer` and presents to the swapchain for you — no manual
+resolve targets, store-op bookkeeping, or present plumbing.
+
+Read the **[Guide](https://jdolan.github.io/ObjectivelyGPU/guide.html)** for the render device, resource
+objects, framebuffers and MSAA, the typed passes, and shaders.
 
 ## API Documentation
 
@@ -40,51 +68,6 @@ autoreconf -i
 ./configure
 make && sudo make install
 ```
-
-## Shaders
-
-ObjectivelyGPU uses a **GLSL → SPIR-V → MSL** pipeline for cross-platform shader support:
-
-* **GLSL** (Vulkan 4.5) is the source language for all shaders
-* **glslc** (from [shaderc](https://github.com/google/shaderc)) compiles GLSL to SPIR-V
-* **shadercross** (from [SDL_shadercross](https://github.com/libsdl-org/SDL_shadercross)) converts SPIR-V to MSL, using SDL3-aware buffer assignments
-
-Both the SPIR-V and MSL blobs are versioned in the repository, so normal builds never invoke these tools.
-Run `make shaders` after editing a `.glsl` file to regenerate the blobs.
-
-### Installing the tools
-
-```sh
-# glslc (part of shaderc)
-brew install shaderc
-
-# shadercross — build from source (SPIR-V → MSL path; no DXC needed)
-git clone https://github.com/libsdl-org/SDL_shadercross
-cd SDL_shadercross
-git submodule update --init --recursive external/SPIRV-Cross external/SPIRV-Headers external/SPIRV-Tools
-cmake -S . -B build \
-  -DSDLSHADERCROSS_VENDORED=ON \
-  -DSDLSHADERCROSS_SPIRVCROSS_SHARED=OFF \
-  -DSDLSHADERCROSS_CLI=ON \
-  -DSDLSHADERCROSS_INSTALL=ON \
-  -DCMAKE_BUILD_TYPE=Release
-cmake --build build -j$(nproc)
-sudo cmake --install build
-```
-
-> **Note:** `SDLSHADERCROSS_DXC=ON` and the `DirectXShaderCompiler` submodule are **not** required.
-> DXC is only needed for HLSL input. The SPIR-V → MSL path used here works without it.
-
-### GLSL binding layout (SDL3 GPU descriptor set convention)
-
-| Stage    | Set | Binding | Usage                          |
-|----------|-----|---------|--------------------------------|
-| Vertex   | 0   | 0+      | Vertex samplers / storage bufs |
-| Vertex   | 1   | 0+      | Vertex uniform buffers         |
-| Fragment | 2   | 0+      | Fragment samplers / storage    |
-| Fragment | 3   | 0+      | Fragment uniform buffers       |
-| Compute  | 1   | 0+      | Read-write storage buffers     |
-| Compute  | 2   | 0+      | Compute uniform buffers        |
 
 ## Examples & projects using ObjectivelyGPU
 
