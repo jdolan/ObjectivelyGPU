@@ -303,7 +303,7 @@ static RenderDevice *initWithWindow(RenderDevice *self, SDL_Window *window) {
  */
 static Shader *loadShader(RenderDevice *self, const char *name, const SDL_GPUShaderCreateInfo *info) {
 
-  return $(alloc(Shader), initWithResource, self, name, info);
+  return $(alloc(Shader), initWithResourceName, self, name, info);
 }
 
 /**
@@ -312,7 +312,7 @@ static Shader *loadShader(RenderDevice *self, const char *name, const SDL_GPUSha
  */
 static ComputePipeline *loadComputePipeline(RenderDevice *self, const char *name, const SDL_GPUComputePipelineCreateInfo *info) {
 
-  return $(alloc(ComputePipeline), initWithResource, self, name, info);
+  return $(alloc(ComputePipeline), initWithResourceName, self, name, info);
 }
 
 /**

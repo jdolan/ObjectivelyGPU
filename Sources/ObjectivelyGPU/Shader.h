@@ -26,6 +26,7 @@
 #include <SDL3/SDL_gpu.h>
 
 #include <Objectively/Object.h>
+#include <Objectively/Resource.h>
 
 #include <ObjectivelyGPU/Types.h>
 
@@ -93,7 +94,7 @@ struct ShaderInterface {
    * @brief Initializes this Shader from a fully-populated `SDL_GPUShaderCreateInfo`.
    * @details This is the designated initializer. All fields of @p info, including
    *   `code`, `code_size`, and `format`, must be set by the caller. Prefer
-   *   `initWithResource` to load a compiled blob from the Resource system with
+   *   `initWithResourceName` to load a compiled blob from the Resource system with
    *   automatic format selection.
    * @param self The Shader.
    * @param device The RenderDevice used to create and release the shader. Retained.
@@ -104,16 +105,34 @@ struct ShaderInterface {
   Shader *(*initWithDevice)(Shader *self, RenderDevice *device, const SDL_GPUShaderCreateInfo *info);
 
   /**
-   * @fn Shader *Shader::initWithResource(Shader *self, RenderDevice *device, const char *name, const SDL_GPUShaderCreateInfo *info)
+   * @fn Shader *Shader::initWithResource(Shader *self, RenderDevice *device, const Resource *resource, SDL_GPUShaderFormat format, const SDL_GPUShaderCreateInfo *info)
+   * @brief Initializes this Shader from an already-loaded compiled shader blob.
+   * @details Uses @p resource's data as the shader `code` for the given @p format.
+   *   `entrypoint` defaults to `main0` (MSL) or `main` when not set; the `code`,
+   *   `code_size`, and `format` fields of @p info are ignored. `initWithResourceName`
+   *   resolves a name to a resource and format, then delegates here.
+   * @param self The Shader.
+   * @param device The RenderDevice used to create and release the shader. Retained.
+   * @param resource The loaded shader blob; must have non-empty data.
+   * @param format The shader format of @p resource's data.
+   * @param info Shader creation parameters; `code`, `code_size`, and `format` are ignored.
+   * @return The initialized Shader, or `NULL` on failure.
+   * @memberof Shader
+   */
+  Shader *(*initWithResource)(Shader *self, RenderDevice *device, const Resource *resource, SDL_GPUShaderFormat format, const SDL_GPUShaderCreateInfo *info);
+
+  /**
+   * @fn Shader *Shader::initWithResourceName(Shader *self, RenderDevice *device, const char *name, const SDL_GPUShaderCreateInfo *info)
    * @brief Initializes this Shader from a compiled shader blob loaded via the Resource system.
    * @details Appends the platform-appropriate extension to @p name and resolves it via
    *   Objectively's ResourceProvider chain:
    *   - Metal (macOS/iOS): `.metal`
    *   - Vulkan (Linux/Android): `.spv`
    *   - D3D12 (Windows): `.dxil`
-   *   The caller fills in @c stage and binding counts in @p info; `code`, `code_size`,
-   *   and `format` are filled in here, and `entrypoint` defaults to `main0` (MSL) or
-   *   `main` when not set. Shader blobs are produced offline by @c sdl-shadercross.
+   *   The first supported, resolvable, non-empty blob is selected and passed to
+   *   `initWithResource` with its format. The caller fills in @c stage and binding counts
+   *   in @p info; `code`, `code_size`, `format`, and a default `entrypoint` are supplied.
+   *   Shader blobs are produced offline by @c sdl-shadercross.
    * @param self The Shader.
    * @param device The RenderDevice used to create and release the shader. Retained.
    * @param name Shader base name without extension, e.g. @c "shaders/Renderer.vert".
@@ -121,7 +140,7 @@ struct ShaderInterface {
    * @return The initialized Shader. GPU_Asserts if no supported blob is found.
    * @memberof Shader
    */
-  Shader *(*initWithResource)(Shader *self, RenderDevice *device, const char *name, const SDL_GPUShaderCreateInfo *info);
+  Shader *(*initWithResourceName)(Shader *self, RenderDevice *device, const char *name, const SDL_GPUShaderCreateInfo *info);
 };
 
 /**

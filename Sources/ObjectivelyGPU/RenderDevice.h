@@ -329,7 +329,7 @@ struct RenderDeviceInterface {
   /**
    * @fn Shader *RenderDevice::loadShader(RenderDevice *self, const char *name, const SDL_GPUShaderCreateInfo *info)
    * @brief Loads a compiled shader blob via the Resource system and creates a Shader.
-   * @details Convenience factory for `Shader::initWithResource`. Appends the
+   * @details Convenience factory for `Shader::initWithResourceName`. Appends the
    *   platform-appropriate extension to @c name and resolves it via Objectively's
    *   ResourceProvider chain:
    *   - Metal (macOS/iOS): `.metal`
@@ -350,7 +350,7 @@ struct RenderDeviceInterface {
   /**
   * @fn ComputePipeline *RenderDevice::loadComputePipeline(RenderDevice *self, const char *name, const SDL_GPUComputePipelineCreateInfo *info)
   * @brief Loads a compiled compute shader blob via the Resource system and creates a ComputePipeline.
-  * @details Convenience factory for `ComputePipeline::initWithResource`. Parallel to
+  * @details Convenience factory for `ComputePipeline::initWithResourceName`. Parallel to
   *   `loadShader` for compute stages. Appends the platform-appropriate extension to
   *   @c name and resolves it via Objectively's ResourceProvider chain:
   *   - Metal (macOS/iOS): `.metal`

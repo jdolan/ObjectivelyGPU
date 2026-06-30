@@ -72,10 +72,29 @@ static ComputePipeline *initWithDevice(ComputePipeline *self, RenderDevice *devi
 }
 
 /**
- * @fn ComputePipeline *ComputePipeline::initWithResource(ComputePipeline *self, RenderDevice *device, const char *name, const SDL_GPUComputePipelineCreateInfo *info)
+ * @fn ComputePipeline *ComputePipeline::initWithResource(ComputePipeline *self, RenderDevice *device, const Resource *resource, SDL_GPUShaderFormat format, const SDL_GPUComputePipelineCreateInfo *info)
  * @memberof ComputePipeline
  */
-static ComputePipeline *initWithResource(ComputePipeline *self, RenderDevice *device, const char *name, const SDL_GPUComputePipelineCreateInfo *info) {
+static ComputePipeline *initWithResource(ComputePipeline *self, RenderDevice *device, const Resource *resource, SDL_GPUShaderFormat format, const SDL_GPUComputePipelineCreateInfo *info) {
+
+  assert(device);
+  assert(resource && resource->data && resource->data->length);
+  assert(info);
+
+  SDL_GPUComputePipelineCreateInfo create = *info;
+  create.code = resource->data->bytes;
+  create.code_size = resource->data->length;
+  create.format = format;
+  create.entrypoint = create.entrypoint ?: (format == SDL_GPU_SHADERFORMAT_MSL) ? "main0" : "main";
+
+  return $(self, initWithDevice, device, &create);
+}
+
+/**
+ * @fn ComputePipeline *ComputePipeline::initWithResourceName(ComputePipeline *self, RenderDevice *device, const char *name, const SDL_GPUComputePipelineCreateInfo *info)
+ * @memberof ComputePipeline
+ */
+static ComputePipeline *initWithResourceName(ComputePipeline *self, RenderDevice *device, const char *name, const SDL_GPUComputePipelineCreateInfo *info) {
 
   assert(device);
   assert(name);
@@ -111,13 +130,7 @@ static ComputePipeline *initWithResource(ComputePipeline *self, RenderDevice *de
       continue;
     }
 
-    SDL_GPUComputePipelineCreateInfo create = *info;
-    create.code = res->data->bytes;
-    create.code_size = res->data->length;
-    create.format = formats[i].format;
-    create.entrypoint = create.entrypoint ?: (formats[i].format == SDL_GPU_SHADERFORMAT_MSL) ? "main0" : "main";
-
-    self = $(self, initWithDevice, device, &create);
+    self = $(self, initWithResource, device, res, formats[i].format, info);
     release(res);
     return self;
   }
@@ -137,6 +150,7 @@ static void initialize(Class *clazz) {
 
   ((ComputePipelineInterface *) clazz->interface)->initWithDevice = initWithDevice;
   ((ComputePipelineInterface *) clazz->interface)->initWithResource = initWithResource;
+  ((ComputePipelineInterface *) clazz->interface)->initWithResourceName = initWithResourceName;
 }
 
 /**

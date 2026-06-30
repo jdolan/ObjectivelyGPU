@@ -73,10 +73,32 @@ static Shader *initWithDevice(Shader *self, RenderDevice *device, const SDL_GPUS
 }
 
 /**
- * @fn Shader *Shader::initWithResource(Shader *self, RenderDevice *device, const char *name, const SDL_GPUShaderCreateInfo *info)
+ * @fn Shader *Shader::initWithResource(Shader *self, RenderDevice *device, const Resource *resource, SDL_GPUShaderFormat format, const SDL_GPUShaderCreateInfo *info)
  * @memberof Shader
  */
-static Shader *initWithResource(Shader *self, RenderDevice *device, const char *name, const SDL_GPUShaderCreateInfo *info) {
+static Shader *initWithResource(Shader *self, RenderDevice *device, const Resource *resource, SDL_GPUShaderFormat format, const SDL_GPUShaderCreateInfo *info) {
+
+  assert(device);
+  assert(resource && resource->data && resource->data->length);
+  assert(info);
+
+  SDL_GPUShaderCreateInfo filled = *info;
+  filled.code = resource->data->bytes;
+  filled.code_size = resource->data->length;
+  filled.format = format;
+
+  if (!filled.entrypoint) {
+    filled.entrypoint = (format == SDL_GPU_SHADERFORMAT_MSL) ? "main0" : "main";
+  }
+
+  return $(self, initWithDevice, device, &filled);
+}
+
+/**
+ * @fn Shader *Shader::initWithResourceName(Shader *self, RenderDevice *device, const char *name, const SDL_GPUShaderCreateInfo *info)
+ * @memberof Shader
+ */
+static Shader *initWithResourceName(Shader *self, RenderDevice *device, const char *name, const SDL_GPUShaderCreateInfo *info) {
 
   assert(device);
   assert(name);
@@ -107,16 +129,12 @@ static Shader *initWithResource(Shader *self, RenderDevice *device, const char *
       continue;
     }
 
-    SDL_GPUShaderCreateInfo filled = *info;
-    filled.code = res->data->bytes;
-    filled.code_size = res->data->length;
-    filled.format = formats[i].format;
-
-    if (!filled.entrypoint) {
-      filled.entrypoint = (formats[i].format == SDL_GPU_SHADERFORMAT_MSL) ? "main0" : "main";
+    if (!res->data || res->data->length == 0) {
+      release(res);
+      continue;
     }
 
-    self = $(self, initWithDevice, device, &filled);
+    self = $(self, initWithResource, device, res, formats[i].format, info);
     release(res);
     return self;
   }
@@ -136,6 +154,7 @@ static void initialize(Class *clazz) {
 
   ((ShaderInterface *) clazz->interface)->initWithDevice = initWithDevice;
   ((ShaderInterface *) clazz->interface)->initWithResource = initWithResource;
+  ((ShaderInterface *) clazz->interface)->initWithResourceName = initWithResourceName;
 }
 
 /**
