@@ -39,6 +39,7 @@ static void dealloc(Object *self) {
   Framebuffer *this = (Framebuffer *) self;
 
   release(this->colorTexture);
+  release(this->resolveTexture);
   release(this->depthTexture);
 
   release(this->device);
@@ -56,12 +57,26 @@ static SDL_GPUColorTargetInfo colorTargetInfo(const Framebuffer *self, SDL_GPULo
 
   assert(self->colorTexture);
 
-  return (SDL_GPUColorTargetInfo) {
+  SDL_GPUColorTargetInfo info = {
     .texture = self->colorTexture->texture,
     .load_op = loadOp,
     .store_op = storeOp,
     .clear_color = clearColor ? *clearColor : (SDL_FColor) { 0.f, 0.f, 0.f, 1.f },
   };
+
+  if (self->sampleCount > SDL_GPU_SAMPLECOUNT_1) {
+    assert(self->resolveTexture);
+
+    // Resolve the multisampled color into the single-sample resolve target. STORE is
+    // promoted to RESOLVE_AND_STORE so the multisampled contents survive for any later
+    // load-op pass (e.g. UI drawn over a 3D scene) while keeping the resolve current.
+    info.resolve_texture = self->resolveTexture->texture;
+    if (storeOp == SDL_GPU_STOREOP_STORE) {
+      info.store_op = SDL_GPU_STOREOP_RESOLVE_AND_STORE;
+    }
+  }
+
+  return info;
 }
 
 /**
@@ -81,22 +96,23 @@ static SDL_GPUDepthStencilTargetInfo depthTargetInfo(const Framebuffer *self, SD
 }
 
 /**
- * @fn Framebuffer *Framebuffer::initWithDevice(Framebuffer *self, RenderDevice *device, const SDL_Size *size, SDL_GPUTextureFormat colorFormat, SDL_GPUTextureFormat depthFormat)
+ * @fn Framebuffer *Framebuffer::initWithDevice(Framebuffer *self, RenderDevice *device, const GPU_FramebufferCreateInfo *info)
  * @memberof Framebuffer
  */
-static Framebuffer *initWithDevice(Framebuffer *self, RenderDevice *device, const SDL_Size *size, SDL_GPUTextureFormat colorFormat, SDL_GPUTextureFormat depthFormat) {
+static Framebuffer *initWithDevice(Framebuffer *self, RenderDevice *device, const GPU_FramebufferCreateInfo *info) {
 
   assert(device);
-  assert(size && size->w > 0 && size->h > 0);
+  assert(info && info->size.w > 0 && info->size.h > 0);
 
   self = (Framebuffer *) super(Object, self, init);
   if (self) {
     self->device = retain(device);
 
-    self->colorFormat = colorFormat;
-    self->depthFormat = depthFormat;
+    self->colorFormat = info->colorFormat;
+    self->depthFormat = info->depthFormat;
+    self->sampleCount = info->sampleCount;
 
-    $(self, resize, size);
+    $(self, resize, &info->size);
   }
 
   return self;
@@ -115,23 +131,44 @@ static bool resize(Framebuffer *self, const SDL_Size *size) {
   }
 
   release(self->colorTexture);
+  release(self->resolveTexture);
   release(self->depthTexture);
+  self->colorTexture = NULL;
+  self->resolveTexture = NULL;
+  self->depthTexture = NULL;
 
   self->size = *size;
 
+  const bool multisampled = self->sampleCount > SDL_GPU_SAMPLECOUNT_1;
+
   if (self->colorFormat != SDL_GPU_TEXTUREFORMAT_INVALID) {
+
+    // A multisampled color target is resolved before sampling, so it needs only
+    // COLOR_TARGET usage; the single-sample paths (no MSAA, or the resolve target)
+    // also carry SAMPLER so they can be blit/sampled.
     self->colorTexture = $(self->device, createTexture, &(SDL_GPUTextureCreateInfo) {
       .type = SDL_GPU_TEXTURETYPE_2D,
       .format = self->colorFormat,
-      .usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
+      .usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | (multisampled ? 0 : SDL_GPU_TEXTUREUSAGE_SAMPLER),
       .width = (Uint32) self->size.w,
       .height = (Uint32) self->size.h,
       .layer_count_or_depth = 1,
       .num_levels = 1,
-      .sample_count = SDL_GPU_SAMPLECOUNT_1,
+      .sample_count = self->sampleCount,
     }, NULL);
-  } else {
-    self->colorTexture = NULL;
+
+    if (multisampled) {
+      self->resolveTexture = $(self->device, createTexture, &(SDL_GPUTextureCreateInfo) {
+        .type = SDL_GPU_TEXTURETYPE_2D,
+        .format = self->colorFormat,
+        .usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
+        .width = (Uint32) self->size.w,
+        .height = (Uint32) self->size.h,
+        .layer_count_or_depth = 1,
+        .num_levels = 1,
+        .sample_count = SDL_GPU_SAMPLECOUNT_1,
+      }, NULL);
+    }
   }
 
   if (self->depthFormat != SDL_GPU_TEXTUREFORMAT_INVALID) {
@@ -143,13 +180,19 @@ static bool resize(Framebuffer *self, const SDL_Size *size) {
       .height = (Uint32) self->size.h,
       .layer_count_or_depth = 1,
       .num_levels = 1,
-      .sample_count = SDL_GPU_SAMPLECOUNT_1,
+      .sample_count = self->sampleCount,
     }, NULL);
-  } else {
-    self->depthTexture = NULL;
   }
 
   return true;
+}
+
+/**
+ * @fn Texture *Framebuffer::resolvedColorTexture(const Framebuffer *self)
+ * @memberof Framebuffer
+ */
+static Texture *resolvedColorTexture(const Framebuffer *self) {
+  return self->resolveTexture ?: self->colorTexture;
 }
 
 #pragma mark - Class lifecycle
@@ -165,6 +208,7 @@ static void initialize(Class *clazz) {
   ((FramebufferInterface *) clazz->interface)->depthTargetInfo = depthTargetInfo;
   ((FramebufferInterface *) clazz->interface)->initWithDevice = initWithDevice;
   ((FramebufferInterface *) clazz->interface)->resize = resize;
+  ((FramebufferInterface *) clazz->interface)->resolvedColorTexture = resolvedColorTexture;
 }
 
 /**

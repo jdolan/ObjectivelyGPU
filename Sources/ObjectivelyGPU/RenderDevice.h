@@ -42,6 +42,8 @@
 typedef struct Buffer Buffer;
 typedef struct CommandBuffer CommandBuffer;
 typedef struct ComputePipeline ComputePipeline;
+typedef struct Framebuffer Framebuffer;
+typedef struct GPU_FramebufferCreateInfo GPU_FramebufferCreateInfo;
 typedef struct GraphicsPipeline GraphicsPipeline;
 typedef struct RenderDevice RenderDevice;
 typedef struct RenderDeviceInterface RenderDeviceInterface;
@@ -77,6 +79,28 @@ struct RenderDevice {
    * @brief The `SDL_Window` associated with @c device.
    */
   SDL_Window *window;
+
+  /**
+   * @brief The present-target Framebuffer driven by `beginFrame`/`endFrame`, or `NULL`.
+   * @details Set via `setFramebuffer` (retained). `beginFrame` resizes it to the
+   *   swapchain each frame and `endFrame` blits its resolved color to the swapchain.
+   */
+  Framebuffer *framebuffer;
+
+  /**
+   * @brief The command buffer in flight between `beginFrame` and `endFrame`, or `NULL`.
+   * @details Owned by the device for the duration of the frame; `beginFrame` returns a
+   *   borrowed view of it and `endFrame` submits and releases it.
+   * @private
+   */
+  CommandBuffer *commandBuffer;
+
+  /**
+   * @brief The swapchain texture acquired for the current frame.
+   * @details Valid only between `beginFrame` and `endFrame`.
+   * @private
+   */
+  SwapchainTexture swapchain;
 };
 
 /**
@@ -100,6 +124,24 @@ struct RenderDeviceInterface {
    * @memberof RenderDevice
    */
   CommandBuffer *(*acquireCommandBuffer)(const RenderDevice *self);
+
+  /**
+   * @fn CommandBuffer *RenderDevice::beginFrame(RenderDevice *self)
+   * @brief Begins a frame: acquires a command buffer and the swapchain, and prepares the framebuffer.
+   * @details Convenience over the manual acquire→wait-swapchain→resize boilerplate.
+   *   Acquires a CommandBuffer, blocks for the swapchain texture, resizes the framebuffer
+   *   set via `setFramebuffer` to the swapchain dimensions, and returns the command buffer
+   *   so the caller can record passes into `framebuffer`. Returns `NULL` when the swapchain
+   *   is unavailable (e.g. the window is minimised); the command buffer is cancelled and the
+   *   frame should be skipped. Pair every non-NULL return with `endFrame`. The returned
+   *   CommandBuffer is owned by the device; do not release it. Applications that render
+   *   directly to the swapchain can ignore `beginFrame`/`endFrame` and drive the command
+   *   buffer themselves.
+   * @param self The RenderDevice.
+   * @return The frame's CommandBuffer (borrowed), or `NULL` to skip the frame.
+   * @memberof RenderDevice
+   */
+  CommandBuffer *(*beginFrame)(RenderDevice *self);
 
   /**
    * @fn Buffer *RenderDevice::createBuffer(RenderDevice *self, const SDL_GPUBufferCreateInfo *info)
@@ -151,6 +193,18 @@ struct RenderDeviceInterface {
    * @memberof RenderDevice
    */
   ComputePipeline *(*createComputePipeline)(RenderDevice *self, const SDL_GPUComputePipelineCreateInfo *info);
+
+  /**
+   * @fn Framebuffer *RenderDevice::createFramebuffer(RenderDevice *self, const GPU_FramebufferCreateInfo *info)
+   * @brief Creates a Framebuffer aggregating color/depth attachments (and an MSAA resolve target).
+   * @details Convenience factory for `Framebuffer::initWithDevice`. Pair with
+   *   `setFramebuffer` to drive it via `beginFrame`/`endFrame`.
+   * @param self The RenderDevice.
+   * @param info Framebuffer creation parameters (size, formats, sample count).
+   * @return A new, retained Framebuffer. GPU_Asserts on failure. Free with `release`.
+   * @memberof RenderDevice
+   */
+  Framebuffer *(*createFramebuffer)(RenderDevice *self, const GPU_FramebufferCreateInfo *info);
 
   /**
    * @fn GraphicsPipeline *RenderDevice::createGraphicsPipeline(RenderDevice *self, const SDL_GPUGraphicsPipelineCreateInfo *info)
@@ -227,6 +281,18 @@ struct RenderDeviceInterface {
    * @memberof RenderDevice
    */
   SDL_GPUTransferBuffer *(*createTransferBuffer)(const RenderDevice *self, const SDL_GPUTransferBufferCreateInfo *info);
+
+  /**
+   * @fn void RenderDevice::endFrame(RenderDevice *self)
+   * @brief Ends the frame begun by `beginFrame`: presents the framebuffer and submits.
+   * @details Blits the framebuffer's resolved color (`Framebuffer::resolvedColorTexture`,
+   *   the resolve target when multisampled) into the acquired swapchain texture, submits
+   *   the frame's command buffer, and releases it. Must be paired with a non-NULL
+   *   `beginFrame` return.
+   * @param self The RenderDevice.
+   * @memberof RenderDevice
+   */
+  void (*endFrame)(RenderDevice *self);
 
   /**
    * @fn SDL_GPUTextureFormat RenderDevice::getSwapchainTextureFormat(const RenderDevice *self, SDL_Window *window)
@@ -356,6 +422,18 @@ struct RenderDeviceInterface {
    * @memberof RenderDevice
    */
   bool (*setAllowedFramesInFlight)(const RenderDevice *self, Uint32 allowed);
+
+  /**
+   * @fn void RenderDevice::setFramebuffer(RenderDevice *self, Framebuffer *framebuffer)
+   * @brief Sets the present-target Framebuffer driven by `beginFrame`/`endFrame`.
+   * @details The device retains @p framebuffer and releases any previously set one.
+   *   Construct the Framebuffer with the desired color/depth formats and MSAA sample
+   *   count; `beginFrame` resizes it to the swapchain each frame. Pass `NULL` to clear.
+   * @param self The RenderDevice.
+   * @param framebuffer The Framebuffer to present each frame, or `NULL`.
+   * @memberof RenderDevice
+   */
+  void (*setFramebuffer)(RenderDevice *self, Framebuffer *framebuffer);
 
   /**
    * @fn bool RenderDevice::setSwapchainParameters(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition, SDL_GPUPresentMode mode)

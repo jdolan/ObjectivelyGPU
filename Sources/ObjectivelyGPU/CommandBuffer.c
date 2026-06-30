@@ -31,6 +31,21 @@
 
 #define _Class _CommandBuffer
 
+#pragma mark - Object
+
+/**
+ * @see Object::dealloc(Object *)
+ */
+static void dealloc(Object *self) {
+
+  CommandBuffer *this = (CommandBuffer *) self;
+
+  GPU_Assert(!this->pass, "command buffer released with an open pass");
+  GPU_Assert(this->submitted, "command buffer released without submit or cancel");
+
+  super(Object, self, dealloc);
+}
+
 #pragma mark - CommandBuffer
 
 /**
@@ -49,39 +64,57 @@ static bool acquireSwapchainTexture(const CommandBuffer *self, SwapchainTexture 
 }
 
 /**
- * @fn ComputePass *CommandBuffer::beginComputePass(const CommandBuffer *self, const SDL_GPUStorageTextureReadWriteBinding *storageTextures, Uint32 numStorageTextures, const SDL_GPUStorageBufferReadWriteBinding *storageBuffers, Uint32 numStorageBuffers)
+ * @fn ComputePass *CommandBuffer::beginComputePass(CommandBuffer *self, const SDL_GPUStorageTextureReadWriteBinding *storageTextures, Uint32 numStorageTextures, const SDL_GPUStorageBufferReadWriteBinding *storageBuffers, Uint32 numStorageBuffers)
  * @memberof CommandBuffer
  */
-static ComputePass *beginComputePass(const CommandBuffer *self, const SDL_GPUStorageTextureReadWriteBinding *storageTextures, Uint32 numStorageTextures, const SDL_GPUStorageBufferReadWriteBinding *storageBuffers, Uint32 numStorageBuffers) {
+static ComputePass *beginComputePass(CommandBuffer *self, const SDL_GPUStorageTextureReadWriteBinding *storageTextures, Uint32 numStorageTextures, const SDL_GPUStorageBufferReadWriteBinding *storageBuffers, Uint32 numStorageBuffers) {
+
+  GPU_Assert(!self->submitted, "command buffer already submitted");
+  GPU_Assert(!self->pass, "a pass is already open");
 
   SDL_GPUComputePass *pass = SDL_BeginGPUComputePass(self->commands, storageTextures, numStorageTextures, storageBuffers, numStorageBuffers);
   GPU_Assert(pass, "SDL_BeginGPUComputePass");
 
-  return $(alloc(ComputePass), init, (CommandBuffer *) self, pass);
+  ComputePass *computePass = $(alloc(ComputePass), init, self, pass);
+  self->pass = (Object *) computePass;
+
+  return computePass;
 }
 
 /**
- * @fn CopyPass *CommandBuffer::beginCopyPass(const CommandBuffer *self)
+ * @fn CopyPass *CommandBuffer::beginCopyPass(CommandBuffer *self)
  * @memberof CommandBuffer
  */
-static CopyPass *beginCopyPass(const CommandBuffer *self) {
+static CopyPass *beginCopyPass(CommandBuffer *self) {
+
+  GPU_Assert(!self->submitted, "command buffer already submitted");
+  GPU_Assert(!self->pass, "a pass is already open");
 
   SDL_GPUCopyPass *pass = SDL_BeginGPUCopyPass(self->commands);
   GPU_Assert(pass, "SDL_BeginGPUCopyPass");
 
-  return $(alloc(CopyPass), init, (CommandBuffer *) self, pass);
+  CopyPass *copyPass = $(alloc(CopyPass), init, self, pass);
+  self->pass = (Object *) copyPass;
+
+  return copyPass;
 }
 
 /**
- * @fn RenderPass *CommandBuffer::beginRenderPass(const CommandBuffer *self, const SDL_GPUColorTargetInfo *colorTargets, Uint32 numColorTargets, const SDL_GPUDepthStencilTargetInfo *depthStencil)
+ * @fn RenderPass *CommandBuffer::beginRenderPass(CommandBuffer *self, const SDL_GPUColorTargetInfo *colorTargets, Uint32 numColorTargets, const SDL_GPUDepthStencilTargetInfo *depthStencil)
  * @memberof CommandBuffer
  */
-static RenderPass *beginRenderPass(const CommandBuffer *self, const SDL_GPUColorTargetInfo *colorTargets, Uint32 numColorTargets, const SDL_GPUDepthStencilTargetInfo *depthStencil) {
+static RenderPass *beginRenderPass(CommandBuffer *self, const SDL_GPUColorTargetInfo *colorTargets, Uint32 numColorTargets, const SDL_GPUDepthStencilTargetInfo *depthStencil) {
+
+  GPU_Assert(!self->submitted, "command buffer already submitted");
+  GPU_Assert(!self->pass, "a pass is already open");
 
   SDL_GPURenderPass *pass = SDL_BeginGPURenderPass(self->commands, colorTargets, numColorTargets, depthStencil);
   GPU_Assert(pass, "SDL_BeginGPURenderPass");
 
-  return $(alloc(RenderPass), init, (CommandBuffer *) self, pass);
+  RenderPass *renderPass = $(alloc(RenderPass), init, self, pass);
+  self->pass = (Object *) renderPass;
+
+  return renderPass;
 }
 
 /**
@@ -93,13 +126,18 @@ static void blitTexture(const CommandBuffer *self, const SDL_GPUBlitInfo *info) 
 }
 
 /**
- * @fn bool CommandBuffer::cancel(const CommandBuffer *self)
+ * @fn bool CommandBuffer::cancel(CommandBuffer *self)
  * @memberof CommandBuffer
  */
-static bool cancel(const CommandBuffer *self) {
+static bool cancel(CommandBuffer *self) {
+
+  GPU_Assert(!self->submitted, "command buffer already submitted");
+  GPU_Assert(!self->pass, "cannot cancel with an open pass");
 
   const bool ok = SDL_CancelGPUCommandBuffer(self->commands);
   GPU_Assert(ok, "SDL_CancelGPUCommandBuffer");
+
+  self->submitted = true;
 
   return ok;
 }
@@ -180,25 +218,35 @@ static void pushVertexUniformData(const CommandBuffer *self, Uint32 slot, const 
 }
 
 /**
- * @fn bool CommandBuffer::submit(const CommandBuffer *self)
+ * @fn bool CommandBuffer::submit(CommandBuffer *self)
  * @memberof CommandBuffer
  */
-static bool submit(const CommandBuffer *self) {
+static bool submit(CommandBuffer *self) {
+
+  GPU_Assert(!self->submitted, "command buffer already submitted");
+  GPU_Assert(!self->pass, "cannot submit with an open pass");
 
   const bool ok = SDL_SubmitGPUCommandBuffer(self->commands);
   GPU_Assert(ok, "SDL_SubmitGPUCommandBuffer");
+
+  self->submitted = true;
 
   return ok;
 }
 
 /**
- * @fn SDL_GPUFence *CommandBuffer::submitAndFence(const CommandBuffer *self)
+ * @fn SDL_GPUFence *CommandBuffer::submitAndFence(CommandBuffer *self)
  * @memberof CommandBuffer
  */
-static SDL_GPUFence *submitAndFence(const CommandBuffer *self) {
+static SDL_GPUFence *submitAndFence(CommandBuffer *self) {
+
+  GPU_Assert(!self->submitted, "command buffer already submitted");
+  GPU_Assert(!self->pass, "cannot submit with an open pass");
 
   SDL_GPUFence *fence = SDL_SubmitGPUCommandBufferAndAcquireFence(self->commands);
   GPU_Assert(fence, "SDL_SubmitGPUCommandBufferAndAcquireFence");
+
+  self->submitted = true;
 
   return fence;
 }
@@ -224,6 +272,8 @@ static bool waitAndAcquireSwapchainTexture(const CommandBuffer *self, SwapchainT
  * @see Class::initialize(Class *)
  */
 static void initialize(Class *clazz) {
+
+  ((ObjectInterface *) clazz->interface)->dealloc = dealloc;
 
   ((CommandBufferInterface *) clazz->interface)->acquireSwapchainTexture = acquireSwapchainTexture;
   ((CommandBufferInterface *) clazz->interface)->beginComputePass = beginComputePass;

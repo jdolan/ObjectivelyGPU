@@ -40,6 +40,41 @@ typedef struct FramebufferInterface FramebufferInterface;
 typedef struct Texture Texture;
 
 /**
+ * @brief Parameters for creating a Framebuffer.
+ * @details The GPU-layer analogue of SDL's `*CreateInfo` structs, for a target that
+ *   aggregates several `SDL_GPUTexture` attachments and so has no single SDL struct.
+ *   Use a designated initializer; omitted fields default to zero
+ *   (`SDL_GPU_TEXTUREFORMAT_INVALID`, `SDL_GPU_SAMPLECOUNT_1`).
+ */
+typedef struct GPU_FramebufferCreateInfo {
+
+  /**
+   * @brief Initial framebuffer dimensions.
+   * @details When the framebuffer is driven by `RenderDevice::beginFrame`, it is resized
+   *   to the swapchain each frame, so this is only the initial allocation size.
+   */
+  SDL_Size size;
+
+  /**
+   * @brief Color attachment format, or `SDL_GPU_TEXTUREFORMAT_INVALID` to omit.
+   */
+  SDL_GPUTextureFormat colorFormat;
+
+  /**
+   * @brief Depth attachment format, or `SDL_GPU_TEXTUREFORMAT_INVALID` to omit.
+   */
+  SDL_GPUTextureFormat depthFormat;
+
+  /**
+   * @brief MSAA sample count; `SDL_GPU_SAMPLECOUNT_1` for no multisampling.
+   * @details When greater, a single-sample resolve target is allocated alongside the
+   *   multisampled color attachment.
+   */
+  SDL_GPUSampleCount sampleCount;
+
+} GPU_FramebufferCreateInfo;
+
+/**
  * @brief An off-screen render target grouping a color and/or depth texture.
  *
  * Framebuffer owns a pair of `SDL_GPUTexture` objects (color and/or depth) and
@@ -51,10 +86,12 @@ typedef struct Texture Texture;
  * textures and recreates them at the new size.
  *
  * @code
- *   Framebuffer *fb = $(alloc(Framebuffer), initWithDevice, renderDevice,
- *     &(SDL_Size) { 1920, 1080 },
- *     SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT,
- *     SDL_GPU_TEXTUREFORMAT_D32_FLOAT);
+ *   Framebuffer *fb = $(renderDevice, createFramebuffer, &(GPU_FramebufferCreateInfo) {
+ *     .size = { 1920, 1080 },
+ *     .colorFormat = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT,
+ *     .depthFormat = SDL_GPU_TEXTUREFORMAT_D32_FLOAT,
+ *     .sampleCount = SDL_GPU_SAMPLECOUNT_1,
+ *   });
  *
  *   SDL_GPUColorTargetInfo color = $(fb, colorTargetInfo,
  *     SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_STORE,
@@ -100,9 +137,25 @@ struct Framebuffer {
   SDL_GPUTextureFormat depthFormat;
 
   /**
+   * @brief The MSAA sample count of the color and depth attachments.
+   * @details `SDL_GPU_SAMPLECOUNT_1` for no multisampling. When greater, `colorTexture`
+   *   is multisampled and `resolveTexture` holds the single-sample resolve.
+   */
+  SDL_GPUSampleCount sampleCount;
+
+  /**
    * @brief The color attachment texture, or `NULL` if `colorFormat` is invalid.
+   * @details Multisampled when `sampleCount` is greater than `SDL_GPU_SAMPLECOUNT_1`;
+   *   in that case sample the single-sample `resolveTexture`, not this texture.
    */
   Texture *colorTexture;
+
+  /**
+   * @brief The single-sample resolve target, or `NULL` unless `sampleCount` is greater than `SDL_GPU_SAMPLECOUNT_1`.
+   * @details Render passes resolve `colorTexture` into this texture; it is the texture
+   *   to sample, blit, or present. See `resolvedColorTexture`.
+   */
+  Texture *resolveTexture;
 
   /**
    * @brief The depth attachment texture, or `NULL` if `depthFormat` is invalid.
@@ -158,20 +211,25 @@ struct FramebufferInterface {
     SDL_GPULoadOp loadOp, SDL_GPUStoreOp storeOp, float clearDepth);
 
   /**
-   * @fn Framebuffer *Framebuffer::initWithDevice(Framebuffer *self, RenderDevice *device, const SDL_Size *size, SDL_GPUTextureFormat colorFormat, SDL_GPUTextureFormat depthFormat)
+   * @fn Framebuffer *Framebuffer::initWithDevice(Framebuffer *self, RenderDevice *device, const GPU_FramebufferCreateInfo *info)
    * @brief Initializes this Framebuffer and allocates its GPU textures.
    * @param self The Framebuffer.
    * @param device The RenderDevice used to allocate and release textures.
-   * @param size Initial framebuffer dimensions.
-   * @param colorFormat Color attachment format, or `SDL_GPU_TEXTUREFORMAT_INVALID` to omit.
-   * @param depthFormat Depth attachment format, or `SDL_GPU_TEXTUREFORMAT_INVALID` to omit.
+   * @param info Framebuffer creation parameters (size, formats, sample count).
    * @return The initialized Framebuffer, or NULL on failure.
    * @memberof Framebuffer
    */
-  Framebuffer *(*initWithDevice)(Framebuffer *self, RenderDevice *device,
-    const SDL_Size *size,
-    SDL_GPUTextureFormat colorFormat,
-    SDL_GPUTextureFormat depthFormat);
+  Framebuffer *(*initWithDevice)(Framebuffer *self, RenderDevice *device, const GPU_FramebufferCreateInfo *info);
+
+  /**
+   * @fn Texture *Framebuffer::resolvedColorTexture(const Framebuffer *self)
+   * @brief Returns the single-sample color texture to sample, blit, or present.
+   * @details Returns `resolveTexture` when multisampled, otherwise `colorTexture`.
+   * @param self The Framebuffer.
+   * @return The resolved color texture, or `NULL` if this framebuffer has no color attachment.
+   * @memberof Framebuffer
+   */
+  Texture *(*resolvedColorTexture)(const Framebuffer *self);
 
   /**
    * @fn bool Framebuffer::resize(Framebuffer *self, const SDL_Size *size)

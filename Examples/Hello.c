@@ -40,6 +40,11 @@
 #endif
 
 /**
+ * @brief MSAA sample count for the scene framebuffer.
+ */
+#define HELLO_MSAA SDL_GPU_SAMPLECOUNT_4
+
+/**
  * @brief The Scene type.
  */
 typedef struct {
@@ -162,6 +167,7 @@ static void initScene(AppState *app) {
     .vertex_attributes = attrs,
     .num_vertex_attributes = (Uint32) SDL_arraysize(attrs),
   };
+  pipelineInfo.multisample_state.sample_count = app->framebuffer->sampleCount;
   pipelineInfo.target_info = (SDL_GPUGraphicsPipelineTargetInfo) {
     .color_target_descriptions = &(SDL_GPUColorTargetDescription) {
       .format = app->framebuffer->colorTexture->format,
@@ -181,7 +187,7 @@ static void initScene(AppState *app) {
 /**
  * @brief Renders a single frame of the @c Scene.
  */
-static void drawScene(AppState *app, CommandBuffer *cmd) {
+static void drawScene(AppState *app, CommandBuffer *commands) {
 
   const Uint64 ticks = SDL_GetTicks();
   const float dt = (ticks - app->ticks) / 1000.f;
@@ -198,13 +204,13 @@ static void drawScene(AppState *app, CommandBuffer *cmd) {
 
   const mat4 projection = mat4_perspective(45.f, (float) app->framebuffer->size.w / (float) app->framebuffer->size.h, 0.01f, 100.f);
   const mat4 modelViewProjection = mat4_mul(projection, modelView);
-  $(cmd, pushVertexUniformData, 0, modelViewProjection.f, sizeof(modelViewProjection));
+  $(commands, pushVertexUniformData, 0, modelViewProjection.f, sizeof(modelViewProjection));
 
   const SDL_FColor clearColor = { 0.1f, 0.1f, 0.2f, 1.f };
   const SDL_GPUColorTargetInfo color = $(app->framebuffer, colorTargetInfo, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_STORE, &clearColor);
   const SDL_GPUDepthStencilTargetInfo depth = $(app->framebuffer, depthTargetInfo, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_DONT_CARE, 1.f);
 
-  RenderPass *pass = $(cmd, beginRenderPass, &color, 1, &depth);
+  RenderPass *pass = $(commands, beginRenderPass, &color, 1, &depth);
   $(pass, bindPipeline, scene->pipeline);
   $(pass, bindVertexBuffers, 0, &(SDL_GPUBufferBinding) { .buffer = scene->vertexBuffer->buffer }, 1);
   $(pass, drawPrimitives, (Uint32) SDL_arraysize(vertices), 1, 0, 0);
@@ -235,10 +241,14 @@ SDL_AppResult SDL_AppInit(void **appState, int argc, char *argv[]) {
   SDL_GetWindowSizeInPixels(app->window, &w, &h);
 
   const SDL_GPUTextureFormat colorFormat = $(app->renderDevice, getSwapchainTextureFormat, app->window);
-  app->framebuffer = $(alloc(Framebuffer), initWithDevice, app->renderDevice,
-    &MakeSize(w, h),
-    colorFormat,
-    SDL_GPU_TEXTUREFORMAT_D16_UNORM);
+  app->framebuffer = $(app->renderDevice, createFramebuffer, &(GPU_FramebufferCreateInfo) {
+    .size = MakeSize(w, h),
+    .colorFormat = colorFormat,
+    .depthFormat = SDL_GPU_TEXTUREFORMAT_D16_UNORM,
+    .sampleCount = HELLO_MSAA,
+  });
+
+  $(app->renderDevice, setFramebuffer, app->framebuffer);
 
   initScene(app);
 
@@ -252,38 +262,11 @@ SDL_AppResult SDL_AppIterate(void *appState) {
 
   AppState *app = appState;
 
-  CommandBuffer *cmd = $(app->renderDevice, acquireCommandBuffer);
-
-  SwapchainTexture swapchain = { 0 };
-  $(cmd, waitAndAcquireSwapchainTexture, &swapchain);
-
-  if (!swapchain.texture) {
-    $(cmd, cancel);
-    release(cmd);
-    return SDL_APP_CONTINUE;
+  CommandBuffer *commands = $(app->renderDevice, beginFrame);
+  if (commands) {
+    drawScene(app, commands);
+    $(app->renderDevice, endFrame);
   }
-
-  $(app->framebuffer, resize, &swapchain.size);
-
-  drawScene(app, cmd);
-
-  $(cmd, blitTexture, &(SDL_GPUBlitInfo) {
-    .source = {
-      .texture = app->framebuffer->colorTexture->texture,
-      .w = (Uint32) swapchain.size.w,
-      .h = (Uint32) swapchain.size.h,
-    },
-    .destination = {
-      .texture = swapchain.texture,
-      .w = (Uint32) swapchain.size.w,
-      .h = (Uint32) swapchain.size.h,
-    },
-    .load_op = SDL_GPU_LOADOP_DONT_CARE,
-    .filter = SDL_GPU_FILTER_NEAREST,
-  });
-
-  $(app->renderDevice, submit, cmd);
-  release(cmd);
 
   return SDL_APP_CONTINUE;
 }

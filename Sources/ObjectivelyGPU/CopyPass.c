@@ -42,6 +42,10 @@ static void dealloc(Object *self) {
     SDL_EndGPUCopyPass(this->pass);
   }
 
+  if (this->commands) {
+    this->commands->pass = NULL;
+  }
+
   super(Object, self, dealloc);
 }
 

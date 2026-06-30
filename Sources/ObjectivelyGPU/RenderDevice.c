@@ -33,6 +33,7 @@
 #include "CommandBuffer.h"
 #include "ComputePipeline.h"
 #include "CopyPass.h"
+#include "Framebuffer.h"
 #include "GraphicsPipeline.h"
 #include "RenderDevice.h"
 #include "Sampler.h"
@@ -49,6 +50,8 @@
 static void dealloc(Object *self) {
 
   RenderDevice *this = (RenderDevice *) self;
+
+  release(this->framebuffer);
 
   if (this->window && this->device) {
     SDL_ReleaseWindowFromGPUDevice(this->device, this->window);
@@ -73,6 +76,67 @@ static CommandBuffer *acquireCommandBuffer(const RenderDevice *self) {
   GPU_Assert(commands, "SDL_AcquireGPUCommandBuffer");
 
   return $(alloc(CommandBuffer), initWithCommandBuffer, self, commands);
+}
+
+/**
+ * @fn CommandBuffer *RenderDevice::beginFrame(RenderDevice *self)
+ * @memberof RenderDevice
+ */
+static CommandBuffer *beginFrame(RenderDevice *self) {
+
+  GPU_Assert(self->framebuffer, "no framebuffer set; call setFramebuffer first");
+  GPU_Assert(!self->commandBuffer, "beginFrame called with a frame already in flight");
+
+  CommandBuffer *commands = $(self, acquireCommandBuffer);
+
+  SwapchainTexture swapchain = { 0 };
+  $(commands, waitAndAcquireSwapchainTexture, &swapchain);
+
+  if (!swapchain.texture) {
+    $(commands, cancel);
+    release(commands);
+    return NULL;
+  }
+
+  $(self->framebuffer, resize, &swapchain.size);
+
+  self->commandBuffer = commands;
+  self->swapchain = swapchain;
+
+  return commands;
+}
+
+/**
+ * @fn void RenderDevice::endFrame(RenderDevice *self)
+ * @memberof RenderDevice
+ */
+static void endFrame(RenderDevice *self) {
+
+  GPU_Assert(self->commandBuffer, "endFrame called without a frame in flight");
+
+  Texture *color = $(self->framebuffer, resolvedColorTexture);
+  GPU_Assert(color, "framebuffer has no color attachment to present");
+
+  $(self->commandBuffer, blitTexture, &(SDL_GPUBlitInfo) {
+    .source = {
+      .texture = color->texture,
+      .w = (Uint32) self->swapchain.size.w,
+      .h = (Uint32) self->swapchain.size.h,
+    },
+    .destination = {
+      .texture = self->swapchain.texture,
+      .w = (Uint32) self->swapchain.size.w,
+      .h = (Uint32) self->swapchain.size.h,
+    },
+    .load_op = SDL_GPU_LOADOP_DONT_CARE,
+    .filter = SDL_GPU_FILTER_NEAREST,
+  });
+
+  $(self->commandBuffer, submit);
+
+  release(self->commandBuffer);
+  self->commandBuffer = NULL;
+  self->swapchain = (SwapchainTexture) { 0 };
 }
 
 /**
@@ -109,6 +173,15 @@ static Buffer *createBufferWithData(RenderDevice *self, SDL_GPUBufferUsageFlags 
 static ComputePipeline *createComputePipeline(RenderDevice *self, const SDL_GPUComputePipelineCreateInfo *info) {
 
   return $(alloc(ComputePipeline), initWithDevice, self, info);
+}
+
+/**
+ * @fn Framebuffer *RenderDevice::createFramebuffer(RenderDevice *self, const GPU_FramebufferCreateInfo *info)
+ * @memberof RenderDevice
+ */
+static Framebuffer *createFramebuffer(RenderDevice *self, const GPU_FramebufferCreateInfo *info) {
+
+  return $(alloc(Framebuffer), initWithDevice, self, info);
 }
 
 /**
@@ -268,6 +341,18 @@ static bool setAllowedFramesInFlight(const RenderDevice *self, Uint32 allowed) {
 }
 
 /**
+ * @fn void RenderDevice::setFramebuffer(RenderDevice *self, Framebuffer *framebuffer)
+ * @memberof RenderDevice
+ */
+static void setFramebuffer(RenderDevice *self, Framebuffer *framebuffer) {
+
+  if (self->framebuffer != framebuffer) {
+    release(self->framebuffer);
+    self->framebuffer = framebuffer ? retain(framebuffer) : NULL;
+  }
+}
+
+/**
  * @fn bool RenderDevice::setSwapchainParameters(const RenderDevice *self, SDL_Window *window, SDL_GPUSwapchainComposition composition, SDL_GPUPresentMode mode)
  * @memberof RenderDevice
  */
@@ -302,8 +387,8 @@ static void setWindow(RenderDevice *self, SDL_Window *window) {
  * @memberof RenderDevice
  */
 static void submit(const RenderDevice *self, CommandBuffer *commands) {
-  const bool ok = SDL_SubmitGPUCommandBuffer(commands->commands);
-  GPU_Assert(ok, "SDL_SubmitGPUCommandBuffer");
+  assert(commands);
+  $(commands, submit);
 }
 
 /**
@@ -311,11 +396,8 @@ static void submit(const RenderDevice *self, CommandBuffer *commands) {
  * @memberof RenderDevice
  */
 static SDL_GPUFence *submitAndFence(const RenderDevice *self, CommandBuffer *commands) {
-
-  SDL_GPUFence *fence = SDL_SubmitGPUCommandBufferAndAcquireFence(commands->commands);
-  GPU_Assert(fence, "SDL_SubmitGPUCommandBufferAndAcquireFence");
-
-  return fence;
+  assert(commands);
+  return $(commands, submitAndFence);
 }
 
 /**
@@ -392,16 +474,19 @@ static void initialize(Class *clazz) {
   ((ObjectInterface *) clazz->interface)->dealloc = dealloc;
 
   ((RenderDeviceInterface *) clazz->interface)->acquireCommandBuffer = acquireCommandBuffer;
+  ((RenderDeviceInterface *) clazz->interface)->beginFrame = beginFrame;
   ((RenderDeviceInterface *) clazz->interface)->createBuffer = createBuffer;
   ((RenderDeviceInterface *) clazz->interface)->createBufferWithConstMem = createBufferWithConstMem;
   ((RenderDeviceInterface *) clazz->interface)->createBufferWithData = createBufferWithData;
   ((RenderDeviceInterface *) clazz->interface)->createComputePipeline = createComputePipeline;
+  ((RenderDeviceInterface *) clazz->interface)->createFramebuffer = createFramebuffer;
   ((RenderDeviceInterface *) clazz->interface)->createGraphicsPipeline = createGraphicsPipeline;
   ((RenderDeviceInterface *) clazz->interface)->createSampler = createSampler;
   ((RenderDeviceInterface *) clazz->interface)->createShader = createShader;
   ((RenderDeviceInterface *) clazz->interface)->createTexture = createTexture;
   ((RenderDeviceInterface *) clazz->interface)->createTextureFromSurface = createTextureFromSurface;
   ((RenderDeviceInterface *) clazz->interface)->createTransferBuffer = createTransferBuffer;
+  ((RenderDeviceInterface *) clazz->interface)->endFrame = endFrame;
   ((RenderDeviceInterface *) clazz->interface)->getSwapchainTextureFormat = getSwapchainTextureFormat;
   ((RenderDeviceInterface *) clazz->interface)->init = init;
   ((RenderDeviceInterface *) clazz->interface)->initWithWindow = initWithWindow;
@@ -412,6 +497,7 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->releaseFence = releaseFence;
   ((RenderDeviceInterface *) clazz->interface)->releaseTransferBuffer = releaseTransferBuffer;
   ((RenderDeviceInterface *) clazz->interface)->setAllowedFramesInFlight = setAllowedFramesInFlight;
+  ((RenderDeviceInterface *) clazz->interface)->setFramebuffer = setFramebuffer;
   ((RenderDeviceInterface *) clazz->interface)->setSwapchainParameters = setSwapchainParameters;
   ((RenderDeviceInterface *) clazz->interface)->setWindow = setWindow;
   ((RenderDeviceInterface *) clazz->interface)->submit = submit;

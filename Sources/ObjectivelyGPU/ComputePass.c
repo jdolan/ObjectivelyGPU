@@ -41,6 +41,10 @@ static void dealloc(Object *self) {
     SDL_EndGPUComputePass(this->pass);
   }
 
+  if (this->commands) {
+    this->commands->pass = NULL;
+  }
+
   super(Object, self, dealloc);
 }
 

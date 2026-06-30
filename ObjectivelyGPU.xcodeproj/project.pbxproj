@@ -177,7 +177,7 @@
 		CEBA3F692FF3211F00758CA6 /* Shader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
 		CEBA3F6A2FF3211F00758CA6 /* Shader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Shader.c; sourceTree = "<group>"; };
 		CEBA3F742FF330A700758CA6 /* ComputePipeline.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComputePipeline.c; sourceTree = "<group>"; };
-		CEBA3F762FF3367000758CA6 /* fetch-sdl3.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "fetch-sdl3.sh"; sourceTree = "<group>"; };
+		CEBA3F7C2FF36E2300758CA6 /* fetch-sdl3.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "fetch-sdl3.sh"; sourceTree = "<group>"; };
 		CECF83942FEF65EB00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83952FEF65FF00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83962FEF65FF00CB0CCA /* ObjectivelyGPU.pc.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ObjectivelyGPU.pc.in; sourceTree = "<group>"; };
@@ -338,7 +338,7 @@
 			children = (
 				AA000000000000000000EE01 /* SDL3.xcframework */,
 				CEA0030000000000000000F0 /* Objectively.framework */,
-				CEBA3F762FF3367000758CA6 /* fetch-sdl3.sh */,
+				CEBA3F7C2FF36E2300758CA6 /* fetch-sdl3.sh */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

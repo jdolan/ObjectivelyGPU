@@ -93,6 +93,20 @@ struct CommandBuffer {
    * @brief The RenderDevice that this CommandBuffer belongs to.
    */
   RenderDevice *device;
+
+  /**
+   * @brief The currently open pass (RenderPass, CopyPass, or ComputePass), or `NULL`.
+   * @details Borrowed reference, set by the `begin*Pass` factories and cleared when the
+   *   pass ends. Used to enforce that at most one pass is open at a time.
+   * @private
+   */
+  Object *pass;
+
+  /**
+   * @brief Whether this command buffer has been submitted or cancelled.
+   * @private
+   */
+  bool submitted;
 };
 
 /**
@@ -119,7 +133,7 @@ struct CommandBufferInterface {
   bool (*acquireSwapchainTexture)(const CommandBuffer *self, SwapchainTexture *swapchain);
 
   /**
-   * @fn ComputePass *CommandBuffer::beginComputePass(const CommandBuffer *self, const SDL_GPUStorageTextureReadWriteBinding *storageTextures, Uint32 numStorageTextures, const SDL_GPUStorageBufferReadWriteBinding *storageBuffers, Uint32 numStorageBuffers)
+   * @fn ComputePass *CommandBuffer::beginComputePass(CommandBuffer *self, const SDL_GPUStorageTextureReadWriteBinding *storageTextures, Uint32 numStorageTextures, const SDL_GPUStorageBufferReadWriteBinding *storageBuffers, Uint32 numStorageBuffers)
    * @brief Begins a compute pass and returns a retained ComputePass.
    * @details The returned ComputePass must be released when compute work is
    *   complete. Releasing it calls `SDL_EndGPUComputePass` automatically.
@@ -131,10 +145,10 @@ struct CommandBufferInterface {
    * @return A new ComputePass, retained. Must be released by the caller.
    * @memberof CommandBuffer
    */
-  ComputePass *(*beginComputePass)(const CommandBuffer *self, const SDL_GPUStorageTextureReadWriteBinding *storageTextures, Uint32 numStorageTextures, const SDL_GPUStorageBufferReadWriteBinding *storageBuffers, Uint32 numStorageBuffers);
+  ComputePass *(*beginComputePass)(CommandBuffer *self, const SDL_GPUStorageTextureReadWriteBinding *storageTextures, Uint32 numStorageTextures, const SDL_GPUStorageBufferReadWriteBinding *storageBuffers, Uint32 numStorageBuffers);
 
   /**
-   * @fn CopyPass *CommandBuffer::beginCopyPass(const CommandBuffer *self)
+   * @fn CopyPass *CommandBuffer::beginCopyPass(CommandBuffer *self)
    * @brief Begins a copy pass and returns a retained CopyPass.
    * @details The returned CopyPass must be released when all transfers are
    *   complete. Releasing it calls `SDL_EndGPUCopyPass` automatically.
@@ -142,10 +156,10 @@ struct CommandBufferInterface {
    * @return A new CopyPass, retained. Must be released by the caller.
    * @memberof CommandBuffer
    */
-  CopyPass *(*beginCopyPass)(const CommandBuffer *self);
+  CopyPass *(*beginCopyPass)(CommandBuffer *self);
 
   /**
-   * @fn RenderPass *CommandBuffer::beginRenderPass(const CommandBuffer *self, const SDL_GPUColorTargetInfo *colorTargets, Uint32 numColorTargets, const SDL_GPUDepthStencilTargetInfo *depthStencil)
+   * @fn RenderPass *CommandBuffer::beginRenderPass(CommandBuffer *self, const SDL_GPUColorTargetInfo *colorTargets, Uint32 numColorTargets, const SDL_GPUDepthStencilTargetInfo *depthStencil)
    * @brief Begins a render pass and returns a retained RenderPass.
    * @details The returned RenderPass must be released when all draw calls are
    *   recorded. Releasing it calls `SDL_EndGPURenderPass` automatically.
@@ -156,7 +170,7 @@ struct CommandBufferInterface {
    * @return A new RenderPass, retained. Must be released by the caller.
    * @memberof CommandBuffer
    */
-  RenderPass *(*beginRenderPass)(const CommandBuffer *self, const SDL_GPUColorTargetInfo *colorTargets, Uint32 numColorTargets, const SDL_GPUDepthStencilTargetInfo *depthStencil);
+  RenderPass *(*beginRenderPass)(CommandBuffer *self, const SDL_GPUColorTargetInfo *colorTargets, Uint32 numColorTargets, const SDL_GPUDepthStencilTargetInfo *depthStencil);
 
   /**
    * @fn void CommandBuffer::blitTexture(const CommandBuffer *self, const SDL_GPUBlitInfo *info)
@@ -166,7 +180,7 @@ struct CommandBufferInterface {
   void (*blitTexture)(const CommandBuffer *self, const SDL_GPUBlitInfo *info);
 
   /**
-   * @fn bool CommandBuffer::cancel(const CommandBuffer *self)
+   * @fn bool CommandBuffer::cancel(CommandBuffer *self)
    * @brief Cancels this command buffer without submitting it to the GPU.
    * @details Use this when swapchain acquisition fails or rendering must be
    *   skipped for a frame. The CommandBuffer must be released after cancel.
@@ -174,7 +188,7 @@ struct CommandBufferInterface {
    * @return True on success, false on error.
    * @memberof CommandBuffer
    */
-  bool (*cancel)(const CommandBuffer *self);
+  bool (*cancel)(CommandBuffer *self);
 
   /**
    * @fn void CommandBuffer::generateMipmaps(const CommandBuffer *self, SDL_GPUTexture *texture)
@@ -237,7 +251,7 @@ struct CommandBufferInterface {
   void (*pushVertexUniformData)(const CommandBuffer *self, Uint32 slot, const void *data, Uint32 length);
 
   /**
-   * @fn bool CommandBuffer::submit(const CommandBuffer *self)
+   * @fn bool CommandBuffer::submit(CommandBuffer *self)
    * @brief Submits this command buffer to the GPU for execution.
    * @details All passes must be released before submitting. The CommandBuffer
    *   must be released after submission.
@@ -245,10 +259,10 @@ struct CommandBufferInterface {
    * @return True on success, false on error.
    * @memberof CommandBuffer
    */
-  bool (*submit)(const CommandBuffer *self);
+  bool (*submit)(CommandBuffer *self);
 
   /**
-   * @fn SDL_GPUFence *CommandBuffer::submitAndFence(const CommandBuffer *self)
+   * @fn SDL_GPUFence *CommandBuffer::submitAndFence(CommandBuffer *self)
    * @brief Submits this command buffer and returns a fence for GPU completion.
    * @details The fence must be released via `RenderDevice::releaseFence` when
    *   no longer needed.
@@ -256,7 +270,7 @@ struct CommandBufferInterface {
    * @return A new SDL_GPUFence, or NULL on error.
    * @memberof CommandBuffer
    */
-  SDL_GPUFence *(*submitAndFence)(const CommandBuffer *self);
+  SDL_GPUFence *(*submitAndFence)(CommandBuffer *self);
 
   /**
    * @fn bool CommandBuffer::waitAndAcquireSwapchainTexture(const CommandBuffer *self, SwapchainTexture *swapchain)
