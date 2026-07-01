@@ -34,7 +34,7 @@ jobs:
     # headers for the Objectively source dependency. macOS uses system curl.
     - name: Build libcurl.xcframework
       working-directory: Objectively
-      run: ./Frameworks/build-libcurl.sh
+      run: bash ./Frameworks/build-libcurl.sh
 
     - name: Fetch SDL3.xcframework
       working-directory: ObjectivelyGPU
