@@ -5,6 +5,10 @@ Dependencies, building, and linking against ObjectivelyGPU.
 
 [TOC]
 
+## Releases
+
+Tagged releases are published on the [GitHub releases page](https://github.com/jdolan/ObjectivelyGPU/releases). To build the latest from source, follow the steps below.
+
 ## Dependencies
 
 * [Objectively](https://github.com/jdolan/Objectively) >= 2.0.0
