@@ -61,7 +61,12 @@ static bool acquireSwapchainTexture(const CommandBuffer *self, SwapchainTexture 
                                                  self->device->window,
                                                  &swapchain->texture,
                                                  &w, &h);
-  swapchain->size = (SDL_Size) { (int) w, (int) h };
+
+  if (ok) {
+    swapchain->size = (SDL_Size) { (int) w, (int) h };
+    swapchain->format = SDL_GetGPUSwapchainTextureFormat(self->device->device, self->device->window);
+  }
+  
   return ok;
 }
 
@@ -266,7 +271,11 @@ static bool waitAndAcquireSwapchainTexture(const CommandBuffer *self, SwapchainT
                                                         self->device->window,
                                                         &swapchain->texture,
                                                         &w, &h);
-  swapchain->size = (SDL_Size) { (int) w, (int) h };
+  if (ok) {
+    swapchain->size = (SDL_Size) { (int) w, (int) h };
+    swapchain->format = SDL_GetGPUSwapchainTextureFormat(self->device->device, self->device->window);
+  }
+  
   return ok;
 }
 

@@ -53,6 +53,11 @@ struct SwapchainTexture {
   SDL_GPUTexture *texture;
 
   /**
+   * @brief The swapchain texture format.
+   */
+  SDL_GPUTextureFormat format;
+
+  /**
    * @brief The swapchain dimensions in pixels.
    */
   SDL_Size size;

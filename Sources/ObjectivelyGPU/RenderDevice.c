@@ -98,25 +98,19 @@ static CommandBuffer *acquireCommandBuffer(const RenderDevice *self) {
 static CommandBuffer *beginFrame(RenderDevice *self) {
 
   GPU_Assert(self->framebuffer, "no framebuffer set; call setFramebuffer first");
-  GPU_Assert(!self->commandBuffer, "beginFrame called with a frame already in flight");
+  GPU_Assert(self->commandBuffer == NULL, "beginFrame called with a frame already in flight");
 
-  CommandBuffer *commands = $(self, acquireCommandBuffer);
+  self->commandBuffer = $(self, acquireCommandBuffer);
 
-  SwapchainTexture swapchain = { 0 };
-  $(commands, waitAndAcquireSwapchainTexture, &swapchain);
-
-  if (!swapchain.texture) {
-    $(commands, cancel);
-    release(commands);
-    return NULL;
+  const bool ok = $(self->commandBuffer, waitAndAcquireSwapchainTexture, &self->swapchain);
+  if (ok) {
+    $(self->framebuffer, resize, &self->swapchain.size);
+  } else {
+    $(self->commandBuffer, cancel);
+    self->commandBuffer = release(self->commandBuffer);
   }
 
-  $(self->framebuffer, resize, &swapchain.size);
-
-  self->commandBuffer = commands;
-  self->swapchain = swapchain;
-
-  return commands;
+  return self->commandBuffer;
 }
 
 /**
@@ -147,8 +141,8 @@ static void endFrame(RenderDevice *self) {
 
   $(self->commandBuffer, submit);
 
-  release(self->commandBuffer);
-  self->commandBuffer = NULL;
+  self->commandBuffer = release(self->commandBuffer);
+  
   self->swapchain = (SwapchainTexture) { 0 };
 }
 
@@ -366,8 +360,11 @@ static bool setAllowedFramesInFlight(const RenderDevice *self, Uint32 allowed) {
 static void setFramebuffer(RenderDevice *self, Framebuffer *framebuffer) {
 
   if (self->framebuffer != framebuffer) {
-    release(self->framebuffer);
-    self->framebuffer = framebuffer ? retain(framebuffer) : NULL;
+    self->framebuffer = release(self->framebuffer);
+    
+    if (framebuffer) {
+      self->framebuffer = retain(framebuffer);
+    }
   }
 }
 
