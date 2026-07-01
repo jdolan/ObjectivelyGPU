@@ -15,7 +15,7 @@ Object oriented graphics framework for SDL3 and C.
 - **Resource objects** with automatic lifecycle — Buffer, Texture, Sampler, Shader, GraphicsPipeline and ComputePipeline initialize and tear themselves down
 - **Typed passes**: RenderPass, ComputePass and CopyPass with command-lifecycle validation that catches mistakes upfront
 - **Framebuffer** abstracts multiple render targets, depth, and MSAA with automatic resolve — convenience without forfeiting the low-level API
-- **Shaders** in every format SDL3 supports — SPIR-V (Vulkan), MSL (Metal) and DXIL (D3D12) — loaded by name with automatic per-backend selection; author them in any language and cross-compile with [SDL_shadercross](https://github.com/libsdl-org/SDL_shadercross), or bring your own blobs
+- **Shaders** loaded by name, with the formats supported by your platform
 - **Mathlib** — vector, matrix, and quaternion math for 3D graphics
 
 ## tl;dr

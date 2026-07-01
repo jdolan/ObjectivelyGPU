@@ -9,9 +9,7 @@ Zlib [license](./COPYING).
 
 ## About
 ObjectivelyGPU is a cross-platform object oriented graphics framework for the C programming language.
-Built on [Objectively](https://github.com/jdolan/Objectively) and [SDL_gpu](https://libsdl.org)'s GPU API, it
-provides a clean, idiomatic C API for modern GPU programming — targeting Metal, Vulkan, and Direct3D 12
-through a single interface.
+Built on [Objectively](https://github.com/jdolan/Objectively) and [SDL_gpu](https://libsdl.org), it provides a unified API for modern GPU programming with Metal, Vulkan, and Direct3D 12.
 
 ## Features
  * **Cross-platform** support for Android, iOS, macOS, Linux and Windows
