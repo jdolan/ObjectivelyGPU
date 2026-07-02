@@ -205,11 +205,17 @@ static void setScissor(RenderPass *self, const SDL_Rect *scissor) {
     // so w/h never exceed the space remaining from the clamped origin. A fully
     // offscreen scissor collapses to zero w/h, scissoring out the draw.
     // RenderPass does not yet capture the target dimensions, so the viewport
-    // (which the caller is expected to have set) stands in for them.
-    const int x = SDL_clamp(scissor->x, 0, (int) self->viewport.w);
-    const int y = SDL_clamp(scissor->y, 0, (int) self->viewport.h);
-    const int r = SDL_clamp(scissor->x + scissor->w, 0, (int) self->viewport.w);
-    const int b = SDL_clamp(scissor->y + scissor->h, 0, (int) self->viewport.h);
+    // (which the caller is expected to have set) stands in for them. The bounds
+    // are relative to the viewport *origin*, not (0, 0): a viewport offset into
+    // the target (e.g. shadow atlas tiles) must not collapse the scissor.
+    const int vx = (int) self->viewport.x;
+    const int vy = (int) self->viewport.y;
+    const int vw = (int) self->viewport.w;
+    const int vh = (int) self->viewport.h;
+    const int x = SDL_clamp(scissor->x, vx, vx + vw);
+    const int y = SDL_clamp(scissor->y, vy, vy + vh);
+    const int r = SDL_clamp(scissor->x + scissor->w, vx, vx + vw);
+    const int b = SDL_clamp(scissor->y + scissor->h, vy, vy + vh);
     self->scissor = (SDL_Rect) { .x = x, .y = y, .w = r - x, .h = b - y };
   } else {
     // Reset to the full render target. RenderPass does not yet capture the
