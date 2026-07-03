@@ -183,15 +183,15 @@ static bool resize(Framebuffer *self, const SDL_Size *size) {
 
   if (self->depthFormat != SDL_GPU_TEXTUREFORMAT_INVALID) {
 
-    // Single-sample depth carries SAMPLER so it can be read directly via
-    // resolveDepthTexture (e.g. soft particles). Multisampled depth is a plain
-    // depth-stencil target; sampling it requires the separate resolveDepthTexture,
-    // a single-sample sampleable target the app populates with a resolve pass
-    // (SDL has no depth store-op resolve).
+    // Depth carries SAMPLER so it can be read in a shader. Single-sample depth is
+    // read directly via resolveDepthTexture (e.g. soft particles). Multisampled
+    // depth is read (as a multisample texture) by an app resolve pass that writes
+    // the separate single-sample resolveDepthTexture, since SDL has no depth
+    // store-op resolve.
     self->depthTexture = $(self->device, createTexture, &(SDL_GPUTextureCreateInfo) {
       .type = SDL_GPU_TEXTURETYPE_2D,
       .format = self->depthFormat,
-      .usage = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET | (multisampled ? 0 : SDL_GPU_TEXTUREUSAGE_SAMPLER),
+      .usage = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER,
       .width = (Uint32) self->size.w,
       .height = (Uint32) self->size.h,
       .layer_count_or_depth = 1,
