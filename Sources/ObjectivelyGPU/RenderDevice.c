@@ -262,6 +262,74 @@ static Sampler *createSampler(RenderDevice *self, const SDL_GPUSamplerCreateInfo
 }
 
 /**
+ * @fn Sampler *RenderDevice::createSamplerLinearRepeat(RenderDevice *self, float maxAnisotropy)
+ * @memberof RenderDevice
+ */
+static Sampler *createSamplerLinearRepeat(RenderDevice *self, float maxAnisotropy) {
+
+  return $(self, createSampler, &(const SDL_GPUSamplerCreateInfo) {
+    .min_filter = SDL_GPU_FILTER_LINEAR,
+    .mag_filter = SDL_GPU_FILTER_LINEAR,
+    .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_LINEAR,
+    .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+    .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+    .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+    .enable_anisotropy = maxAnisotropy > 0.f,
+    .max_anisotropy = maxAnisotropy,
+  });
+}
+
+/**
+ * @fn Sampler *RenderDevice::createSamplerLinearClamp(RenderDevice *self)
+ * @memberof RenderDevice
+ */
+static Sampler *createSamplerLinearClamp(RenderDevice *self) {
+
+  return $(self, createSampler, &(const SDL_GPUSamplerCreateInfo) {
+    .min_filter = SDL_GPU_FILTER_LINEAR,
+    .mag_filter = SDL_GPU_FILTER_LINEAR,
+    .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_LINEAR,
+    .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+  });
+}
+
+/**
+ * @fn Sampler *RenderDevice::createSamplerNearestClamp(RenderDevice *self)
+ * @memberof RenderDevice
+ */
+static Sampler *createSamplerNearestClamp(RenderDevice *self) {
+
+  return $(self, createSampler, &(const SDL_GPUSamplerCreateInfo) {
+    .min_filter = SDL_GPU_FILTER_NEAREST,
+    .mag_filter = SDL_GPU_FILTER_NEAREST,
+    .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
+    .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+  });
+}
+
+/**
+ * @fn Sampler *RenderDevice::createSamplerShadowCompare(RenderDevice *self)
+ * @memberof RenderDevice
+ */
+static Sampler *createSamplerShadowCompare(RenderDevice *self) {
+
+  return $(self, createSampler, &(const SDL_GPUSamplerCreateInfo) {
+    .min_filter = SDL_GPU_FILTER_LINEAR,
+    .mag_filter = SDL_GPU_FILTER_LINEAR,
+    .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
+    .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    .compare_op = SDL_GPU_COMPAREOP_LESS_OR_EQUAL,
+    .enable_compare = true,
+  });
+}
+
+/**
  * @fn Shader *RenderDevice::createShader(RenderDevice *self, const SDL_GPUShaderCreateInfo *info)
  * @memberof RenderDevice
  */
@@ -299,6 +367,32 @@ static Texture *createTextureFromSurface(RenderDevice *self, SDL_Surface *surfac
                                           bool mipmaps) {
 
   return $(alloc(Texture), initWithSurface, self, surface, usage, mipmaps);
+}
+
+/**
+ * @fn Texture *RenderDevice::createSolidColorTexture(RenderDevice *self, SDL_GPUTextureType type, Uint32 layerCount, Uint32 rgba)
+ * @memberof RenderDevice
+ */
+static Texture *createSolidColorTexture(RenderDevice *self, SDL_GPUTextureType type, Uint32 layerCount, Uint32 rgba) {
+
+  assert(type == SDL_GPU_TEXTURETYPE_2D || type == SDL_GPU_TEXTURETYPE_CUBE);
+  assert(layerCount >= 1 && layerCount <= 6);
+
+  Uint32 pixels[6];
+  for (Uint32 i = 0; i < layerCount; i++) {
+    pixels[i] = rgba;
+  }
+
+  return $(self, createTexture, &(const SDL_GPUTextureCreateInfo) {
+    .type = type,
+    .format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
+    .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER,
+    .width = 1,
+    .height = 1,
+    .layer_count_or_depth = layerCount,
+    .num_levels = 1,
+    .sample_count = SDL_GPU_SAMPLECOUNT_1,
+  }, pixels);
 }
 
 /**
@@ -410,6 +504,29 @@ static ComputePipeline *loadComputePipeline(RenderDevice *self, const char *name
   ComputePipeline *pipeline = $(alloc(ComputePipeline), initWithDevice, self, &create);
 
   release(resource);
+  return pipeline;
+}
+
+/**
+ * @fn GraphicsPipeline *RenderDevice::loadGraphicsPipeline(RenderDevice *self, const char *vertexShaderName, const SDL_GPUShaderCreateInfo *vertexShaderInfo, const char *fragmentShaderName, const SDL_GPUShaderCreateInfo *fragmentShaderInfo, SDL_GPUGraphicsPipelineCreateInfo *info)
+ * @memberof RenderDevice
+ */
+static GraphicsPipeline *loadGraphicsPipeline(RenderDevice *self,
+                                               const char *vertexShaderName, const SDL_GPUShaderCreateInfo *vertexShaderInfo,
+                                               const char *fragmentShaderName, const SDL_GPUShaderCreateInfo *fragmentShaderInfo,
+                                               SDL_GPUGraphicsPipelineCreateInfo *info) {
+
+  Shader *vertexShader = $(self, loadShader, vertexShaderName, vertexShaderInfo);
+  Shader *fragmentShader = $(self, loadShader, fragmentShaderName, fragmentShaderInfo);
+
+  info->vertex_shader = vertexShader->shader;
+  info->fragment_shader = fragmentShader->shader;
+
+  GraphicsPipeline *pipeline = $(self, createGraphicsPipeline, info);
+
+  release(vertexShader);
+  release(fragmentShader);
+
   return pipeline;
 }
 
@@ -588,9 +705,14 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->createFramebuffer = createFramebuffer;
   ((RenderDeviceInterface *) clazz->interface)->createGraphicsPipeline = createGraphicsPipeline;
   ((RenderDeviceInterface *) clazz->interface)->createSampler = createSampler;
+  ((RenderDeviceInterface *) clazz->interface)->createSamplerLinearRepeat = createSamplerLinearRepeat;
+  ((RenderDeviceInterface *) clazz->interface)->createSamplerLinearClamp = createSamplerLinearClamp;
+  ((RenderDeviceInterface *) clazz->interface)->createSamplerNearestClamp = createSamplerNearestClamp;
+  ((RenderDeviceInterface *) clazz->interface)->createSamplerShadowCompare = createSamplerShadowCompare;
   ((RenderDeviceInterface *) clazz->interface)->createShader = createShader;
   ((RenderDeviceInterface *) clazz->interface)->createTexture = createTexture;
   ((RenderDeviceInterface *) clazz->interface)->createTextureFromSurface = createTextureFromSurface;
+  ((RenderDeviceInterface *) clazz->interface)->createSolidColorTexture = createSolidColorTexture;
   ((RenderDeviceInterface *) clazz->interface)->createTransferBuffer = createTransferBuffer;
   ((RenderDeviceInterface *) clazz->interface)->endFrame = endFrame;
   ((RenderDeviceInterface *) clazz->interface)->getSwapchainTextureFormat = getSwapchainTextureFormat;
@@ -598,6 +720,7 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->initWithWindow = initWithWindow;
   ((RenderDeviceInterface *) clazz->interface)->loadShader = loadShader;
   ((RenderDeviceInterface *) clazz->interface)->loadComputePipeline = loadComputePipeline;
+  ((RenderDeviceInterface *) clazz->interface)->loadGraphicsPipeline = loadGraphicsPipeline;
   ((RenderDeviceInterface *) clazz->interface)->mapTransferBuffer = mapTransferBuffer;
   ((RenderDeviceInterface *) clazz->interface)->queryFence = queryFence;
   ((RenderDeviceInterface *) clazz->interface)->releaseFence = releaseFence;

@@ -232,13 +232,63 @@ struct RenderDeviceInterface {
    * @fn Sampler *RenderDevice::createSampler(RenderDevice *self, const SDL_GPUSamplerCreateInfo *info)
    * @brief Creates a Sampler describing filter and address modes.
    * @details Convenience factory for `Sampler::initWithDevice`. For the common
-   *   filtering presets, prefer the cached `sampler*` accessors.
+   *   filtering presets below, prefer `createSamplerLinearRepeat` et al.
    * @param self The RenderDevice.
    * @param info Sampler creation parameters (min/mag filter, mip mode, address modes, anisotropy, etc.).
    * @return A new, retained Sampler. GPU_Asserts on failure. Free with `release`.
    * @memberof RenderDevice
    */
   Sampler *(*createSampler)(RenderDevice *self, const SDL_GPUSamplerCreateInfo *info);
+
+  /**
+   * @fn Sampler *RenderDevice::createSamplerLinearRepeat(RenderDevice *self, float maxAnisotropy)
+   * @brief Creates a trilinear, wrapping Sampler -- the common preset for tiled surface textures.
+   * @details Linear min/mag filter, linear mipmap mode, `REPEAT` addressing on all
+   *   three axes. Anisotropic filtering is enabled when @p maxAnisotropy is greater
+   *   than zero.
+   * @param self The RenderDevice.
+   * @param maxAnisotropy The maximum anisotropy level, or `0` to disable anisotropic filtering.
+   * @return A new, retained Sampler. GPU_Asserts on failure. Free with `release`.
+   * @memberof RenderDevice
+   */
+  Sampler *(*createSamplerLinearRepeat)(RenderDevice *self, float maxAnisotropy);
+
+  /**
+   * @fn Sampler *RenderDevice::createSamplerLinearClamp(RenderDevice *self)
+   * @brief Creates a trilinear, edge-clamped Sampler -- the common preset for
+   *   continuously-sampled volumes and non-tiling images (ambient/voxel volumes,
+   *   cubemaps, post-process targets, UI images).
+   * @details Linear min/mag filter, linear mipmap mode, `CLAMP_TO_EDGE` addressing
+   *   on all three axes, no anisotropic filtering.
+   * @param self The RenderDevice.
+   * @return A new, retained Sampler. GPU_Asserts on failure. Free with `release`.
+   * @memberof RenderDevice
+   */
+  Sampler *(*createSamplerLinearClamp)(RenderDevice *self);
+
+  /**
+   * @fn Sampler *RenderDevice::createSamplerNearestClamp(RenderDevice *self)
+   * @brief Creates a point-filtered, edge-clamped Sampler -- the common preset
+   *   for data textures fetched by integer coordinate (voxel light data,
+   *   depth-attachment copies) rather than sampled for appearance.
+   * @details Nearest min/mag filter, nearest mipmap mode, `CLAMP_TO_EDGE`
+   *   addressing on all three axes.
+   * @param self The RenderDevice.
+   * @return A new, retained Sampler. GPU_Asserts on failure. Free with `release`.
+   * @memberof RenderDevice
+   */
+  Sampler *(*createSamplerNearestClamp)(RenderDevice *self);
+
+  /**
+   * @fn Sampler *RenderDevice::createSamplerShadowCompare(RenderDevice *self)
+   * @brief Creates a hardware-PCF comparison Sampler for shadow map sampling.
+   * @details Linear min/mag filter, nearest mipmap mode, `CLAMP_TO_EDGE`
+   *   addressing, depth comparison enabled with `SDL_GPU_COMPAREOP_LESS_OR_EQUAL`.
+   * @param self The RenderDevice.
+   * @return A new, retained Sampler. GPU_Asserts on failure. Free with `release`.
+   * @memberof RenderDevice
+   */
+  Sampler *(*createSamplerShadowCompare)(RenderDevice *self);
 
   /**
    * @fn Shader *RenderDevice::createShader(RenderDevice *self, const SDL_GPUShaderCreateInfo *info)
@@ -282,6 +332,23 @@ struct RenderDeviceInterface {
    * @memberof RenderDevice
    */
   Texture *(*createTextureFromSurface)(RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage, bool mipmaps);
+
+  /**
+   * @fn Texture *RenderDevice::createSolidColorTexture(RenderDevice *self, SDL_GPUTextureType type, Uint32 layerCount, Uint32 rgba)
+   * @brief Creates a small, solid-color Texture -- the common "placeholder" pattern
+   *   for a sampler slot a shader declares but a given draw never actually reads.
+   * @details `type` may be `SDL_GPU_TEXTURETYPE_2D` (@p layerCount ignored, treated
+   *   as 1) or `SDL_GPU_TEXTURETYPE_CUBE` (@p layerCount must be 6); every texel of
+   *   every layer is filled with @p rgba. Always 1x1 per layer/face,
+   *   `SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM`, one mip level, `SAMPLER` usage only.
+   * @param self The RenderDevice.
+   * @param type `SDL_GPU_TEXTURETYPE_2D` or `SDL_GPU_TEXTURETYPE_CUBE`.
+   * @param layerCount The layer/face count (6 for `_CUBE`, otherwise ignored).
+   * @param rgba The fill color, packed as `0xAABBGGRR` (i.e. red in the lowest byte).
+   * @return A new, retained Texture. GPU_Asserts on failure. Free with `release`.
+   * @memberof RenderDevice
+   */
+  Texture *(*createSolidColorTexture)(RenderDevice *self, SDL_GPUTextureType type, Uint32 layerCount, Uint32 rgba);
 
   /**
    * @fn SDL_GPUTransferBuffer *RenderDevice::createTransferBuffer(const RenderDevice *self, const SDL_GPUTransferBufferCreateInfo *info)
@@ -378,6 +445,31 @@ struct RenderDeviceInterface {
   * @memberof RenderDevice
   */
   ComputePipeline *(*loadComputePipeline)(RenderDevice *self, const char *name, const SDL_GPUComputePipelineCreateInfo *info);
+
+  /**
+   * @fn GraphicsPipeline *RenderDevice::loadGraphicsPipeline(RenderDevice *self, const char *vertexShaderName, const SDL_GPUShaderCreateInfo *vertexShaderInfo, const char *fragmentShaderName, const SDL_GPUShaderCreateInfo *fragmentShaderInfo, SDL_GPUGraphicsPipelineCreateInfo *info)
+   * @brief Loads a vertex/fragment shader pair and creates a GraphicsPipeline from them.
+   * @details Convenience over the load-both/assign/create/release-both boilerplate every
+   *   graphics pipeline needs: calls `loadShader` for @p vertexShaderName and
+   *   @p fragmentShaderName, assigns the results to @p info's `vertex_shader`/
+   *   `fragment_shader` fields, calls `createGraphicsPipeline`, then releases both
+   *   Shaders (they're retained by the pipeline internally; the caller never sees
+   *   or owns them). @p info must otherwise be fully populated (vertex layout,
+   *   blend/rasterizer/depth-stencil state, colour target formats) by the caller.
+   * @param self The RenderDevice.
+   * @param vertexShaderName Vertex shader base name, e.g. @c "shaders/bsp_vs".
+   * @param vertexShaderInfo Vertex shader creation parameters (see `loadShader`).
+   * @param fragmentShaderName Fragment shader base name, e.g. @c "shaders/bsp_fs".
+   * @param fragmentShaderInfo Fragment shader creation parameters (see `loadShader`).
+   * @param info Graphics pipeline creation parameters; `vertex_shader`/`fragment_shader`
+   *   are overwritten, all other fields must already be set.
+   * @return A new, retained GraphicsPipeline. GPU_Asserts on failure. Free with `release`.
+   * @memberof RenderDevice
+   */
+  GraphicsPipeline *(*loadGraphicsPipeline)(RenderDevice *self,
+                                             const char *vertexShaderName, const SDL_GPUShaderCreateInfo *vertexShaderInfo,
+                                             const char *fragmentShaderName, const SDL_GPUShaderCreateInfo *fragmentShaderInfo,
+                                             SDL_GPUGraphicsPipelineCreateInfo *info);
 
   /**
   * @fn void *RenderDevice::mapTransferBuffer(const RenderDevice *self, SDL_GPUTransferBuffer *tbuf, bool cycle)

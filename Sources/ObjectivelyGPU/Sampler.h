@@ -42,10 +42,9 @@ typedef struct SamplerInterface SamplerInterface;
  * @brief An `SDL_GPUSampler` describing texture filter and address modes.
  *
  * Sampler owns its underlying `SDL_GPUSampler` and releases it in `dealloc`, so a
- * Sampler is freed with `release` like any other Objectively object. The
- * `RenderDevice::sampler*` accessors return shared, device-owned Samplers that
- * must not be released by the caller; Samplers created via `createSampler` are
- * owned by the caller.
+ * Sampler is freed with `release` like any other Objectively object, including
+ * ones returned by `RenderDevice`'s `createSampler*` convenience constructors
+ * for common filter/address-mode presets.
  *
  * @extends Object
  */

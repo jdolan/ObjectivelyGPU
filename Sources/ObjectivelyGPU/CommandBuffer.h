@@ -254,6 +254,22 @@ struct CommandBufferInterface {
   void (*pushFragmentUniformData)(const CommandBuffer *self, Uint32 slot, const void *data, Uint32 length);
 
   /**
+   * @fn void CommandBuffer::pushUniformData(const CommandBuffer *self, Uint32 slot, const void *data, Uint32 length)
+   * @brief Pushes the same uniform data to @p slot for both the current vertex
+   *   and fragment shaders.
+   * @details Convenience for the common case of a uniform block (e.g. globals,
+   *   a material block) declared at the same binding in both stages. Equivalent
+   *   to calling `pushVertexUniformData` and `pushFragmentUniformData` with the
+   *   same arguments.
+   * @param self The CommandBuffer.
+   * @param slot The uniform buffer slot, matching both shaders' declarations.
+   * @param data The uniform data to push.
+   * @param length The length of @p data in bytes.
+   * @memberof CommandBuffer
+   */
+  void (*pushUniformData)(const CommandBuffer *self, Uint32 slot, const void *data, Uint32 length);
+
+  /**
    * @fn void CommandBuffer::pushVertexUniformData(const CommandBuffer *self, Uint32 slot, const void *data, Uint32 length)
    * @brief Pushes uniform data for the current vertex shader.
    * @memberof CommandBuffer

@@ -225,6 +225,15 @@ static void pushVertexUniformData(const CommandBuffer *self, Uint32 slot, const 
 }
 
 /**
+ * @fn void CommandBuffer::pushUniformData(const CommandBuffer *self, Uint32 slot, const void *data, Uint32 length)
+ * @memberof CommandBuffer
+ */
+static void pushUniformData(const CommandBuffer *self, Uint32 slot, const void *data, Uint32 length) {
+  SDL_PushGPUVertexUniformData(self->commands, slot, data, length);
+  SDL_PushGPUFragmentUniformData(self->commands, slot, data, length);
+}
+
+/**
  * @fn bool CommandBuffer::submit(CommandBuffer *self)
  * @memberof CommandBuffer
  */
@@ -301,6 +310,7 @@ static void initialize(Class *clazz) {
   ((CommandBufferInterface *) clazz->interface)->pushComputeUniformData = pushComputeUniformData;
   ((CommandBufferInterface *) clazz->interface)->pushDebugGroup = pushDebugGroup;
   ((CommandBufferInterface *) clazz->interface)->pushFragmentUniformData = pushFragmentUniformData;
+  ((CommandBufferInterface *) clazz->interface)->pushUniformData = pushUniformData;
   ((CommandBufferInterface *) clazz->interface)->pushVertexUniformData = pushVertexUniformData;
   ((CommandBufferInterface *) clazz->interface)->submit = submit;
   ((CommandBufferInterface *) clazz->interface)->submitAndFence = submitAndFence;
