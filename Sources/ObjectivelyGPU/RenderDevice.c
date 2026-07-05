@@ -274,6 +274,7 @@ static Sampler *createSamplerLinearRepeat(RenderDevice *self) {
     .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
     .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
     .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+    .max_lod = 1000.f, // no clamp (matches Vulkan's VK_LOD_CLAMP_NONE convention)
     .enable_anisotropy = self->maxAnisotropy > 0.f,
     .max_anisotropy = self->maxAnisotropy,
   });
@@ -292,6 +293,7 @@ static Sampler *createSamplerLinearClamp(RenderDevice *self) {
     .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
     .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
     .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    .max_lod = 1000.f, // no clamp (matches Vulkan's VK_LOD_CLAMP_NONE convention)
     .enable_anisotropy = self->maxAnisotropy > 0.f,
     .max_anisotropy = self->maxAnisotropy,
   });
@@ -310,6 +312,7 @@ static Sampler *createSamplerNearestClamp(RenderDevice *self) {
     .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
     .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
     .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    .max_lod = 1000.f, // no clamp (matches Vulkan's VK_LOD_CLAMP_NONE convention)
   });
 }
 
@@ -326,6 +329,7 @@ static Sampler *createSamplerShadowCompare(RenderDevice *self) {
     .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
     .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
     .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    .max_lod = 1000.f, // no clamp (matches Vulkan's VK_LOD_CLAMP_NONE convention)
     .compare_op = SDL_GPU_COMPAREOP_LESS_OR_EQUAL,
     .enable_compare = true,
   });
