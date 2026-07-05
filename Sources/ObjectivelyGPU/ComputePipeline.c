@@ -60,6 +60,12 @@ static ComputePipeline *initWithDevice(ComputePipeline *self, RenderDevice *devi
   if (self) {
     self->device = retain(device);
 
+    SDL_Log("Assembling ComputePipeline (threads %ux%ux%u, %u samplers, %u storage textures, %u storage buffers)",
+            info->threadcount_x, info->threadcount_y, info->threadcount_z,
+            info->num_samplers,
+            info->num_readonly_storage_textures + info->num_readwrite_storage_textures,
+            info->num_readonly_storage_buffers + info->num_readwrite_storage_buffers);
+
     self->pipeline = SDL_CreateGPUComputePipeline(device->device, info);
     GPU_Assert(self->pipeline, "SDL_CreateGPUComputePipeline");
   }

@@ -127,6 +127,13 @@ static GraphicsPipeline *initWithDevice(GraphicsPipeline *self, RenderDevice *de
 
     self->device = retain(device);
 
+    SDL_Log("Assembling GraphicsPipeline (%u color targets, %ux MSAA, %s)",
+            info->target_info.num_color_targets,
+            info->multisample_state.sample_count == SDL_GPU_SAMPLECOUNT_1 ? 1 :
+                info->multisample_state.sample_count == SDL_GPU_SAMPLECOUNT_2 ? 2 :
+                info->multisample_state.sample_count == SDL_GPU_SAMPLECOUNT_4 ? 4 : 8,
+            info->target_info.has_depth_stencil_target ? "depth" : "no depth");
+
     self->pipeline = SDL_CreateGPUGraphicsPipeline(device->device, info);
     GPU_Assert(self->pipeline, "SDL_CreateGPUGraphicsPipeline");
   }

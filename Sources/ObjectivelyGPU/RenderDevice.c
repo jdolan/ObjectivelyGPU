@@ -355,13 +355,18 @@ static Shader *loadShader(RenderDevice *self, const char *name, const SDL_GPUSha
 
   GPU_ShaderFormat resolved;
   Resource *resource = resolveShaderResource(name, self->shaderFormats, &resolved);
-  
+
+  SDL_Log("Compiling shader \"%s%s\" (%s, %u samplers, %u uniform buffers, %u storage buffers)",
+          name, resolved.ext,
+          info->stage == SDL_GPU_SHADERSTAGE_VERTEX ? "vertex" : "fragment",
+          info->num_samplers, info->num_uniform_buffers, info->num_storage_buffers);
+
   SDL_GPUShaderCreateInfo create = *info;
-  
+
   create.code = resource->data->bytes;
   create.code_size = resource->data->length;
   create.format = resolved.format;
-  
+
   if (!create.entrypoint) {
     switch (create.stage) {
       case SDL_GPU_SHADERSTAGE_VERTEX:
@@ -387,6 +392,10 @@ static ComputePipeline *loadComputePipeline(RenderDevice *self, const char *name
 
   GPU_ShaderFormat resolved;
   Resource *resource = resolveShaderResource(name, self->shaderFormats, &resolved);
+
+  SDL_Log("Compiling compute pipeline \"%s%s\" (threads %ux%ux%u)",
+          name, resolved.ext,
+          info->threadcount_x, info->threadcount_y, info->threadcount_z);
 
   SDL_GPUComputePipelineCreateInfo create = *info;
   create.code = resource->data->bytes;
