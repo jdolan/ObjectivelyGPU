@@ -86,6 +86,14 @@ struct RenderDevice {
   SDL_GPUShaderFormat shaderFormats;
 
   /**
+   * @brief The anisotropic filtering level applied by `createSamplerLinearRepeat`
+   * and `createSamplerLinearClamp`. Defaults to `0` (anisotropic filtering
+   * disabled). Assign directly; only affects Samplers created afterward, since
+   * SDL_gpu Samplers are immutable once created.
+   */
+  float maxAnisotropy;
+
+  /**
    * @brief The present-target Framebuffer driven by `beginFrame`/`endFrame`, or `NULL`.
    * @details Set via `setFramebuffer` (retained). `beginFrame` resizes it to the
    *   swapchain each frame and `endFrame` blits its resolved color to the swapchain.
@@ -241,17 +249,16 @@ struct RenderDeviceInterface {
   Sampler *(*createSampler)(RenderDevice *self, const SDL_GPUSamplerCreateInfo *info);
 
   /**
-   * @fn Sampler *RenderDevice::createSamplerLinearRepeat(RenderDevice *self, float maxAnisotropy)
+   * @fn Sampler *RenderDevice::createSamplerLinearRepeat(RenderDevice *self)
    * @brief Creates a trilinear, wrapping Sampler -- the common preset for tiled surface textures.
    * @details Linear min/mag filter, linear mipmap mode, `REPEAT` addressing on all
-   *   three axes. Anisotropic filtering is enabled when @p maxAnisotropy is greater
-   *   than zero.
+   *   three axes. Anisotropic filtering is enabled when `self->maxAnisotropy` is
+   *   greater than `0`.
    * @param self The RenderDevice.
-   * @param maxAnisotropy The maximum anisotropy level, or `0` to disable anisotropic filtering.
    * @return A new, retained Sampler. GPU_Asserts on failure. Free with `release`.
    * @memberof RenderDevice
    */
-  Sampler *(*createSamplerLinearRepeat)(RenderDevice *self, float maxAnisotropy);
+  Sampler *(*createSamplerLinearRepeat)(RenderDevice *self);
 
   /**
    * @fn Sampler *RenderDevice::createSamplerLinearClamp(RenderDevice *self)
@@ -259,7 +266,8 @@ struct RenderDeviceInterface {
    *   continuously-sampled volumes and non-tiling images (ambient/voxel volumes,
    *   cubemaps, post-process targets, UI images).
    * @details Linear min/mag filter, linear mipmap mode, `CLAMP_TO_EDGE` addressing
-   *   on all three axes, no anisotropic filtering.
+   *   on all three axes. Anisotropic filtering is enabled when `self->maxAnisotropy`
+   *   is greater than `0`.
    * @param self The RenderDevice.
    * @return A new, retained Sampler. GPU_Asserts on failure. Free with `release`.
    * @memberof RenderDevice

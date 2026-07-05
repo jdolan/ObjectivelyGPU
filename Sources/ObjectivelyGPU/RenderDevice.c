@@ -262,10 +262,10 @@ static Sampler *createSampler(RenderDevice *self, const SDL_GPUSamplerCreateInfo
 }
 
 /**
- * @fn Sampler *RenderDevice::createSamplerLinearRepeat(RenderDevice *self, float maxAnisotropy)
+ * @fn Sampler *RenderDevice::createSamplerLinearRepeat(RenderDevice *self)
  * @memberof RenderDevice
  */
-static Sampler *createSamplerLinearRepeat(RenderDevice *self, float maxAnisotropy) {
+static Sampler *createSamplerLinearRepeat(RenderDevice *self) {
 
   return $(self, createSampler, &(const SDL_GPUSamplerCreateInfo) {
     .min_filter = SDL_GPU_FILTER_LINEAR,
@@ -274,8 +274,8 @@ static Sampler *createSamplerLinearRepeat(RenderDevice *self, float maxAnisotrop
     .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
     .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
     .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-    .enable_anisotropy = maxAnisotropy > 0.f,
-    .max_anisotropy = maxAnisotropy,
+    .enable_anisotropy = self->maxAnisotropy > 0.f,
+    .max_anisotropy = self->maxAnisotropy,
   });
 }
 
@@ -292,6 +292,8 @@ static Sampler *createSamplerLinearClamp(RenderDevice *self) {
     .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
     .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
     .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+    .enable_anisotropy = self->maxAnisotropy > 0.f,
+    .max_anisotropy = self->maxAnisotropy,
   });
 }
 
@@ -424,6 +426,8 @@ static RenderDevice *init(RenderDevice *self) {
     
     self->shaderFormats = SDL_GetGPUShaderFormats(self->device);
     GPU_Assert(self->shaderFormats, "SDL_GetGPUShaderFormats");
+
+    self->maxAnisotropy = 0.f;
   }
 
   return self;
