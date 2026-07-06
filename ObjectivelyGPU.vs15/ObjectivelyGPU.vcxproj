@@ -28,6 +28,7 @@
     <ClInclude Include="..\Sources\ObjectivelyGPU\Framebuffer.h" />
     <ClInclude Include="..\Sources\ObjectivelyGPU\GraphicsPipeline.h" />
     <ClInclude Include="..\Sources\ObjectivelyGPU\Mathlib.h" />
+    <ClInclude Include="..\Sources\ObjectivelyGPU\QueryPool.h" />
     <ClInclude Include="..\Sources\ObjectivelyGPU\RenderDevice.h" />
     <ClInclude Include="..\Sources\ObjectivelyGPU\RenderPass.h" />
     <ClInclude Include="..\Sources\ObjectivelyGPU\Sampler.h" />
@@ -44,6 +45,7 @@
     <ClCompile Include="..\Sources\ObjectivelyGPU\CopyPass.c" />
     <ClCompile Include="..\Sources\ObjectivelyGPU\Framebuffer.c" />
     <ClCompile Include="..\Sources\ObjectivelyGPU\GraphicsPipeline.c" />
+    <ClCompile Include="..\Sources\ObjectivelyGPU\QueryPool.c" />
     <ClCompile Include="..\Sources\ObjectivelyGPU\RenderDevice.c" />
     <ClCompile Include="..\Sources\ObjectivelyGPU\RenderPass.c" />
     <ClCompile Include="..\Sources\ObjectivelyGPU\Sampler.c" />
