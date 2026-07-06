@@ -25,6 +25,7 @@
 
 #include "CommandBuffer.h"
 #include "GraphicsPipeline.h"
+#include "QueryPool.h"
 #include "RenderPass.h"
 
 #define _Class _RenderPass
@@ -125,6 +126,32 @@ static void bindVertexStorageBuffers(const RenderPass *self, Uint32 firstSlot, S
  */
 static void bindVertexStorageTextures(const RenderPass *self, Uint32 firstSlot, SDL_GPUTexture *const *textures, Uint32 num) {
   SDL_BindGPUVertexStorageTextures(self->pass, firstSlot, textures, num);
+}
+
+/**
+ * @fn void RenderPass::beginQuery(const RenderPass *self, QueryPool *pool, Uint32 index)
+ * @memberof RenderPass
+ */
+static void beginQuery(const RenderPass *self, QueryPool *pool, Uint32 index) {
+  assert(pool);
+#ifdef SDL_GPU_OCCLUSION_QUERY
+  if (pool->pool) {
+    SDL_BeginGPUQuery(self->commands->commands, pool->pool, index);
+  }
+#endif
+}
+
+/**
+ * @fn void RenderPass::endQuery(const RenderPass *self, QueryPool *pool, Uint32 index)
+ * @memberof RenderPass
+ */
+static void endQuery(const RenderPass *self, QueryPool *pool, Uint32 index) {
+  assert(pool);
+#ifdef SDL_GPU_OCCLUSION_QUERY
+  if (pool->pool) {
+    SDL_EndGPUQuery(self->commands->commands, pool->pool, index);
+  }
+#endif
 }
 
 /**
@@ -275,6 +302,8 @@ static void initialize(Class *clazz) {
   ((RenderPassInterface *) clazz->interface)->bindVertexSamplers = bindVertexSamplers;
   ((RenderPassInterface *) clazz->interface)->bindVertexStorageBuffers = bindVertexStorageBuffers;
   ((RenderPassInterface *) clazz->interface)->bindVertexStorageTextures = bindVertexStorageTextures;
+  ((RenderPassInterface *) clazz->interface)->beginQuery = beginQuery;
+  ((RenderPassInterface *) clazz->interface)->endQuery = endQuery;
   ((RenderPassInterface *) clazz->interface)->drawIndexedPrimitives = drawIndexedPrimitives;
   ((RenderPassInterface *) clazz->interface)->drawIndexedPrimitivesIndirect = drawIndexedPrimitivesIndirect;
   ((RenderPassInterface *) clazz->interface)->drawPrimitives = drawPrimitives;

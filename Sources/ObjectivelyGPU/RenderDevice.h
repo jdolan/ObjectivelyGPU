@@ -32,6 +32,7 @@
 #include <Objectively/Object.h>
 
 #include <ObjectivelyGPU/CommandBuffer.h>
+#include <ObjectivelyGPU/QueryPool.h>
 #include <ObjectivelyGPU/Types.h>
 
 /**
@@ -45,6 +46,7 @@ typedef struct ComputePipeline ComputePipeline;
 typedef struct Framebuffer Framebuffer;
 typedef struct GPU_FramebufferCreateInfo GPU_FramebufferCreateInfo;
 typedef struct GraphicsPipeline GraphicsPipeline;
+typedef struct QueryPool QueryPool;
 typedef struct RenderDevice RenderDevice;
 typedef struct RenderDeviceInterface RenderDeviceInterface;
 typedef struct Sampler Sampler;
@@ -235,6 +237,19 @@ struct RenderDeviceInterface {
    * @memberof RenderDevice
    */
   GraphicsPipeline *(*createGraphicsPipeline)(RenderDevice *self, const SDL_GPUGraphicsPipelineCreateInfo *info);
+
+  /**
+   * @fn QueryPool *RenderDevice::createQueryPool(RenderDevice *self, const SDL_GPUQueryPoolCreateInfo *info)
+   * @brief Creates a QueryPool for occlusion or timestamp queries.
+   * @details Convenience factory for `QueryPool::initWithDevice`. Always
+   *   succeeds, even when occlusion queries are unsupported by the linked
+   *   SDL3 -- see `QueryPool`.
+   * @param self The RenderDevice.
+   * @param info Query pool creation parameters (query type, query count).
+   * @return A new, retained QueryPool. GPU_Asserts on failure. Free with `release`.
+   * @memberof RenderDevice
+   */
+  QueryPool *(*createQueryPool)(RenderDevice *self, const SDL_GPUQueryPoolCreateInfo *info);
 
   /**
    * @fn Sampler *RenderDevice::createSampler(RenderDevice *self, const SDL_GPUSamplerCreateInfo *info)

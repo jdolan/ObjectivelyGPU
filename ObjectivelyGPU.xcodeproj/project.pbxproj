@@ -55,6 +55,8 @@
 		CEBA3F772FF3418E00758CA6 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
 		CEBA3F782FF3419100758CA6 /* ObjectivelyGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6251F22589273797656C269E /* ObjectivelyGPU.framework */; };
 		CECF83982FEF6A7200CB0CCA /* Mathlib.h in Headers */ = {isa = PBXBuildFile; fileRef = CECF83972FEF6A7200CB0CCA /* Mathlib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		496C55EEAC4C86E3B7C6550E /* QueryPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 989E64805790578A941CB5B9 /* QueryPool.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		45AD38AB8109398E51564CFD /* QueryPool.c in Sources */ = {isa = PBXBuildFile; fileRef = 872CC6C6CBA08F1A36626F57 /* QueryPool.c */; };
 		CECF83B62FEF765400CB0CCA /* Hello.frag.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A52FEF712F00CB0CCA /* Hello.frag.metal */; };
 		CECF83B72FEF765400CB0CCA /* Hello.frag.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A62FEF712F00CB0CCA /* Hello.frag.spv */; };
 		CECF83B92FEF765400CB0CCA /* Hello.vert.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A82FEF712F00CB0CCA /* Hello.vert.metal */; };
@@ -182,6 +184,8 @@
 		CECF83952FEF65FF00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83962FEF65FF00CB0CCA /* ObjectivelyGPU.pc.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ObjectivelyGPU.pc.in; sourceTree = "<group>"; };
 		CECF83972FEF6A7200CB0CCA /* Mathlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Mathlib.h; sourceTree = "<group>"; };
+		989E64805790578A941CB5B9 /* QueryPool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QueryPool.h; sourceTree = "<group>"; };
+		872CC6C6CBA08F1A36626F57 /* QueryPool.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = QueryPool.c; sourceTree = "<group>"; };
 		CECF83A32FEF6F5B00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83A42FEF712F00CB0CCA /* Hello.frag.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Hello.frag.glsl; sourceTree = "<group>"; };
 		CECF83A52FEF712F00CB0CCA /* Hello.frag.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Hello.frag.metal; sourceTree = "<group>"; };
@@ -306,6 +310,8 @@
 				CEBA3F652FF3211F00758CA6 /* GraphicsPipeline.h */,
 				CEBA3F662FF3211F00758CA6 /* GraphicsPipeline.c */,
 				CECF83972FEF6A7200CB0CCA /* Mathlib.h */,
+				989E64805790578A941CB5B9 /* QueryPool.h */,
+				872CC6C6CBA08F1A36626F57 /* QueryPool.c */,
 				9220C57BBAA3C951D8083799 /* RenderDevice.h */,
 				77315F9BC357C97B885E883C /* RenderDevice.c */,
 				206D63692B601BD90F377BF5 /* RenderPass.h */,
@@ -397,6 +403,7 @@
 				CECF83C72FF03A3500CB0CCA /* Framebuffer.h in Headers */,
 				CEBA3F6B2FF3211F00758CA6 /* GraphicsPipeline.h in Headers */,
 				CECF83982FEF6A7200CB0CCA /* Mathlib.h in Headers */,
+				496C55EEAC4C86E3B7C6550E /* QueryPool.h in Headers */,
 				A09AD953AC672E0DE9D1E26D /* ObjectivelyGPU.h in Headers */,
 				59897FC7BCC194032E971A9B /* RenderDevice.h in Headers */,
 				683F683E23149C267D613EA0 /* RenderPass.h in Headers */,
@@ -579,6 +586,7 @@
 				CCCB11DB70E4A962360A2119 /* CopyPass.c in Sources */,
 				CECF83C82FF03A3500CB0CCA /* Framebuffer.c in Sources */,
 				CEBA3F702FF3211F00758CA6 /* GraphicsPipeline.c in Sources */,
+				45AD38AB8109398E51564CFD /* QueryPool.c in Sources */,
 				CEBA3F732FF3211F00758CA6 /* Sampler.c in Sources */,
 				CEBA3F722FF3211F00758CA6 /* Shader.c in Sources */,
 				86E5132F5DCCB6B674151343 /* RenderDevice.c in Sources */,

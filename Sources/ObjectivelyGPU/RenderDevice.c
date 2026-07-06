@@ -34,6 +34,7 @@
 #include "CopyPass.h"
 #include "Framebuffer.h"
 #include "GraphicsPipeline.h"
+#include "QueryPool.h"
 #include "RenderDevice.h"
 #include "Sampler.h"
 #include "Shader.h"
@@ -250,6 +251,15 @@ static Framebuffer *createFramebuffer(RenderDevice *self, const GPU_FramebufferC
 static GraphicsPipeline *createGraphicsPipeline(RenderDevice *self, const SDL_GPUGraphicsPipelineCreateInfo *info) {
 
   return $(alloc(GraphicsPipeline), initWithDevice, self, info);
+}
+
+/**
+ * @fn QueryPool *RenderDevice::createQueryPool(RenderDevice *self, const SDL_GPUQueryPoolCreateInfo *info)
+ * @memberof RenderDevice
+ */
+static QueryPool *createQueryPool(RenderDevice *self, const SDL_GPUQueryPoolCreateInfo *info) {
+
+  return $(alloc(QueryPool), initWithDevice, self, info);
 }
 
 /**
@@ -711,6 +721,7 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->createComputePipeline = createComputePipeline;
   ((RenderDeviceInterface *) clazz->interface)->createFramebuffer = createFramebuffer;
   ((RenderDeviceInterface *) clazz->interface)->createGraphicsPipeline = createGraphicsPipeline;
+  ((RenderDeviceInterface *) clazz->interface)->createQueryPool = createQueryPool;
   ((RenderDeviceInterface *) clazz->interface)->createSampler = createSampler;
   ((RenderDeviceInterface *) clazz->interface)->createSamplerLinearRepeat = createSamplerLinearRepeat;
   ((RenderDeviceInterface *) clazz->interface)->createSamplerLinearClamp = createSamplerLinearClamp;

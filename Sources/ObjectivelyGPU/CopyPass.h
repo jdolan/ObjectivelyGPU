@@ -35,6 +35,7 @@
 typedef struct CommandBuffer CommandBuffer;
 typedef struct CopyPass CopyPass;
 typedef struct CopyPassInterface CopyPassInterface;
+typedef struct QueryPool QueryPool;
 
 /**
  * @brief A scoped copy pass for uploading CPU data and copying GPU resources.
@@ -120,6 +121,17 @@ struct CopyPassInterface {
    * @memberof CopyPass
    */
   void (*downloadTexture)(const CopyPass *self, const SDL_GPUTextureRegion *src, const SDL_GPUTextureTransferInfo *dst);
+
+  /**
+   * @fn void CopyPass::downloadQueryResults(const CopyPass *self, QueryPool *pool, Uint32 firstQuery, Uint32 count, const SDL_GPUTransferBufferLocation *dst)
+   * @brief Downloads a range of query results to a CPU-accessible transfer buffer.
+   * @details Each result is a `Uint64`, laid out contiguously starting at @p dst.
+   *   When @p pool is backed by an unsupported SDL3 build, every result is
+   *   reported as "not occluded" (nonzero) rather than left uninitialized; see
+   *   `QueryPool`.
+   * @memberof CopyPass
+   */
+  void (*downloadQueryResults)(const CopyPass *self, QueryPool *pool, Uint32 firstQuery, Uint32 count, const SDL_GPUTransferBufferLocation *dst);
 
   /**
    * @fn CopyPass *CopyPass::init(CopyPass *self, CommandBuffer *commands, SDL_GPUCopyPass *pass)

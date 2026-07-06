@@ -93,6 +93,13 @@ typedef struct {
    * @brief The @c Scene.
    */
   Scene scene;
+
+  /**
+   * @brief Occlusion query proof-of-concept: pool, readback buffer, and frame counter.
+   */
+  QueryPool *occlusionQueryPool;
+  SDL_GPUTransferBuffer *occlusionQueryTransfer;
+  Uint32 frames;
 } AppState;
 
 static AppState application;
@@ -213,8 +220,37 @@ static void drawScene(AppState *app, CommandBuffer *commands) {
   RenderPass *pass = $(commands, beginRenderPass, &color, 1, &depth);
   $(pass, bindPipeline, scene->pipeline);
   $(pass, bindVertexBuffers, 0, &(SDL_GPUBufferBinding) { .buffer = scene->vertexBuffer->buffer }, 1);
+  $(pass, beginQuery, app->occlusionQueryPool, 0);
   $(pass, drawPrimitives, (Uint32) SDL_arraysize(vertices), 1, 0, 0);
+  $(pass, endQuery, app->occlusionQueryPool, 0);
   release(pass);
+}
+
+/**
+ * @brief Occlusion query proof-of-concept: downloads and logs this frame's result.
+ * @details A real application would defer the readback to a later frame instead
+ *   of blocking on the GPU like this. When occlusion queries are unsupported by
+ *   the linked SDL3, this always reports a "not occluded" sentinel value.
+ */
+static void logOcclusionQueryResult(AppState *app) {
+
+  CommandBuffer *commands = $(app->renderDevice, acquireCommandBuffer);
+
+  CopyPass *copyPass = $(commands, beginCopyPass);
+  $(copyPass, downloadQueryResults, app->occlusionQueryPool, 0, 1, &(SDL_GPUTransferBufferLocation) {
+    .transfer_buffer = app->occlusionQueryTransfer,
+  });
+  release(copyPass);
+
+  SDL_GPUFence *fence = $(commands, submitAndFence);
+  release(commands);
+
+  $(app->renderDevice, waitForFences, true, &fence, 1);
+  $(app->renderDevice, releaseFence, fence);
+
+  const Uint64 *result = $(app->renderDevice, mapTransferBuffer, app->occlusionQueryTransfer, false);
+  SDL_Log("Occlusion query result: %" SDL_PRIu64 " samples passed", *result);
+  $(app->renderDevice, unmapTransferBuffer, app->occlusionQueryTransfer);
 }
 
 #pragma mark - SDL application callbacks
@@ -254,6 +290,16 @@ SDL_AppResult SDL_AppInit(void **appState, int argc, char *argv[]) {
 
   initScene(app);
 
+  app->occlusionQueryPool = $(app->renderDevice, createQueryPool, &(SDL_GPUQueryPoolCreateInfo) {
+    .type = SDL_GPU_QUERY_PRECISE_OCCLUSION,
+    .query_count = 1,
+  });
+
+  app->occlusionQueryTransfer = $(app->renderDevice, createTransferBuffer, &(SDL_GPUTransferBufferCreateInfo) {
+    .usage = SDL_GPU_TRANSFERBUFFERUSAGE_DOWNLOAD,
+    .size = sizeof(Uint64),
+  });
+
   return SDL_APP_CONTINUE;
 }
 
@@ -268,6 +314,10 @@ SDL_AppResult SDL_AppIterate(void *appState) {
   if (commands) {
     drawScene(app, commands);
     $(app->renderDevice, endFrame);
+
+    if ((app->frames++ % 60) == 0) {
+      logOcclusionQueryResult(app);
+    }
   }
 
   return SDL_APP_CONTINUE;
@@ -297,6 +347,9 @@ void SDL_AppQuit(void *appState, SDL_AppResult result) {
   $(app->renderDevice, waitForIdle);
   release(app->scene.pipeline);
   release(app->scene.vertexBuffer);
+
+  release(app->occlusionQueryPool);
+  $(app->renderDevice, releaseTransferBuffer, app->occlusionQueryTransfer);
 
   release(app->framebuffer);
   release(app->renderDevice);

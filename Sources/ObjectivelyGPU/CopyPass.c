@@ -26,6 +26,7 @@
 
 #include "CommandBuffer.h"
 #include "CopyPass.h"
+#include "QueryPool.h"
 #include "RenderDevice.h"
 
 #define _Class _CopyPass
@@ -81,6 +82,32 @@ static void downloadBuffer(const CopyPass *self, const SDL_GPUBufferRegion *src,
  */
 static void downloadTexture(const CopyPass *self, const SDL_GPUTextureRegion *src, const SDL_GPUTextureTransferInfo *dst) {
   SDL_DownloadFromGPUTexture(self->pass, src, dst);
+}
+
+/**
+ * @fn void CopyPass::downloadQueryResults(const CopyPass *self, QueryPool *pool, Uint32 firstQuery, Uint32 count, const SDL_GPUTransferBufferLocation *dst)
+ * @memberof CopyPass
+ */
+static void downloadQueryResults(const CopyPass *self, QueryPool *pool, Uint32 firstQuery, Uint32 count, const SDL_GPUTransferBufferLocation *dst) {
+
+  assert(pool);
+
+#ifdef SDL_GPU_OCCLUSION_QUERY
+  if (pool->pool) {
+    SDL_DownloadGPUQueryResults(self->pass, pool->pool, firstQuery, count, (SDL_GPUTransferBufferLocation *) dst);
+    return;
+  }
+#endif
+
+  // Occlusion queries are unsupported: no GPU work will ever populate `dst`, so
+  // write a "not occluded" sentinel for every requested result directly, rather
+  // than leaving the destination uninitialized (which callers would likely
+  // misread as "occluded", incorrectly culling everything).
+  Uint64 *results = $(self->commands->device, mapTransferBuffer, dst->transfer_buffer, false);
+  for (Uint32 i = 0; i < count; i++) {
+    results[(dst->offset / sizeof(Uint64)) + i] = 1;
+  }
+  $(self->commands->device, unmapTransferBuffer, dst->transfer_buffer);
 }
 
 /**
@@ -159,6 +186,7 @@ static void initialize(Class *clazz) {
   ((CopyPassInterface *) clazz->interface)->copyTextureToTexture = copyTextureToTexture;
   ((CopyPassInterface *) clazz->interface)->downloadBuffer = downloadBuffer;
   ((CopyPassInterface *) clazz->interface)->downloadTexture = downloadTexture;
+  ((CopyPassInterface *) clazz->interface)->downloadQueryResults = downloadQueryResults;
   ((CopyPassInterface *) clazz->interface)->init = init;
   ((CopyPassInterface *) clazz->interface)->uploadBuffer = uploadBuffer;
   ((CopyPassInterface *) clazz->interface)->uploadData = uploadData;

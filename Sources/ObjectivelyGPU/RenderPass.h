@@ -34,6 +34,7 @@
 
 typedef struct CommandBuffer CommandBuffer;
 typedef struct GraphicsPipeline GraphicsPipeline;
+typedef struct QueryPool QueryPool;
 typedef struct RenderPass RenderPass;
 typedef struct RenderPassInterface RenderPassInterface;
 
@@ -182,6 +183,22 @@ struct RenderPassInterface {
    * @memberof RenderPass
    */
   void (*bindVertexStorageTextures)(const RenderPass *self, Uint32 firstSlot, SDL_GPUTexture *const *textures, Uint32 num);
+
+  /**
+   * @fn void RenderPass::beginQuery(const RenderPass *self, QueryPool *pool, Uint32 index)
+   * @brief Begins a query, accumulating results from subsequent draw calls until `endQuery`.
+   * @details A no-op when @p pool is backed by an unsupported SDL3 build; see `QueryPool`.
+   * @memberof RenderPass
+   */
+  void (*beginQuery)(const RenderPass *self, QueryPool *pool, Uint32 index);
+
+  /**
+   * @fn void RenderPass::endQuery(const RenderPass *self, QueryPool *pool, Uint32 index)
+   * @brief Ends a query begun with `beginQuery`.
+   * @details A no-op when @p pool is backed by an unsupported SDL3 build; see `QueryPool`.
+   * @memberof RenderPass
+   */
+  void (*endQuery)(const RenderPass *self, QueryPool *pool, Uint32 index);
 
   /**
    * @fn void RenderPass::drawIndexedPrimitives(const RenderPass *self, Uint32 numIndices, Uint32 numInstances, Uint32 firstIndex, Sint32 vertexOffset, Uint32 firstInstance)

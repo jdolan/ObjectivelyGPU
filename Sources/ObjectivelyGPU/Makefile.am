@@ -15,6 +15,7 @@ pkginclude_HEADERS = \
     Framebuffer.h \
     GraphicsPipeline.h \
     Mathlib.h \
+    QueryPool.h \
     RenderDevice.h \
     RenderPass.h \
     Sampler.h \
@@ -32,6 +33,7 @@ libObjectivelyGPU_la_SOURCES = \
     CopyPass.c \
     Framebuffer.c \
     GraphicsPipeline.c \
+    QueryPool.c \
     RenderDevice.c \
     RenderPass.c \
     Sampler.c \
