@@ -151,7 +151,7 @@ struct TextureInterface {
   Texture *(*initWithDevice)(Texture *self, RenderDevice *device, const SDL_GPUTextureCreateInfo *info, const void *pixels);
 
   /**
-   * @fn Texture *Texture::initWithSurface(Texture *self, RenderDevice *device, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage, bool mipmaps)
+   * @fn Texture *Texture::initWithSurface(Texture *self, RenderDevice *device, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage, bool generateMipmaps)
    * @brief Initializes this Texture from an `SDL_Surface`, uploading its pixels immediately.
    * @details Converts @p surface to `SDL_PIXELFORMAT_RGBA32` if needed, derives the
    *   dimensions from the surface, and uploads as `SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM`.
@@ -168,7 +168,7 @@ struct TextureInterface {
    * @return The initialized Texture, or `NULL` on failure.
    * @memberof Texture
    */
-  Texture *(*initWithSurface)(Texture *self, RenderDevice *device, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage, bool mipmaps);
+  Texture *(*initWithSurface)(Texture *self, RenderDevice *device, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage, bool generateMipmaps);
 
   /**
    * @fn void Texture::setName(Texture *self, const char *name)

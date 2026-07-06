@@ -154,12 +154,7 @@ static Texture *initWithDevice(Texture *self, RenderDevice *device, const SDL_GP
     self->sampleCount = info->sample_count;
 
     if (pixels) {
-      // Tightly-packed source: SDL_CalculateGPUTextureFormatSize accounts for
-      // block-compressed formats, so this is correct for BCn/ASTC/etc. as well as
-      // plain texel formats (where a naive width*height*texelSize would also work).
-      const Uint32 size = SDL_CalculateGPUTextureFormatSize(info->format,
-        info->width, info->height, info->layer_count_or_depth);
-
+      const Uint32 size = SDL_CalculateGPUTextureFormatSize(info->format, info->width, info->height, info->layer_count_or_depth);
       uploadPixels(self, pixels, size, info->width);
     }
   }
@@ -168,11 +163,10 @@ static Texture *initWithDevice(Texture *self, RenderDevice *device, const SDL_GP
 }
 
 /**
- * @fn Texture *Texture::initWithSurface(Texture *self, RenderDevice *device, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage)
+ * @fn Texture *Texture::initWithSurface(Texture *self, RenderDevice *device, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage, bool generateMipmaps)
  * @memberof Texture
  */
-static Texture *initWithSurface(Texture *self, RenderDevice *device, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage,
-                                 bool mipmaps) {
+static Texture *initWithSurface(Texture *self, RenderDevice *device, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage, bool generateMipmaps) {
 
   assert(device);
   assert(surface);
@@ -182,8 +176,8 @@ static Texture *initWithSurface(Texture *self, RenderDevice *device, SDL_Surface
     : SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
   GPU_Assert(rgba, "SDL_ConvertSurface");
 
-  const Uint32 numLevels = mipmaps ? (Uint32) (floorf(log2f((float) SDL_min(rgba->w, rgba->h))) + 1) : 1;
-  if (mipmaps) {
+  const Uint32 numLevels = generateMipmaps ? (Uint32) (floorf(log2f((float) SDL_min(rgba->w, rgba->h))) + 1) : 1;
+  if (generateMipmaps) {
     usage |= SDL_GPU_TEXTUREUSAGE_COLOR_TARGET;
   }
 
@@ -207,7 +201,7 @@ static Texture *initWithSurface(Texture *self, RenderDevice *device, SDL_Surface
       (Uint32) rgba->pitch * (Uint32) rgba->h,
       (Uint32) rgba->pitch / bytesPerPixel);
 
-    if (mipmaps) {
+    if (generateMipmaps) {
       // Mipmap generation is not a copy-pass operation and must run outside any pass,
       // so it gets its own one-shot command buffer after the base level upload above.
       CommandBuffer *commands = $(device, acquireCommandBuffer);

@@ -13,8 +13,7 @@ Built on [Objectively](https://github.com/jdolan/Objectively) and [SDL_gpu](http
 
 ## Features
  * **Cross-platform** support for Android, iOS, macOS, Linux and Windows
- * **RenderDevice** owns the swapchain — drive frames with a simple `beginFrame` / `endFrame` loop and an unambiguous order of operations
- * **Resource objects** with automatic lifecycle — Buffer, Texture, Sampler, Shader, GraphicsPipeline and ComputePipeline initialize and tear themselves down
+ * **Resource objects** with automatic lifecycle — Buffer, Texture, Sampler, Shader, GraphicsPipeline, ComputePipeline and RenderDevice initialize and tear themselves down
  * **Typed passes**: RenderPass, ComputePass and CopyPass with command-lifecycle validation that catches mistakes upfront
  * **Framebuffer** abstracts multiple render targets, depth, and MSAA with automatic resolve — convenience without forfeiting the low-level API
  * **Shaders** loaded by name, with the formats supported by your platform
@@ -28,14 +27,14 @@ Uploading an image to the GPU is a single call — the staging buffer and copy p
 
 ```c
 SDL_Surface *surface = IMG_Load("crate.png");
-Texture *texture = $(renderDevice, createTextureFromSurface, surface, SDL_GPU_TEXTUREUSAGE_SAMPLER);
+Texture *texture = $(device, createTextureFromSurface, surface, SDL_GPU_TEXTUREUSAGE_SAMPLER);
 SDL_DestroySurface(surface);
 ```
 
 And a whole frame — acquire the swapchain, clear, draw a multisampled scene, resolve, and present:
 
 ```c
-CommandBuffer *commands = $(renderDevice, beginFrame);
+CommandBuffer *commands = $(device, beginFrame);
 if (commands) {
 
   const SDL_FColor clearColor = { 0.1f, 0.1f, 0.2f, 1.f };
@@ -48,7 +47,7 @@ if (commands) {
   $(pass, drawPrimitives, 36, 1, 0, 0);
   pass = release(pass);
 
-  $(renderDevice, endFrame);
+  $(device, endFrame);
 }
 ```
 

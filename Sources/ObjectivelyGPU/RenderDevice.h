@@ -327,7 +327,7 @@ struct RenderDeviceInterface {
   Texture *(*createTexture)(RenderDevice *self, const SDL_GPUTextureCreateInfo *info, const void *pixels);
 
   /**
-   * @fn Texture *RenderDevice::createTextureFromSurface(RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage, bool mipmaps)
+   * @fn Texture *RenderDevice::createTextureFromSurface(RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage, bool generateMipmaps)
    * @brief Creates a Texture from an `SDL_Surface`, uploading pixel data immediately.
    * @details Convenience factory for `Texture::initWithSurface`. Converts @p surface
    *   to `SDL_PIXELFORMAT_RGBA32` if needed and uploads it as
@@ -339,7 +339,7 @@ struct RenderDeviceInterface {
    * @return A new, retained Texture. GPU_Asserts on failure. Free with `release`.
    * @memberof RenderDevice
    */
-  Texture *(*createTextureFromSurface)(RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage, bool mipmaps);
+  Texture *(*createTextureFromSurface)(RenderDevice *self, SDL_Surface *surface, SDL_GPUTextureUsageFlags usage, bool generateMipmaps);
 
   /**
    * @fn Texture *RenderDevice::createSolidColorTexture(RenderDevice *self, SDL_GPUTextureType type, Uint32 layerCount, Uint32 rgba)
