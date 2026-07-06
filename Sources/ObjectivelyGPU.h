@@ -31,6 +31,7 @@
 #include <ObjectivelyGPU/Framebuffer.h>
 #include <ObjectivelyGPU/GraphicsPipeline.h>
 #include <ObjectivelyGPU/Mathlib.h>
+#include <ObjectivelyGPU/QueryPool.h>
 #include <ObjectivelyGPU/RenderDevice.h>
 #include <ObjectivelyGPU/RenderPass.h>
 #include <ObjectivelyGPU/Sampler.h>
