@@ -1,6 +1,6 @@
 AC_PREREQ(2.69)
 
-AC_INIT([ObjectivelyGPU], [1.0.0], [jay@jaydolan.com])
+AC_INIT([ObjectivelyGPU], [0.4.0], [jay@jaydolan.com])
 
 AC_CONFIG_HEADERS([Sources/ObjectivelyGPU/Config.h])
 AC_CONFIG_MACRO_DIR([m4])
