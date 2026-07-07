@@ -28,6 +28,7 @@
 #include "CommandBuffer.h"
 #include "CopyPass.h"
 #include "RenderDevice.h"
+#include "TransferBuffer.h"
 
 #define _Class _Buffer
 
@@ -129,30 +130,19 @@ static void upload(Buffer *self, const void *data, Uint32 size, Uint32 offset, b
   assert(data);
   assert(size);
 
-  SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->device->device, &(SDL_GPUTransferBufferCreateInfo) {
-    .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-    .size = size,
-  });
-  GPU_Assert(tbuf, "SDL_CreateGPUTransferBuffer");
-
-  void *mapped = SDL_MapGPUTransferBuffer(self->device->device, tbuf, cycle);
-  GPU_Assert(mapped, "SDL_MapGPUTransferBuffer");
-
-  memcpy(mapped, data, size);
-  SDL_UnmapGPUTransferBuffer(self->device->device, tbuf);
+  const TransferBuffer *tbuf = $(self->device, stageData, data, size);
 
   CommandBuffer *commands = $(self->device, acquireCommandBuffer);
   CopyPass *copyPass = $(commands, beginCopyPass);
 
   $(copyPass, uploadBuffer,
-    &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf },
+    &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf->buffer },
     &(SDL_GPUBufferRegion) { .buffer = self->buffer, .offset = offset, .size = size },
     cycle);
 
   release(copyPass);
   $(commands, submit);
   release(commands);
-  SDL_ReleaseGPUTransferBuffer(self->device->device, tbuf);
 }
 
 #pragma mark - Class lifecycle

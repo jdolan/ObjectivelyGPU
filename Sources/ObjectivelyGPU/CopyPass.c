@@ -28,6 +28,7 @@
 #include "CopyPass.h"
 #include "QueryPool.h"
 #include "RenderDevice.h"
+#include "TransferBuffer.h"
 
 #define _Class _CopyPass
 
@@ -147,24 +148,12 @@ static void uploadData(const CopyPass *self, SDL_GPUBuffer *dst, const void *dat
   assert(data);
   assert(size);
 
-  SDL_GPUTransferBuffer *tbuf = SDL_CreateGPUTransferBuffer(self->commands->device->device, &(SDL_GPUTransferBufferCreateInfo) {
-    .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-    .size = size,
-  });
-  GPU_Assert(tbuf, "SDL_CreateGPUTransferBuffer");
-
-  void *mapped = SDL_MapGPUTransferBuffer(self->commands->device->device, tbuf, cycle);
-  GPU_Assert(mapped, "SDL_MapGPUTransferBuffer");
-
-  memcpy(mapped, data, size);
-  SDL_UnmapGPUTransferBuffer(self->commands->device->device, tbuf);
+  const TransferBuffer *tbuf = $(self->commands->device, stageData, data, size);
 
   SDL_UploadToGPUBuffer(self->pass,
-    &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf },
+    &(SDL_GPUTransferBufferLocation) { .transfer_buffer = tbuf->buffer },
     &(SDL_GPUBufferRegion) { .buffer = dst, .offset = offset, .size = size },
     cycle);
-
-  SDL_ReleaseGPUTransferBuffer(self->commands->device->device, tbuf);
 }
 
 /**
