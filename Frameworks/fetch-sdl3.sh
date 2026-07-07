@@ -4,19 +4,36 @@
 # on demand and caches it under Frameworks/.
 #
 # This mirrors the Windows VS build (ObjectivelyGPU.vs15/sdl3.targets): CI and
-# local developers share a single code path. SDL3.xcframework is downloaded
-# once, on demand, and is .gitignored. Bump SDL3_VERSION to upgrade; delete
-# Frameworks/SDL3.xcframework to force a re-download.
+# local developers share a single code path. The download is cached at
+# Frameworks/SDL3.xcframework.stable, and Frameworks/SDL3.xcframework is a
+# symlink to it. This indirection lets link-sdl3-local.sh (and use-sdl3.sh)
+# repoint that same symlink at a locally-built SDL3 checkout without disturbing
+# this cache. Bump SDL3_VERSION to upgrade; delete
+# Frameworks/SDL3.xcframework.stable to force a re-download.
 #
 set -euo pipefail
 
 SDL3_VERSION="${SDL3_VERSION:-3.4.2}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+STABLE="$SCRIPT_DIR/SDL3.xcframework.stable"
 XCFRAMEWORK="$SCRIPT_DIR/SDL3.xcframework"
 
-# Already cached? Nothing to do.
-[ -d "$XCFRAMEWORK" ] && exit 0
+# Migrate a pre-existing plain directory (from before the .stable split) in place.
+if [ -d "$XCFRAMEWORK" ] && [ ! -L "$XCFRAMEWORK" ]; then
+    mv "$XCFRAMEWORK" "$STABLE"
+fi
+
+# Point the symlink at the stable cache, creating/replacing it as needed.
+relink() {
+    ln -sfn "$(basename "$STABLE")" "$XCFRAMEWORK"
+}
+
+# Already cached? Just make sure the symlink points at it and we're done.
+if [ -d "$STABLE" ]; then
+    relink
+    exit 0
+fi
 
 # Serialize concurrent invocations (parallel target builds) on a lock dir,
 # the shell equivalent of the Global mutex used by sdl3.targets on Windows.
@@ -36,7 +53,10 @@ cleanup() {
 trap cleanup EXIT
 
 # Re-check after acquiring the lock; another build may have just finished.
-[ -d "$XCFRAMEWORK" ] && exit 0
+if [ -d "$STABLE" ]; then
+    relink
+    exit 0
+fi
 
 DMG_URL="https://github.com/libsdl-org/SDL/releases/download/release-$SDL3_VERSION/SDL3-$SDL3_VERSION.dmg"
 
@@ -54,6 +74,7 @@ if [ -z "$src" ]; then
 fi
 
 echo "==> Caching SDL3.xcframework"
-cp -R "$src" "$XCFRAMEWORK"
+cp -R "$src" "$STABLE"
+relink
 
 echo "==> SDL3.xcframework $SDL3_VERSION ready at Frameworks/SDL3.xcframework"
