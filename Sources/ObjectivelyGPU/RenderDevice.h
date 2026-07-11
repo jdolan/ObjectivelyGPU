@@ -117,7 +117,14 @@ struct RenderDevice {
    * @private
    */
   SwapchainTexture swapchain;
-  
+
+  /**
+   * @brief The scratch upload transfer buffer shared by streaming uploads
+   *   (`stageData`), created and grown on demand and cycled thereafter.
+   * @private
+   */
+  TransferBuffer *scratch;
+
   /**
    * @brief User data.
    */
@@ -558,6 +565,21 @@ struct RenderDeviceInterface {
    * @memberof RenderDevice
    */
   void (*setWindow)(RenderDevice *self, SDL_Window *window);
+
+  /**
+   * @fn TransferBuffer *RenderDevice::stageData(RenderDevice *self, const void *data, Uint32 size)
+   * @brief Stages `size` bytes of `data` into this device's shared scratch
+   *   upload transfer buffer, which is created or grown on demand and mapped
+   *   with cycling thereafter -- back-to-back uploads neither stall on frames
+   *   in flight nor create and release a transfer buffer per call.
+   * @param self The RenderDevice.
+   * @param data The data to stage.
+   * @param size The size of `data`, in bytes.
+   * @return The scratch transfer buffer, ready to source an upload. Borrowed,
+   *   not retained; its contents are valid only until the next `stageData`.
+   * @memberof RenderDevice
+   */
+  TransferBuffer *(*stageData)(RenderDevice *self, const void *data, Uint32 size);
 
   /**
    * @fn bool RenderDevice::supportsPresentMode(const RenderDevice *self, SDL_GPUPresentMode mode)

@@ -118,6 +118,7 @@ static void dealloc(Object *self) {
 
   RenderDevice *this = (RenderDevice *) self;
 
+  release(this->scratch);
   release(this->framebuffer);
 
   if (this->window && this->device) {
@@ -611,6 +612,30 @@ static void setWindow(RenderDevice *self, SDL_Window *window) {
 }
 
 /**
+ * @fn TransferBuffer *RenderDevice::stageData(RenderDevice *self, const void *data, Uint32 size)
+ * @memberof RenderDevice
+ */
+static TransferBuffer *stageData(RenderDevice *self, const void *data, Uint32 size) {
+
+  assert(data);
+  assert(size);
+
+  if (self->scratch == NULL || self->scratch->size < size) {
+    release(self->scratch);
+    self->scratch = $(self, createTransferBuffer, &(SDL_GPUTransferBufferCreateInfo) {
+      .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+      .size = size,
+    });
+  }
+
+  void *mapped = $(self->scratch, map, true);
+  memcpy(mapped, data, size);
+  $(self->scratch, unmap);
+
+  return self->scratch;
+}
+
+/**
  * @fn bool RenderDevice::supportsPresentMode(const RenderDevice *self, SDL_GPUPresentMode mode)
  * @memberof RenderDevice
  */
@@ -701,6 +726,7 @@ static void initialize(Class *clazz) {
   ((RenderDeviceInterface *) clazz->interface)->setFramebuffer = setFramebuffer;
   ((RenderDeviceInterface *) clazz->interface)->setSwapchainParameters = setSwapchainParameters;
   ((RenderDeviceInterface *) clazz->interface)->setWindow = setWindow;
+  ((RenderDeviceInterface *) clazz->interface)->stageData = stageData;
   ((RenderDeviceInterface *) clazz->interface)->supportsPresentMode = supportsPresentMode;
   ((RenderDeviceInterface *) clazz->interface)->supportsSwapchainComposition = supportsSwapchainComposition;
   ((RenderDeviceInterface *) clazz->interface)->textureSupportsFormat = textureSupportsFormat;
