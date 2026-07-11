@@ -271,7 +271,7 @@ SDL_AppResult SDL_AppInit(void **appState, int argc, char *argv[]) {
   app->window = SDL_CreateWindow("Hello ObjectivelyGPU", HELLO_WINDOW_W, HELLO_WINDOW_H, HELLO_WINDOW_FLAGS);
   GPU_Assert(app->window, "SDL_CreateWindow");
 
-  app->renderDevice = $(alloc(RenderDevice), initWithWindow, app->window);
+  app->renderDevice = $(alloc(RenderDevice), initWithWindow, app->window, NULL);
 
   int w = 0, h = 0;
   SDL_GetWindowSizeInPixels(app->window, &w, &h);

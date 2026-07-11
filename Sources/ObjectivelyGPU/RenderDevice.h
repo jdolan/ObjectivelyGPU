@@ -421,25 +421,27 @@ struct RenderDeviceInterface {
   SDL_GPUTextureFormat (*getSwapchainTextureFormat)(const RenderDevice *self);
 
   /**
-   * @fn RenderDevice *RenderDevice::init(RenderDevice *self)
+   * @fn RenderDevice *RenderDevice::init(RenderDevice *self, const char *driverName)
    * @brief Initialises a RenderDevice, creating an `SDL_GPUDevice` with no window claimed.
    * @details Creates the device supporting MSL, SPIR-V, and DXIL shader formats.
    *   Use `setWindow` or `initWithWindow` to associate a window after init.
    * @param self The RenderDevice.
+   * @param driverName The driver name, one of "vulkan", "direct3d12", "metal" or NULL.
    * @return The initialised RenderDevice, or `NULL` on failure.
    * @memberof RenderDevice
    */
-  RenderDevice *(*init)(RenderDevice *self);
+  RenderDevice *(*init)(RenderDevice *self, const char *driverName);
 
   /**
-   * @fn RenderDevice *RenderDevice::initWithWindow(RenderDevice *self, SDL_Window *window)
+   * @fn RenderDevice *RenderDevice::initWithWindow(RenderDevice *self, SDL_Window *window, cont char *driverName)
    * @brief Initialises a RenderDevice and immediately claims @p window for rendering.
    * @param self The RenderDevice.
    * @param window The `SDL_Window` to claim for this device.
+   * @param driverName The driver name, one of "vulkan", "direct3d12", "metal" or NULL.
    * @return The initialised RenderDevice, or `NULL` on failure.
    * @memberof RenderDevice
    */
-  RenderDevice *(*initWithWindow)(RenderDevice *self, SDL_Window *window);
+  RenderDevice *(*initWithWindow)(RenderDevice *self, SDL_Window *window, const char *driverName);
 
   /**
    * @fn Shader *RenderDevice::loadShader(RenderDevice *self, const char *name, const SDL_GPUShaderCreateInfo *info)

@@ -12,7 +12,7 @@ ObjectivelyGPU is built on [Objectively](https://github.com/jdolan/Objectively),
 Everything starts with a `RenderDevice`, created for the window you intend to draw to:
 
 ```c
-RenderDevice *renderDevice = $(alloc(RenderDevice), initWithWindow, window);
+RenderDevice *renderDevice = $(alloc(RenderDevice), initWithWindow, window, NULL);
 ```
 
 The device claims the GPU, configures the swapchain for that window, and becomes the factory for every other resource.

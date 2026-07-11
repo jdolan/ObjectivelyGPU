@@ -429,10 +429,10 @@ static SDL_GPUTextureFormat getSwapchainTextureFormat(const RenderDevice *self) 
 }
 
 /**
- * @fn RenderDevice *RenderDevice::init(RenderDevice *self)
+ * @fn RenderDevice *RenderDevice::init(RenderDevice *self, const char *driverName)
  * @memberof RenderDevice
  */
-static RenderDevice *init(RenderDevice *self) {
+static RenderDevice *init(RenderDevice *self, const char *driverName) {
 
   self = (RenderDevice *) super(Object, self, init);
   if (self) {
@@ -443,7 +443,7 @@ static RenderDevice *init(RenderDevice *self) {
       SDL_GPU_SHADERFORMAT_SPIRV |
       SDL_GPU_SHADERFORMAT_DXIL;
 
-    self->device = SDL_CreateGPUDevice(requested, GPU_DEBUG, NULL);
+    self->device = SDL_CreateGPUDevice(requested, GPU_DEBUG, driverName);
     GPU_Assert(self->device, "SDL_CreateGPUDevice");
     
     self->shaderFormats = SDL_GetGPUShaderFormats(self->device);
@@ -459,9 +459,9 @@ static RenderDevice *init(RenderDevice *self) {
  * @fn RenderDevice *RenderDevice::initWithWindow(RenderDevice *self, SDL_Window *window)
  * @memberof RenderDevice
  */
-static RenderDevice *initWithWindow(RenderDevice *self, SDL_Window *window) {
+static RenderDevice *initWithWindow(RenderDevice *self, SDL_Window *window, const char *driverName) {
 
-  self = $(self, init);
+  self = $(self, init, driverName);
   if (self) {
     $(self, setWindow, window);
   }

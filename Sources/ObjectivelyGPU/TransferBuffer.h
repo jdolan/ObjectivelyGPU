@@ -116,7 +116,7 @@ struct TransferBufferInterface {
    *   Call `unmap` when done; the mapping must not be used after that.
    * @param self The TransferBuffer.
    * @param cycle If `true`, the driver may cycle to a new backing allocation.
-   * @return A CPU pointer to the mapped region. GPU_Asserts on failure.
+   * @return A CPU pointer to the mapped region. @c GPU_Asserts on failure.
    * @memberof TransferBuffer
    */
   void *(*map)(const TransferBuffer *self, bool cycle);
