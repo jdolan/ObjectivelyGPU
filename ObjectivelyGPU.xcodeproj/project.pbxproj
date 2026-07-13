@@ -23,12 +23,17 @@
 
 /* Begin PBXBuildFile section */
 		034285033FECAB2D6BD6AE5B /* ComputePass.h in Headers */ = {isa = PBXBuildFile; fileRef = 09B8DD26CDB7926D89445C91 /* ComputePass.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17034614E26D4BBCA2806D4B /* TransferBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = DCDE588CEB8C4ED0A63C96C7 /* TransferBuffer.c */; };
 		2A17F0E01E5CC25A431FFBAD /* CommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = E71C479F7B60345FDDA44201 /* CommandBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3402D3208D6A4CF886402DD3 /* Fence.h in Headers */ = {isa = PBXBuildFile; fileRef = B89C52ADCD12486D934D4F78 /* Fence.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		36FBB92ACB08F2078D50C84D /* CommandBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 6C38B23048C269B804E75F03 /* CommandBuffer.c */; };
+		45AD38AB8109398E51564CFD /* QueryPool.c in Sources */ = {isa = PBXBuildFile; fileRef = 872CC6C6CBA08F1A36626F57 /* QueryPool.c */; };
+		496C55EEAC4C86E3B7C6550E /* QueryPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 989E64805790578A941CB5B9 /* QueryPool.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59897FC7BCC194032E971A9B /* RenderDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 9220C57BBAA3C951D8083799 /* RenderDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		683F683E23149C267D613EA0 /* RenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 206D63692B601BD90F377BF5 /* RenderPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6F351DFD232DA78A42D8B494 /* Config.h in Headers */ = {isa = PBXBuildFile; fileRef = 338EC7DCAE74C1B8C397D189 /* Config.h */; };
 		86E5132F5DCCB6B674151343 /* RenderDevice.c in Sources */ = {isa = PBXBuildFile; fileRef = 77315F9BC357C97B885E883C /* RenderDevice.c */; };
+		8D678937240347D29F529D34 /* TransferBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F20F19F296684FA89413FFC0 /* TransferBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		90C29A39257729BE8D4FDDF8 /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = 38F069D0DBE26C7E00B5B5EE /* Types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A09AD953AC672E0DE9D1E26D /* ObjectivelyGPU.h in Headers */ = {isa = PBXBuildFile; fileRef = C16D60B0E94469E649953EC5 /* ObjectivelyGPU.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
@@ -55,12 +60,6 @@
 		CEBA3F772FF3418E00758CA6 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
 		CEBA3F782FF3419100758CA6 /* ObjectivelyGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6251F22589273797656C269E /* ObjectivelyGPU.framework */; };
 		CECF83982FEF6A7200CB0CCA /* Mathlib.h in Headers */ = {isa = PBXBuildFile; fileRef = CECF83972FEF6A7200CB0CCA /* Mathlib.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		496C55EEAC4C86E3B7C6550E /* QueryPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 989E64805790578A941CB5B9 /* QueryPool.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		45AD38AB8109398E51564CFD /* QueryPool.c in Sources */ = {isa = PBXBuildFile; fileRef = 872CC6C6CBA08F1A36626F57 /* QueryPool.c */; };
-		3402D3208D6A4CF886402DD3 /* Fence.h in Headers */ = {isa = PBXBuildFile; fileRef = B89C52ADCD12486D934D4F78 /* Fence.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E7138396FE1A4AF0B311EBD6 /* Fence.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F7C26CE48FB43D393B963EA /* Fence.c */; };
-		8D678937240347D29F529D34 /* TransferBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F20F19F296684FA89413FFC0 /* TransferBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17034614E26D4BBCA2806D4B /* TransferBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = DCDE588CEB8C4ED0A63C96C7 /* TransferBuffer.c */; };
 		CECF83B62FEF765400CB0CCA /* Hello.frag.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A52FEF712F00CB0CCA /* Hello.frag.metal */; };
 		CECF83B72FEF765400CB0CCA /* Hello.frag.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A62FEF712F00CB0CCA /* Hello.frag.spv */; };
 		CECF83B92FEF765400CB0CCA /* Hello.vert.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83A82FEF712F00CB0CCA /* Hello.vert.metal */; };
@@ -68,6 +67,7 @@
 		CECF83C72FF03A3500CB0CCA /* Framebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CECF83C52FF03A3500CB0CCA /* Framebuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CECF83C82FF03A3500CB0CCA /* Framebuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = CECF83C62FF03A3500CB0CCA /* Framebuffer.c */; };
 		DF73824CC25298378B451056 /* CopyPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 59334BDAED542AB6DE565EDD /* CopyPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E7138396FE1A4AF0B311EBD6 /* Fence.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F7C26CE48FB43D393B963EA /* Fence.c */; };
 		EE00100000000000000000B1 /* Hello.c in Sources */ = {isa = PBXBuildFile; fileRef = EE00010000000000000000B1 /* Hello.c */; };
 		EE00110000000000000000B2 /* HelloCompute.c in Sources */ = {isa = PBXBuildFile; fileRef = EE00020000000000000000B2 /* HelloCompute.c */; };
 		EE00120000000000000000B3 /* ObjectivelyGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6251F22589273797656C269E /* ObjectivelyGPU.framework */; };
@@ -155,6 +155,7 @@
 
 /* Begin PBXFileReference section */
 		09B8DD26CDB7926D89445C91 /* ComputePass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComputePass.h; sourceTree = "<group>"; };
+		0F7C26CE48FB43D393B963EA /* Fence.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Fence.c; sourceTree = "<group>"; };
 		206D63692B601BD90F377BF5 /* RenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderPass.h; sourceTree = "<group>"; };
 		338EC7DCAE74C1B8C397D189 /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
 		38F069D0DBE26C7E00B5B5EE /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
@@ -163,13 +164,18 @@
 		669BE73362E651792735CB1C /* RenderPass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderPass.c; sourceTree = "<group>"; };
 		6C38B23048C269B804E75F03 /* CommandBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CommandBuffer.c; sourceTree = "<group>"; };
 		77315F9BC357C97B885E883C /* RenderDevice.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderDevice.c; sourceTree = "<group>"; };
+		872CC6C6CBA08F1A36626F57 /* QueryPool.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = QueryPool.c; sourceTree = "<group>"; };
 		9220C57BBAA3C951D8083799 /* RenderDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderDevice.h; sourceTree = "<group>"; };
+		989E64805790578A941CB5B9 /* QueryPool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QueryPool.h; sourceTree = "<group>"; };
 		AA000000000000000000EE01 /* SDL3.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL3.xcframework; path = Frameworks/SDL3.xcframework; sourceTree = "<group>"; };
+		B89C52ADCD12486D934D4F78 /* Fence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fence.h; sourceTree = "<group>"; };
 		C16D60B0E94469E649953EC5 /* ObjectivelyGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectivelyGPU.h; sourceTree = "<group>"; };
 		C862954A9DD435C1FF7CD31D /* CopyPass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CopyPass.c; sourceTree = "<group>"; };
 		CE1643412FF47B7D00863996 /* guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = guide.md; sourceTree = "<group>"; };
 		CE1643422FF47B7D00863996 /* Hello.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Hello.gif; sourceTree = "<group>"; };
 		CE1643432FF47B7D00863996 /* HelloCompute.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = HelloCompute.gif; sourceTree = "<group>"; };
+		CE6049BB30055F5700B1C1E3 /* link-sdl3-local.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "link-sdl3-local.sh"; path = "Frameworks/link-sdl3-local.sh"; sourceTree = "<group>"; };
+		CE6049BC30055F5700B1C1E3 /* use-sdl3.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "use-sdl3.sh"; path = "Frameworks/use-sdl3.sh"; sourceTree = "<group>"; };
 		CEA0030000000000000000F0 /* Objectively.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Objectively.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEBA3F5E2FF30F1E00758CA6 /* Texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
 		CEBA3F5F2FF30F1E00758CA6 /* Texture.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Texture.c; sourceTree = "<group>"; };
@@ -188,12 +194,6 @@
 		CECF83952FEF65FF00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83962FEF65FF00CB0CCA /* ObjectivelyGPU.pc.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ObjectivelyGPU.pc.in; sourceTree = "<group>"; };
 		CECF83972FEF6A7200CB0CCA /* Mathlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Mathlib.h; sourceTree = "<group>"; };
-		989E64805790578A941CB5B9 /* QueryPool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QueryPool.h; sourceTree = "<group>"; };
-		872CC6C6CBA08F1A36626F57 /* QueryPool.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = QueryPool.c; sourceTree = "<group>"; };
-		B89C52ADCD12486D934D4F78 /* Fence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fence.h; sourceTree = "<group>"; };
-		0F7C26CE48FB43D393B963EA /* Fence.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Fence.c; sourceTree = "<group>"; };
-		F20F19F296684FA89413FFC0 /* TransferBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransferBuffer.h; sourceTree = "<group>"; };
-		DCDE588CEB8C4ED0A63C96C7 /* TransferBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TransferBuffer.c; sourceTree = "<group>"; };
 		CECF83A32FEF6F5B00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83A42FEF712F00CB0CCA /* Hello.frag.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Hello.frag.glsl; sourceTree = "<group>"; };
 		CECF83A52FEF712F00CB0CCA /* Hello.frag.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Hello.frag.metal; sourceTree = "<group>"; };
@@ -216,6 +216,7 @@
 		CEEAAFF82FED833A00FFEBE6 /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CEEAAFFA2FED833A00FFEBE6 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		CEEAAFFD2FED83E400FFEBE6 /* configure.ac */ = {isa = PBXFileReference; lastKnownFileType = text; path = configure.ac; sourceTree = "<group>"; };
+		DCDE588CEB8C4ED0A63C96C7 /* TransferBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TransferBuffer.c; sourceTree = "<group>"; };
 		DOC00010000000000000001 /* index.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = index.md; sourceTree = "<group>"; };
 		DOC00020000000000000001 /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		E71C479F7B60345FDDA44201 /* CommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandBuffer.h; sourceTree = "<group>"; };
@@ -227,6 +228,7 @@
 		EI00020000000000000000B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EI00030000000000000000B3 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EI00040000000000000000B4 /* ObjectivelyGPU-Hello-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ObjectivelyGPU-Hello-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F20F19F296684FA89413FFC0 /* TransferBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TransferBuffer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -234,8 +236,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */,
 				CEA0030000000000000000F1 /* Objectively.framework in Frameworks */,
+				AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,9 +356,11 @@
 		CE73E9F62FEEA53E0048BC24 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				AA000000000000000000EE01 /* SDL3.xcframework */,
 				CEA0030000000000000000F0 /* Objectively.framework */,
+				AA000000000000000000EE01 /* SDL3.xcframework */,
+				CE6049BB30055F5700B1C1E3 /* link-sdl3-local.sh */,
 				CEBA3F7C2FF36E2300758CA6 /* fetch-sdl3.sh */,
+				CE6049BC30055F5700B1C1E3 /* use-sdl3.sh */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -602,10 +606,10 @@
 				CECF83C82FF03A3500CB0CCA /* Framebuffer.c in Sources */,
 				CEBA3F702FF3211F00758CA6 /* GraphicsPipeline.c in Sources */,
 				45AD38AB8109398E51564CFD /* QueryPool.c in Sources */,
-				CEBA3F732FF3211F00758CA6 /* Sampler.c in Sources */,
-				CEBA3F722FF3211F00758CA6 /* Shader.c in Sources */,
 				86E5132F5DCCB6B674151343 /* RenderDevice.c in Sources */,
 				FF30FF2D56F9E4EA3C492CBB /* RenderPass.c in Sources */,
+				CEBA3F732FF3211F00758CA6 /* Sampler.c in Sources */,
+				CEBA3F722FF3211F00758CA6 /* Shader.c in Sources */,
 				CEBA3F612FF30F1E00758CA6 /* Texture.c in Sources */,
 				17034614E26D4BBCA2806D4B /* TransferBuffer.c in Sources */,
 			);
