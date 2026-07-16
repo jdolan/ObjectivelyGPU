@@ -35,9 +35,8 @@ And a whole frame — acquire the swapchain, clear, draw a multisampled scene, r
 CommandBuffer *commands = $(device, beginFrame);
 if (commands) {
 
-  const SDL_FColor clearColor = { 0.1f, 0.1f, 0.2f, 1.f };
-  const SDL_GPUColorTargetInfo color = $(framebuffer, colorTargetInfo, 0, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_STORE, &clearColor);
-  const SDL_GPUDepthStencilTargetInfo depth = $(framebuffer, depthTargetInfo, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_DONT_CARE, 1.f);
+  const SDL_GPUColorTargetInfo color = $(framebuffer, colorTargetInfo, 0, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_STORE);
+  const SDL_GPUDepthStencilTargetInfo depth = $(framebuffer, depthTargetInfo, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_DONT_CARE);
 
   RenderPass *pass = $(commands, beginRenderPass, &color, 1, &depth);
   $(pass, bindPipeline, pipeline);

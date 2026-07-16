@@ -65,24 +65,41 @@ const SDL_GPUTextureFormat colorFormat = $(renderDevice, getSwapchainTextureForm
 
 Framebuffer *framebuffer = $(renderDevice, createFramebuffer, &(GPU_FramebufferCreateInfo) {
   .size = MakeSize(w, h),
-  .colorFormats = { colorFormat },
+  .colorAttachments = {
+    { .format = colorFormat, .clearColor = { 0.1f, 0.1f, 0.2f, 1.f } },
+  },
   .numColorTargets = 1,
-  .depthFormat = SDL_GPU_TEXTUREFORMAT_D16_UNORM,
+  .depthAttachment = { .format = SDL_GPU_TEXTUREFORMAT_D16_UNORM, .clearDepth = 1.f },
   .sampleCount = SDL_GPU_SAMPLECOUNT_4,
 });
 
 $(renderDevice, setFramebuffer, framebuffer);
 ```
 
-When `sampleCount` is greater than one, the framebuffer allocates the resolve targets and promotes your `STORE` operations to `RESOLVE_AND_STORE` automatically. You ask for target descriptors with `colorTargetInfo` and `depthTargetInfo`; the MSAA bookkeeping is handled for you, and `endFrame` presents the resolved result.
+When `sampleCount` is greater than one, the framebuffer allocates the resolve targets and promotes your `STORE` operations to `RESOLVE_AND_STORE` automatically. You ask for target descriptors with `colorTargetInfo` and `depthTargetInfo` — each attachment clears to the `clearColor`/`clearDepth` given at creation time, so there's nothing further to pass at draw time; the MSAA bookkeeping is handled for you, and `endFrame` presents the resolved result.
+
+Building the matching `GraphicsPipeline` needs the same formats, but as an `SDL_GPUGraphicsPipelineTargetInfo` rather than render-pass target info — `pipelineTargetInfo` derives that from the Framebuffer too, given one blend state per color attachment:
+
+```c
+SDL_GPUColorTargetDescription descriptions[1];
+SDL_GPUGraphicsPipelineTargetInfo targetInfo;
+$(framebuffer, pipelineTargetInfo, &GPU_BlendStateOpaque, descriptions, &targetInfo);
+
+SDL_GPUGraphicsPipelineCreateInfo info = GPU_GraphicsPipeline3D;
+info.vertex_shader = vertexShader->shader;
+info.fragment_shader = fragmentShader->shader;
+info.target_info = targetInfo;
+
+GraphicsPipeline *pipeline = $(renderDevice, createGraphicsPipeline, &info);
+```
 
 ## Typed passes with lifecycle validation
 
 A `CommandBuffer` vends three kinds of pass — `RenderPass`, `ComputePass`, and `CopyPass` — each a distinct type exposing only the methods that are legal within it. The framework asserts on misuse (recording into a finished buffer, leaving a pass open, submitting twice), turning a class of silent GPU errors into immediate, located failures.
 
 ```c
-const SDL_GPUColorTargetInfo color = $(framebuffer, colorTargetInfo, 0, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_STORE, &clearColor);
-const SDL_GPUDepthStencilTargetInfo depth = $(framebuffer, depthTargetInfo, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_DONT_CARE, 1.f);
+const SDL_GPUColorTargetInfo color = $(framebuffer, colorTargetInfo, 0, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_STORE);
+const SDL_GPUDepthStencilTargetInfo depth = $(framebuffer, depthTargetInfo, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_DONT_CARE);
 
 RenderPass *pass = $(commands, beginRenderPass, &color, 1, &depth);
 $(pass, bindPipeline, pipeline);

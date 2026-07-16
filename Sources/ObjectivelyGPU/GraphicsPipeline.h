@@ -129,7 +129,7 @@ OBJECTIVELYGPU_EXPORT Class *_GraphicsPipeline(void);
  *       .blend_state = GPU_BlendStateOpaque,
  *     },
  *     .num_color_targets = 1,
- *     .depth_stencil_format = framebuffer->depthTexture->format,
+ *     .depth_stencil_format = framebuffer->depthAttachment.format,
  *     .has_depth_stencil_target = true,
  *   };
  *   GraphicsPipeline *pipeline = $(renderDevice, createGraphicsPipeline, &info);

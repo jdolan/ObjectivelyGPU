@@ -135,18 +135,18 @@ static RenderPass *beginRenderPassWithFramebuffer(CommandBuffer *self, const Fra
   assert(framebuffer);
 
   SDL_GPUColorTargetInfo color[GPU_MAX_COLOR_TARGETS];
-  for (Uint32 i = 0; i < framebuffer->numColorTargets; i++) {
-    color[i] = $(framebuffer, colorTargetInfo, i, loadOp, storeOp, NULL);
+  for (Uint32 i = 0; i < framebuffer->numColorAttachments; i++) {
+    color[i] = $(framebuffer, colorTargetInfo, i, loadOp, storeOp);
   }
 
   SDL_GPUDepthStencilTargetInfo depth;
   const SDL_GPUDepthStencilTargetInfo *depthStencil = NULL;
-  if (framebuffer->depthFormat != SDL_GPU_TEXTUREFORMAT_INVALID) {
-    depth = $(framebuffer, depthTargetInfo, loadOp, storeOp, framebuffer->clearDepth);
+  if (framebuffer->depthAttachment.format != SDL_GPU_TEXTUREFORMAT_INVALID) {
+    depth = $(framebuffer, depthTargetInfo, loadOp, storeOp);
     depthStencil = &depth;
   }
 
-  return beginRenderPass(self, framebuffer->numColorTargets ? color : NULL, framebuffer->numColorTargets, depthStencil);
+  return beginRenderPass(self, framebuffer->numColorAttachments ? color : NULL, framebuffer->numColorAttachments, depthStencil);
 }
 
 /**

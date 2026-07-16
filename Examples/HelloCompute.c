@@ -133,13 +133,9 @@ static void initParticles(AppState *app) {
   pipelineInfo.fragment_shader = fragmentShader->shader;
   pipelineInfo.primitive_type = SDL_GPU_PRIMITIVETYPE_POINTLIST;
   pipelineInfo.multisample_state.sample_count = app->framebuffer->sampleCount;
-  pipelineInfo.target_info = (SDL_GPUGraphicsPipelineTargetInfo) {
-    .color_target_descriptions = &(SDL_GPUColorTargetDescription) {
-      .format = app->framebuffer->colorTextures[0]->format,
-      .blend_state = GPU_BlendStateOpaque,
-    },
-    .num_color_targets = 1,
-  };
+
+  SDL_GPUColorTargetDescription descriptions[1];
+  $(app->framebuffer, pipelineTargetInfo, &GPU_BlendStateOpaque, descriptions, &pipelineInfo.target_info);
 
   app->graphicsPipeline = $(app->renderDevice, createGraphicsPipeline, &pipelineInfo);
 
@@ -161,8 +157,7 @@ static void drawParticles(AppState *app, CommandBuffer *commands) {
   $(computePass, dispatchCompute, 1, 1, 1);
   release(computePass);
 
-  const SDL_FColor clearColor = { 0.05f, 0.05f, 0.1f, 1.f };
-  const SDL_GPUColorTargetInfo color = $(app->framebuffer, colorTargetInfo, 0, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_STORE, &clearColor);
+  const SDL_GPUColorTargetInfo color = $(app->framebuffer, colorTargetInfo, 0, SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_STORE);
 
   RenderPass *pass = $(commands, beginRenderPass, &color, 1, NULL);
   $(pass, bindPipeline, app->graphicsPipeline);
@@ -198,7 +193,7 @@ SDL_AppResult SDL_AppInit(void **appState, int argc, char *argv[]) {
   
   app->framebuffer = $(app->renderDevice, createFramebuffer, &(GPU_FramebufferCreateInfo) {
     .size = MakeSize(w, h),
-    .colorFormats = { colorFormat },
+    .colorAttachments = { { .format = colorFormat, .clearColor = { 0.05f, 0.05f, 0.1f, 1.f } } },
     .numColorTargets = 1,
     .sampleCount = HELLO_MSAA,
   });

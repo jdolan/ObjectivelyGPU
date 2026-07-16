@@ -47,11 +47,63 @@ typedef struct Texture Texture;
 #define GPU_MAX_COLOR_TARGETS 4
 
 /**
+ * @brief Describes, and backs, a single Framebuffer attachment (color or depth).
+ * @details `format`, the clear value, and `doubleBuffered` are the input description:
+ *   set them in `GPU_FramebufferCreateInfo` with a designated initializer. `textures`
+ *   and `resolveTextures` are live state, populated by `Framebuffer::resize` and owned
+ *   by the Framebuffer -- leave them zeroed in a `GPU_FramebufferCreateInfo`.
+ *
+ *   When `doubleBuffered` is `true`, the attachment allocates both texture slots and
+ *   `Framebuffer::swap` alternates which slot is the current frame's write target, so
+ *   the other slot remains valid to sample as last frame's contents -- e.g. a depth
+ *   copy sampled by soft particles -- without a same-frame write-then-read hazard.
+ *   Single-buffered attachments (`doubleBuffered` `false`) only ever use slot `0`.
+ */
+typedef struct GPU_FramebufferAttachment {
+
+  /**
+   * @brief The attachment format, or `SDL_GPU_TEXTUREFORMAT_INVALID` to omit (depth only).
+   */
+  SDL_GPUTextureFormat format;
+
+  union {
+    /**
+     * @brief The clear color, for color attachments.
+     * @details Used by `Framebuffer::colorTargetInfo` and `CommandBuffer::beginRenderPassWithFramebuffer`.
+     */
+    SDL_FColor clearColor;
+
+    /**
+     * @brief The clear depth value, for the depth attachment.
+     * @details Used by `CommandBuffer::beginRenderPassWithFramebuffer`.
+     */
+    float clearDepth;
+  };
+
+  /**
+   * @brief If `true`, this attachment is double-buffered; see above.
+   */
+  bool doubleBuffered;
+
+  /**
+   * @brief The backing texture(s). Multisampled when the Framebuffer's `sampleCount` is
+   *   greater than `SDL_GPU_SAMPLECOUNT_1`; sample the corresponding `resolveTextures`
+   *   entry instead. Index `1` is only allocated when `doubleBuffered` is `true`.
+   * @private
+   */
+  Texture *textures[2];
+
+  /**
+   * @brief The single-sample resolve target(s), or `NULL` unless the Framebuffer is
+   *   multisampled. Mirrors `textures`.
+   * @private
+   */
+  Texture *resolveTextures[2];
+
+} GPU_FramebufferAttachment;
+
+/**
  * @brief Parameters for creating a Framebuffer.
- * @details The GPU-layer analogue of SDL's `*CreateInfo` structs, for a target that
- *   aggregates several `SDL_GPUTexture` attachments and so has no single SDL struct.
- *   Use a designated initializer; omitted fields default to zero
- *   (`SDL_GPU_TEXTUREFORMAT_INVALID`, `SDL_GPU_SAMPLECOUNT_1`).
  */
 typedef struct GPU_FramebufferCreateInfo {
 
@@ -63,11 +115,11 @@ typedef struct GPU_FramebufferCreateInfo {
   SDL_Size size;
 
   /**
-   * @brief The color attachment formats, one per render target (MRT).
-   * @details Indices `[0, numColorTargets)` are used. With MSAA, every color attachment
-   *   is multisampled and gets its own single-sample resolve target.
+   * @brief The color attachments, one per render target (MRT).
+   * @details Indices `[0, numColorTargets)` are used. Only `format`, `clearColor`, and
+   *   `doubleBuffered` are meaningful here; leave `textures`/`resolveTextures` zeroed.
    */
-  SDL_GPUTextureFormat colorFormats[GPU_MAX_COLOR_TARGETS];
+  GPU_FramebufferAttachment colorAttachments[GPU_MAX_COLOR_TARGETS];
 
   /**
    * @brief The number of color attachments; `0` to omit color entirely.
@@ -75,10 +127,11 @@ typedef struct GPU_FramebufferCreateInfo {
   Uint32 numColorTargets;
 
   /**
-   * @brief Depth attachment format, or `SDL_GPU_TEXTUREFORMAT_INVALID` to omit.
+   * @brief The depth attachment, or `format` `SDL_GPU_TEXTUREFORMAT_INVALID` to omit.
    * @details A render pass supports at most one depth-stencil target, so this is singular.
+   *   Only `format` and `clearDepth` are meaningful here.
    */
-  SDL_GPUTextureFormat depthFormat;
+  GPU_FramebufferAttachment depthAttachment;
 
   /**
    * @brief MSAA sample count; `SDL_GPU_SAMPLECOUNT_1` for no multisampling.
@@ -86,23 +139,6 @@ typedef struct GPU_FramebufferCreateInfo {
    *   multisampled color attachment.
    */
   SDL_GPUSampleCount sampleCount;
-
-  /**
-   * @brief The clear color for each color attachment, indices `[0, numColorTargets)`.
-   * @details Stashed on the Framebuffer and used as the default `clearColor` by
-   *   `colorTargetInfo` (when passed `NULL`) and by
-   *   `CommandBuffer::beginRenderPassWithFramebuffer`. Omitted entries default to
-   *   opaque black.
-   */
-  SDL_FColor clearColors[GPU_MAX_COLOR_TARGETS];
-
-  /**
-   * @brief The clear depth value for the depth attachment, if any.
-   * @details Stashed on the Framebuffer and used by
-   *   `CommandBuffer::beginRenderPassWithFramebuffer`. Typically `1.f` (the far plane);
-   *   omitted defaults to `0.f`.
-   */
-  float clearDepth;
 
 } GPU_FramebufferCreateInfo;
 
@@ -120,15 +156,15 @@ typedef struct GPU_FramebufferCreateInfo {
  * @code
  *   Framebuffer *fb = $(renderDevice, createFramebuffer, &(GPU_FramebufferCreateInfo) {
  *     .size = { 1920, 1080 },
- *     .colorFormats = { SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT },
+ *     .colorAttachments = {
+ *       { .format = SDL_GPU_TEXTUREFORMAT_R16G16B16A16_FLOAT, .clearColor = { 0.f, 0.f, 0.f, 1.f } },
+ *     },
  *     .numColorTargets = 1,
- *     .clearColors = { { 0.f, 0.f, 0.f, 1.f } },
- *     .depthFormat = SDL_GPU_TEXTUREFORMAT_D32_FLOAT,
- *     .clearDepth = 1.f,
+ *     .depthAttachment = { .format = SDL_GPU_TEXTUREFORMAT_D32_FLOAT, .clearDepth = 1.f },
  *     .sampleCount = SDL_GPU_SAMPLECOUNT_1,
  *   });
  *
- *   // Renders into all of fb's targets, clearing to its own clearColors/clearDepth.
+ *   // Renders into all of fb's targets, clearing to their own clear color/depth.
  *   RenderPass *pass = $(commands, beginRenderPassWithFramebuffer, fb,
  *     SDL_GPU_LOADOP_CLEAR, SDL_GPU_STOREOP_STORE);
  *   // ...
@@ -152,84 +188,40 @@ struct Framebuffer {
   FramebufferInterface *interface;
 
   /**
+   * @brief The owning RenderDevice, used for texture allocation and dealloc.
+   */
+  RenderDevice *device;
+
+  /**
    * @brief The framebuffer dimensions.
    */
   SDL_Size size;
 
   /**
-   * @brief The MSAA sample count of all attachments.
-   * @details `SDL_GPU_SAMPLECOUNT_1` for no multisampling. When greater, every color
-   *   attachment and the depth attachment are multisampled (a render pass requires a
-   *   single sample count across all attachments); each color attachment also gets a
-   *   single-sample resolve target in `resolveTextures`.
+   * @brief The MSAA sample count of all color and depth attachments.
    */
   SDL_GPUSampleCount sampleCount;
 
   /**
+   * @brief The color attachments, indices `[0, numColorTargets)`.
+   */
+  GPU_FramebufferAttachment colorAttachments[GPU_MAX_COLOR_TARGETS];
+
+  /**
    * @brief The number of color attachments; indices `[0, numColorTargets)` are valid.
    */
-  Uint32 numColorTargets;
+  Uint32 numColorAttachments;
 
   /**
-   * @brief The color attachment texture formats, indices `[0, numColorTargets)`.
+   * @brief The depth attachment, or `format` `SDL_GPU_TEXTUREFORMAT_INVALID` if none.
    */
-  SDL_GPUTextureFormat colorFormats[GPU_MAX_COLOR_TARGETS];
+  GPU_FramebufferAttachment depthAttachment;
 
   /**
-   * @brief The color attachment textures, indices `[0, numColorTargets)`.
-   * @details Multisampled when `sampleCount` > `SDL_GPU_SAMPLECOUNT_1`; in that case
-   *   sample/blit/present the corresponding `resolveTextures` entry, not these.
-   */
-  Texture *colorTextures[GPU_MAX_COLOR_TARGETS];
-
-  /**
-   * @brief The single-sample resolve targets, or all `NULL` unless `sampleCount` > `SDL_GPU_SAMPLECOUNT_1`.
-   * @details Render passes resolve `colorTextures[i]` into `resolveTextures[i]`; that is
-   *   the texture to sample, blit, or present. See `resolveColorTexture`.
-   */
-  Texture *resolveTextures[GPU_MAX_COLOR_TARGETS];
-
-  /**
-   * @brief The depth attachment texture format, or `SDL_GPU_TEXTUREFORMAT_INVALID` if none.
-   */
-  SDL_GPUTextureFormat depthFormat;
-
-  /**
-   * @brief The clear color for each color attachment, indices `[0, numColorTargets)`.
-   * @details Used as the default `clearColor` by `colorTargetInfo` (when passed `NULL`)
-   *   and by `CommandBuffer::beginRenderPassWithFramebuffer`.
-   */
-  SDL_FColor clearColors[GPU_MAX_COLOR_TARGETS];
-
-  /**
-   * @brief The clear depth value for the depth attachment, if any.
-   * @details Used by `CommandBuffer::beginRenderPassWithFramebuffer`.
-   */
-  float clearDepth;
-
-  /**
-   * @brief The depth attachment texture, or `NULL` if `depthFormat` is invalid.
-   * @details Single-sample depth also carries `SAMPLER` and is returned directly by
-   *   `resolveDepthTexture`. Multisampled depth is a plain depth-stencil target
-   *   (`resolveDepthTexture` returns the separate `resolveDepthTexture` instead, since
-   *   SDL has no depth store-op resolve). Sample via `resolveDepthTexture`, not this.
+   * @brief The current frame parity for double-buffered color attachments; toggled by `swap`.
    * @private
    */
-  Texture *depthTexture;
-
-  /**
-   * @brief The single-sample, sampleable depth resolve target, or `NULL`.
-   * @details Only allocated when multisampled (single-sample reads the depth attachment
-   *   directly). Populated by an explicit resolve pass; returned by `resolveDepthTexture`.
-   * @private
-   */
-  Texture *resolveDepthTexture;
-
-  /**
-   * @brief The owning RenderDevice, used for texture allocation and dealloc.
-   * @private
-   */
-  RenderDevice *device;
+  Uint32 frame;
   
   /**
    * @brief User data.
@@ -248,7 +240,7 @@ struct FramebufferInterface {
   ObjectInterface objectInterface;
 
   /**
-   * @fn SDL_GPUColorTargetInfo Framebuffer::colorTargetInfo(const Framebuffer *self, Uint32 index, SDL_GPULoadOp loadOp, SDL_GPUStoreOp storeOp, const SDL_FColor *clearColor)
+   * @fn SDL_GPUColorTargetInfo Framebuffer::colorTargetInfo(const Framebuffer *self, Uint32 index, SDL_GPULoadOp loadOp, SDL_GPUStoreOp storeOp)
    * @brief Returns a populated `SDL_GPUColorTargetInfo` for color attachment @p index.
    * @details Assemble an array of these (one per color target) and pass it to
    *   `CommandBuffer::beginRenderPass`. When multisampled, the resolve target and a
@@ -257,27 +249,41 @@ struct FramebufferInterface {
    * @param index The color attachment index, in `[0, numColorTargets)`.
    * @param loadOp Load operation at the start of the pass.
    * @param storeOp Store operation at the end of the pass.
-   * @param clearColor Clear color used when `loadOp` is `SDL_GPU_LOADOP_CLEAR`, or NULL to use the framebuffer's own `clearColors[index]`.
-   * @return A stack-allocated `SDL_GPUColorTargetInfo`.
+   * @return A stack-allocated `SDL_GPUColorTargetInfo`, cleared to the attachment's own
+   *   `clearColor` when `loadOp` is `SDL_GPU_LOADOP_CLEAR`.
    * @memberof Framebuffer
    */
-  SDL_GPUColorTargetInfo (*colorTargetInfo)(const Framebuffer *self, Uint32 index,
-    SDL_GPULoadOp loadOp, SDL_GPUStoreOp storeOp, const SDL_FColor *clearColor);
+  SDL_GPUColorTargetInfo (*colorTargetInfo)(const Framebuffer *self, Uint32 index, SDL_GPULoadOp loadOp, SDL_GPUStoreOp storeOp);
 
   /**
-   * @fn SDL_GPUDepthStencilTargetInfo Framebuffer::depthTargetInfo(const Framebuffer *self, SDL_GPULoadOp loadOp, SDL_GPUStoreOp storeOp, float clearDepth)
+   * @fn SDL_GPUDepthStencilTargetInfo Framebuffer::depthTargetInfo(const Framebuffer *self, SDL_GPULoadOp loadOp, SDL_GPUStoreOp storeOp)
    * @brief Returns a populated `SDL_GPUDepthStencilTargetInfo` for this framebuffer's depth attachment.
    * @details Pass the result directly to `CommandBuffer::beginRenderPass`.
-   *   `assert`s that `depthTexture` is non-NULL.
+   *   `assert`s that the depth attachment's texture is non-NULL.
    * @param self The Framebuffer.
    * @param loadOp Load operation at the start of the pass.
    * @param storeOp Store operation at the end of the pass.
-   * @param clearDepth Clear depth value used when `loadOp` is `SDL_GPU_LOADOP_CLEAR`.
-   * @return A stack-allocated `SDL_GPUDepthStencilTargetInfo`.
+   * @return A stack-allocated `SDL_GPUDepthStencilTargetInfo`, cleared to the attachment's
+   *   own `clearDepth` when `loadOp` is `SDL_GPU_LOADOP_CLEAR`.
    * @memberof Framebuffer
    */
-  SDL_GPUDepthStencilTargetInfo (*depthTargetInfo)(const Framebuffer *self,
-    SDL_GPULoadOp loadOp, SDL_GPUStoreOp storeOp, float clearDepth);
+  SDL_GPUDepthStencilTargetInfo (*depthTargetInfo)(const Framebuffer *self, SDL_GPULoadOp loadOp, SDL_GPUStoreOp storeOp);
+
+  /**
+   * @fn void Framebuffer::pipelineTargetInfo(const Framebuffer *self, const SDL_GPUColorTargetBlendState *blendStates, SDL_GPUColorTargetDescription *descriptions, SDL_GPUGraphicsPipelineTargetInfo *targetInfo)
+   * @brief Populates @p descriptions and @p targetInfo for a GraphicsPipeline that targets this Framebuffer.
+   * @details Pass one blend state per color attachment in @p blendStates (see `GraphicsPipelinePresets`), and
+   *   caller-owned storage for @p descriptions with capacity `numColorAttachments`. The resulting @p targetInfo
+   *   references @p descriptions, so @p descriptions must remain valid for as long as @p targetInfo (and any
+   *   `SDL_GPUGraphicsPipelineCreateInfo` built from it) is in use.
+   * @param self The Framebuffer.
+   * @param blendStates One blend state per color attachment, `[0, numColorAttachments)`.
+   * @param descriptions Output storage for `numColorAttachments` color target descriptions.
+   * @param targetInfo Output: populated with @p descriptions and this Framebuffer's depth format.
+   * @memberof Framebuffer
+   */
+  void (*pipelineTargetInfo)(const Framebuffer *self, const SDL_GPUColorTargetBlendState *blendStates,
+                             SDL_GPUColorTargetDescription *descriptions, SDL_GPUGraphicsPipelineTargetInfo *targetInfo);
 
   /**
    * @fn Framebuffer *Framebuffer::initWithDevice(Framebuffer *self, RenderDevice *device, const GPU_FramebufferCreateInfo *info)
@@ -293,7 +299,9 @@ struct FramebufferInterface {
   /**
    * @fn Texture *Framebuffer::resolveColorTexture(const Framebuffer *self, Uint32 index)
    * @brief Returns the single-sample, sampleable color texture for attachment @p index, to sample, blit, or present.
-   * @details Returns `resolveTextures[index]` when multisampled, otherwise `colorTextures[index]`.
+   * @details Returns the current frame's resolved texture: the multisampled resolve target when the
+   *   Framebuffer is multisampled, otherwise the attachment's own texture. For a double-buffered
+   *   attachment, this is the slot being written *this* frame; see `previousColorTexture` for the other.
    * @param self The Framebuffer.
    * @param index The color attachment index, in `[0, numColorTargets)`.
    * @return The resolved color texture, or `NULL` if @p index has no attachment.
@@ -302,10 +310,25 @@ struct FramebufferInterface {
   Texture *(*resolveColorTexture)(const Framebuffer *self, Uint32 index);
 
   /**
+   * @fn Texture *Framebuffer::previousColorTexture(const Framebuffer *self, Uint32 index)
+   * @brief Returns the single-sample, sampleable color texture attachment @p index held *last* frame.
+   * @details Only valid for a double-buffered attachment (`doubleBuffered` `true`); `assert`s otherwise.
+   *   Since this slot was not written this frame, it may be safely sampled within the same render pass
+   *   that is concurrently writing `resolveColorTexture`'s slot -- e.g. soft particles sampling last
+   *   frame's depth copy while the current frame's opaque geometry writes this frame's copy, all within
+   *   one render pass, with no same-frame write-then-read hazard.
+   * @param self The Framebuffer.
+   * @param index The color attachment index, in `[0, numColorTargets)`.
+   * @return The previous frame's resolved color texture.
+   * @memberof Framebuffer
+   */
+  Texture *(*previousColorTexture)(const Framebuffer *self, Uint32 index);
+
+  /**
    * @fn Texture *Framebuffer::resolveDepthTexture(const Framebuffer *self)
    * @brief Returns the single-sample, sampleable depth texture, to read scene depth (e.g. soft particles).
    * @details Single-sample: the depth attachment itself (created with `SAMPLER`). Multisampled: the
-   *   separate `resolveDepthTexture`, which must first be populated by a resolve pass (SDL has no depth
+   *   separate resolve texture, which must first be populated by a resolve pass (SDL has no depth
    *   store-op resolve). Returns `NULL` if the framebuffer has no depth attachment.
    * @param self The Framebuffer.
    * @return The sampleable depth texture, or `NULL` if there is no depth attachment.
@@ -324,6 +347,18 @@ struct FramebufferInterface {
    * @memberof Framebuffer
    */
   bool (*resize)(Framebuffer *self, const SDL_Size *size);
+
+  /**
+   * @fn void Framebuffer::swap(Framebuffer *self)
+   * @brief Advances the frame parity used by double-buffered attachments.
+   * @details Call this once per frame, after any double-buffered attachment has been
+   *   written for the frame -- e.g. at the end of the frame. Toggles which physical
+   *   slot `colorTargetInfo`/`resolveColorTexture` write/read as "current" for each
+   *   `doubleBuffered` attachment; the other slot becomes `previousColorTexture`.
+   * @param self The Framebuffer.
+   * @memberof Framebuffer
+   */
+  void (*swap)(Framebuffer *self);
 };
 
 /**
