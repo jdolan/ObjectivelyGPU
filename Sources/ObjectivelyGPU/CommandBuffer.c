@@ -64,12 +64,17 @@ static bool acquireSwapchainTexture(const CommandBuffer *self, SwapchainTexture 
                                                  &swapchain->texture,
                                                  &w, &h);
 
-  if (ok) {
-    swapchain->size = (SDL_Size) { (int) w, (int) h };
-    swapchain->format = SDL_GetGPUSwapchainTextureFormat(self->device->device, self->device->window);
+  // SDL reports success with a NULL texture when too many frames are in flight;
+  // that NULL must never be handed back to SDL, so report it as unavailable.
+  if (!ok || swapchain->texture == NULL) {
+    *swapchain = (SwapchainTexture) { 0 };
+    return false;
   }
-  
-  return ok;
+
+  swapchain->size = (SDL_Size) { (int) w, (int) h };
+  swapchain->format = SDL_GetGPUSwapchainTextureFormat(self->device->device, self->device->window);
+
+  return true;
 }
 
 /**
@@ -305,12 +310,18 @@ static bool waitAndAcquireSwapchainTexture(const CommandBuffer *self, SwapchainT
                                                         self->device->window,
                                                         &swapchain->texture,
                                                         &w, &h);
-  if (ok) {
-    swapchain->size = (SDL_Size) { (int) w, (int) h };
-    swapchain->format = SDL_GetGPUSwapchainTextureFormat(self->device->device, self->device->window);
+
+  // SDL reports success with a NULL texture when the window is minimised or the
+  // swapchain is otherwise unavailable; that NULL must never be handed back to SDL.
+  if (!ok || swapchain->texture == NULL) {
+    *swapchain = (SwapchainTexture) { 0 };
+    return false;
   }
-  
-  return ok;
+
+  swapchain->size = (SDL_Size) { (int) w, (int) h };
+  swapchain->format = SDL_GetGPUSwapchainTextureFormat(self->device->device, self->device->window);
+
+  return true;
 }
 
 #pragma mark - Class lifecycle

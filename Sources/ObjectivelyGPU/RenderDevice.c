@@ -155,15 +155,17 @@ static CommandBuffer *beginFrame(RenderDevice *self) {
   GPU_Assert(self->framebuffer, "no framebuffer set; call setFramebuffer first");
   GPU_Assert(self->commands == NULL, "beginFrame called with a frame already in flight");
 
+  // The swapchain is deliberately *not* acquired here; see endFrameAndFence. Size the
+  // framebuffer from the window instead, so a transient swapchain hiccup can never
+  // churn every attachment.
+  int w = 0, h = 0;
+  if (!SDL_GetWindowSizeInPixels(self->window, &w, &h) || w <= 0 || h <= 0) {
+    return NULL;
+  }
+
   self->commands = $(self, acquireCommandBuffer);
 
-  const bool ok = $(self->commands, waitAndAcquireSwapchainTexture, &self->swapchain);
-  if (ok) {
-    $(self->framebuffer, resize, &self->swapchain.size);
-  } else {
-    $(self->commands, cancel);
-    self->commands = release(self->commands);
-  }
+  $(self->framebuffer, resize, &(SDL_Size) { w, h });
 
   return self->commands;
 }
@@ -179,20 +181,26 @@ static Fence *endFrameAndFence(RenderDevice *self) {
   Texture *color = $(self->framebuffer, resolveColorTexture, 0);
   GPU_Assert(color, "framebuffer has no color attachment to present");
 
-  $(self->commands, blitTexture, &(SDL_GPUBlitInfo) {
-    .source = {
-      .texture = color->texture,
-      .w = (Uint32) self->swapchain.size.w,
-      .h = (Uint32) self->swapchain.size.h,
-    },
-    .destination = {
-      .texture = self->swapchain.texture,
-      .w = (Uint32) self->swapchain.size.w,
-      .h = (Uint32) self->swapchain.size.h,
-    },
-    .load_op = SDL_GPU_LOADOP_DONT_CARE,
-    .filter = SDL_GPU_FILTER_NEAREST,
-  });
+  // Acquire the swapchain as late as possible: the drawable is held only for this blit
+  // rather than for the whole frame, which is what Metal's CAMetalLayer wants and what
+  // keeps `nextDrawable` from starving under contention. When no drawable is available
+  // the frame's GPU work is still submitted -- it simply isn't presented.
+  if ($(self->commands, waitAndAcquireSwapchainTexture, &self->swapchain)) {
+    $(self->commands, blitTexture, &(SDL_GPUBlitInfo) {
+      .source = {
+        .texture = color->texture,
+        .w = (Uint32) self->framebuffer->size.w,
+        .h = (Uint32) self->framebuffer->size.h,
+      },
+      .destination = {
+        .texture = self->swapchain.texture,
+        .w = (Uint32) self->swapchain.size.w,
+        .h = (Uint32) self->swapchain.size.h,
+      },
+      .load_op = SDL_GPU_LOADOP_DONT_CARE,
+      .filter = SDL_GPU_FILTER_NEAREST,
+    });
+  }
 
   Fence *fence = $(self->commands, submitAndFence);
 

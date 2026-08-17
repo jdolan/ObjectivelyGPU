@@ -134,11 +134,13 @@ struct CommandBufferInterface {
   /**
    * @fn bool CommandBuffer::acquireSwapchainTexture(const CommandBuffer *self, SwapchainTexture *swapchain)
    * @brief Acquires the next swapchain texture for rendering.
-   * @details Returns `false` (without asserting) when the window is minimised
-   *   or the swapchain is temporarily unavailable. The caller should skip
-   *   rendering for that frame.
+   * @details Returns `false` (without asserting) when the window is minimised, too many
+   *   frames are in flight, or the swapchain is temporarily unavailable; SDL reports those
+   *   cases as success with a NULL texture, which MUST NOT be passed back into SDL, so
+   *   they are reported here as failure and @p swapchain is zeroed. The caller should skip
+   *   presenting for that frame.
    * @param self The CommandBuffer.
-   * @param swapchain Output structure populated with the texture and dimensions.
+   * @param swapchain Output structure populated with the texture and dimensions, or zeroed.
    * @return True on success, false when the swapchain is unavailable this frame.
    * @memberof CommandBuffer
    */
@@ -322,10 +324,16 @@ struct CommandBufferInterface {
    * @fn bool CommandBuffer::waitAndAcquireSwapchainTexture(const CommandBuffer *self, SwapchainTexture *swapchain)
    * @brief Blocks until a swapchain texture is available, then acquires it.
    * @details Prefer `acquireSwapchainTexture` unless you must guarantee a
-   *   texture this frame (e.g. during resize).
+   *   texture this frame (e.g. during resize). Blocking bounds how many frames may be in
+   *   flight, but a drawable is still not guaranteed: as with `acquireSwapchainTexture`,
+   *   an unavailable swapchain is reported as `false` with @p swapchain zeroed.
+   *
+   *   Call this as late in the frame as possible. The acquired drawable is held until this
+   *   CommandBuffer is submitted, and holding it across a frame's CPU work starves the
+   *   drawable pool.
    * @param self The CommandBuffer.
-   * @param swapchain Output structure populated with the texture and dimensions.
-   * @return True on success, false on error.
+   * @param swapchain Output structure populated with the texture and dimensions, or zeroed.
+   * @return True on success, false when the swapchain is unavailable this frame.
    * @memberof CommandBuffer
    */
   bool (*waitAndAcquireSwapchainTexture)(const CommandBuffer *self, SwapchainTexture *swapchain);

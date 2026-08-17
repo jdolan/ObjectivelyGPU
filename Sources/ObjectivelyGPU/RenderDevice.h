@@ -98,8 +98,8 @@ struct RenderDevice {
 
   /**
    * @brief The present-target Framebuffer driven by `beginFrame`/`endFrame`, or `NULL`.
-   * @details Set via `setFramebuffer` (retained). `beginFrame` resizes it to the
-   *   swapchain each frame and `endFrame` blits its resolved color to the swapchain.
+   * @details Set via `setFramebuffer` (retained). `beginFrame` resizes it to the window's
+   *   pixel size each frame and `endFrame` blits its resolved color to the swapchain.
    */
   Framebuffer *framebuffer;
 
@@ -112,8 +112,9 @@ struct RenderDevice {
   CommandBuffer *commands;
 
   /**
-   * @brief The swapchain texture acquired for the current frame.
-   * @details Valid only between `beginFrame` and `endFrame`.
+   * @brief The swapchain texture acquired to present the current frame.
+   * @details Acquired inside `endFrame`, immediately before the presenting blit, and
+   *   cleared again before it returns. Zeroed when no drawable was available.
    * @private
    */
   SwapchainTexture swapchain;
@@ -155,16 +156,20 @@ struct RenderDeviceInterface {
 
   /**
    * @fn CommandBuffer *RenderDevice::beginFrame(RenderDevice *self)
-   * @brief Begins a frame: acquires a command buffer and the swapchain, and prepares the framebuffer.
-   * @details Convenience over the manual acquire→wait-swapchain→resize boilerplate.
-   *   Acquires a CommandBuffer, blocks for the swapchain texture, resizes the framebuffer
-   *   set via `setFramebuffer` to the swapchain dimensions, and returns the command buffer
-   *   so the caller can record passes into `framebuffer`. Returns `NULL` when the swapchain
-   *   is unavailable (e.g. the window is minimised); the command buffer is cancelled and the
-   *   frame should be skipped. Pair every non-NULL return with `endFrame`. The returned
-   *   CommandBuffer is owned by the device; do not release it. Applications that render
-   *   directly to the swapchain can ignore `beginFrame`/`endFrame` and drive the command
-   *   buffer themselves.
+   * @brief Begins a frame: acquires a command buffer and prepares the framebuffer.
+   * @details Acquires a CommandBuffer, resizes the framebuffer set via `setFramebuffer`
+   *   to the window's pixel size, and returns the command buffer so the caller can record
+   *   passes into `framebuffer`. Returns `NULL` when the window has no drawable area (e.g.
+   *   it is minimised) and the frame should be skipped entirely.
+   *
+   *   The swapchain is deliberately **not** acquired here. `endFrame` acquires it
+   *   immediately before the presenting blit, so the drawable is held for that blit alone
+   *   rather than for the whole frame. Holding a Metal drawable across a frame's CPU work
+   *   starves `CAMetalLayer`'s drawable pool and costs presented frames.
+   *
+   *   Pair every non-NULL return with `endFrame`. The returned CommandBuffer is owned by
+   *   the device; do not release it. Applications that render directly to the swapchain can
+   *   ignore `beginFrame`/`endFrame` and drive the command buffer themselves.
    * @param self The RenderDevice.
    * @return The frame's CommandBuffer (borrowed), or `NULL` to skip the frame.
    * @memberof RenderDevice
@@ -394,10 +399,14 @@ struct RenderDeviceInterface {
   /**
    * @fn void RenderDevice::endFrame(RenderDevice *self)
    * @brief Ends the frame begun by `beginFrame`: presents the framebuffer and submits.
-   * @details Blits the framebuffer's resolved color (`Framebuffer::resolveColorTexture`,
-   *   the resolve target when multisampled) into the acquired swapchain texture, submits
-   *   the frame's command buffer, and releases it. Must be paired with a non-NULL
+   * @details Acquires the swapchain texture, blits the framebuffer's resolved color
+   *   (`Framebuffer::resolveColorTexture`, the resolve target when multisampled) into it,
+   *   submits the frame's command buffer, and releases it. Must be paired with a non-NULL
    *   `beginFrame` return.
+   *
+   *   When no drawable is available the blit is skipped but the command buffer is still
+   *   submitted, so the frame's GPU work completes and resource cycling stays correct; the
+   *   frame simply is not presented and the previous one remains on screen.
    * @param self The RenderDevice.
    * @memberof RenderDevice
    */
