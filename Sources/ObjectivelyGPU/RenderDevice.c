@@ -152,21 +152,19 @@ static CommandBuffer *acquireCommandBuffer(const RenderDevice *self) {
  */
 static CommandBuffer *beginFrame(RenderDevice *self) {
 
+  GPU_Assert(self->window, "no SDL_Window for RenderDevice");
   GPU_Assert(self->framebuffer, "no framebuffer set; call setFramebuffer first");
-  GPU_Assert(self->commands == NULL, "beginFrame called with a frame already in flight");
 
-  // The swapchain is deliberately *not* acquired here; see endFrameAndFence. Size the
-  // framebuffer from the window instead, so a transient swapchain hiccup can never
-  // churn every attachment.
   int w = 0, h = 0;
   if (!SDL_GetWindowSizeInPixels(self->window, &w, &h) || w <= 0 || h <= 0) {
     return NULL;
   }
-
-  self->commands = $(self, acquireCommandBuffer);
-
+  
   $(self->framebuffer, resize, &(SDL_Size) { w, h });
 
+  GPU_Assert(self->commands == NULL, "beginFrame called with a frame already in flight");
+
+  self->commands = $(self, acquireCommandBuffer);
   return self->commands;
 }
 
@@ -181,10 +179,6 @@ static Fence *endFrameAndFence(RenderDevice *self) {
   Texture *color = $(self->framebuffer, resolveColorTexture, 0);
   GPU_Assert(color, "framebuffer has no color attachment to present");
 
-  // Acquire the swapchain as late as possible: the drawable is held only for this blit
-  // rather than for the whole frame, which is what Metal's CAMetalLayer wants and what
-  // keeps `nextDrawable` from starving under contention. When no drawable is available
-  // the frame's GPU work is still submitted -- it simply isn't presented.
   if ($(self->commands, waitAndAcquireSwapchainTexture, &self->swapchain)) {
     $(self->commands, blitTexture, &(SDL_GPUBlitInfo) {
       .source = {
@@ -205,7 +199,6 @@ static Fence *endFrameAndFence(RenderDevice *self) {
   Fence *fence = $(self->commands, submitAndFence);
 
   self->commands = release(self->commands);
-
   self->swapchain = (SwapchainTexture) { 0 };
 
   return fence;

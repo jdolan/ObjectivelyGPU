@@ -63,9 +63,6 @@ static bool acquireSwapchainTexture(const CommandBuffer *self, SwapchainTexture 
                                                  self->device->window,
                                                  &swapchain->texture,
                                                  &w, &h);
-
-  // SDL reports success with a NULL texture when too many frames are in flight;
-  // that NULL must never be handed back to SDL, so report it as unavailable.
   if (!ok || swapchain->texture == NULL) {
     *swapchain = (SwapchainTexture) { 0 };
     return false;
@@ -311,8 +308,6 @@ static bool waitAndAcquireSwapchainTexture(const CommandBuffer *self, SwapchainT
                                                         &swapchain->texture,
                                                         &w, &h);
 
-  // SDL reports success with a NULL texture when the window is minimised or the
-  // swapchain is otherwise unavailable; that NULL must never be handed back to SDL.
   if (!ok || swapchain->texture == NULL) {
     *swapchain = (SwapchainTexture) { 0 };
     return false;
