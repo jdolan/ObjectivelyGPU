@@ -312,7 +312,6 @@ Class *_Texture(void) {
       .name            = "Texture",
       .superclass      = _Object(),
       .instanceSize    = sizeof(Texture),
-      .interfaceOffset = offsetof(Texture, interface),
       .interfaceSize   = sizeof(TextureInterface),
       .initialize      = initialize,
     });

@@ -49,7 +49,7 @@ libObjectivelyGPU_la_CFLAGS = \
     $(SDL3_CFLAGS)
 
 libObjectivelyGPU_la_LDFLAGS = \
-    -version-info 1:0:0 \
+    -release @RELEASE_VERSION@ \
     $(HOST_LDFLAGS)
 
 libObjectivelyGPU_la_LIBADD = \

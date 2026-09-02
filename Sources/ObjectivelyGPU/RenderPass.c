@@ -328,7 +328,6 @@ Class *_RenderPass(void) {
       .name            = "RenderPass",
       .superclass      = _Object(),
       .instanceSize    = sizeof(RenderPass),
-      .interfaceOffset = offsetof(RenderPass, interface),
       .interfaceSize   = sizeof(RenderPassInterface),
       .initialize      = initialize,
     });

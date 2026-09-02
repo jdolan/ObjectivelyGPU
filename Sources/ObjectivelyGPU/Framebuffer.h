@@ -182,10 +182,10 @@ struct Framebuffer {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  FramebufferInterface *interface;
+  FramebufferInterface *interface[0];
 
   /**
    * @brief The owning RenderDevice, used for texture allocation and dealloc.

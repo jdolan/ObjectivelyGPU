@@ -60,10 +60,10 @@ struct Fence {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  FenceInterface *interface;
+  FenceInterface *interface[0];
 
   /**
    * @brief The underlying SDL fence.

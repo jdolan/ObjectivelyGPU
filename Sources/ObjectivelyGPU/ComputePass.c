@@ -154,7 +154,6 @@ Class *_ComputePass(void) {
       .name            = "ComputePass",
       .superclass      = _Object(),
       .instanceSize    = sizeof(ComputePass),
-      .interfaceOffset = offsetof(ComputePass, interface),
       .interfaceSize   = sizeof(ComputePassInterface),
       .initialize      = initialize,
     });

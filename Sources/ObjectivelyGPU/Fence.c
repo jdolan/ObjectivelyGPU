@@ -109,7 +109,6 @@ Class *_Fence(void) {
       .name            = "Fence",
       .superclass      = _Object(),
       .instanceSize    = sizeof(Fence),
-      .interfaceOffset = offsetof(Fence, interface),
       .interfaceSize   = sizeof(FenceInterface),
       .initialize      = initialize,
     });

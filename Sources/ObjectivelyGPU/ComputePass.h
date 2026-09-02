@@ -61,10 +61,10 @@ struct ComputePass {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  ComputePassInterface *interface;
+  ComputePassInterface *interface[0];
 
   /**
    * @brief The CommandBuffer this pass was begun from.

@@ -65,10 +65,10 @@ struct Texture {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  TextureInterface *interface;
+  TextureInterface *interface[0];
 
   /**
    * @brief The underlying SDL texture.

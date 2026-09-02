@@ -66,10 +66,10 @@ struct Buffer {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  BufferInterface *interface;
+  BufferInterface *interface[0];
 
   /**
    * @brief The underlying SDL buffer.

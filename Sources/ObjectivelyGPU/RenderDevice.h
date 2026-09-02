@@ -68,10 +68,10 @@ struct RenderDevice {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  RenderDeviceInterface *interface;
+  RenderDeviceInterface *interface[0];
 
   /**
    * @brief The `SDL_GPUDevice`.

@@ -56,10 +56,10 @@ struct Sampler {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  SamplerInterface *interface;
+  SamplerInterface *interface[0];
 
   /**
    * @brief The underlying SDL sampler.

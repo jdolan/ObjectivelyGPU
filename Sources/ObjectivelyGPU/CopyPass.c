@@ -204,7 +204,6 @@ Class *_CopyPass(void) {
       .name            = "CopyPass",
       .superclass      = _Object(),
       .instanceSize    = sizeof(CopyPass),
-      .interfaceOffset = offsetof(CopyPass, interface),
       .interfaceSize   = sizeof(CopyPassInterface),
       .initialize      = initialize,
     });

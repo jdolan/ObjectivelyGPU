@@ -723,7 +723,6 @@ Class *_RenderDevice(void) {
       .name            = "RenderDevice",
       .superclass      = _Object(),
       .instanceSize    = sizeof(RenderDevice),
-      .interfaceOffset = offsetof(RenderDevice, interface),
       .interfaceSize   = sizeof(RenderDeviceInterface),
       .initialize      = initialize,
     });
