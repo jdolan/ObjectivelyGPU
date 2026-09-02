@@ -102,7 +102,6 @@ Class *_QueryPool(void) {
       .name            = "QueryPool",
       .superclass      = _Object(),
       .instanceSize    = sizeof(QueryPool),
-      .interfaceOffset = offsetof(QueryPool, interface),
       .interfaceSize   = sizeof(QueryPoolInterface),
       .initialize      = initialize,
     });

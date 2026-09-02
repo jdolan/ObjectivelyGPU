@@ -86,10 +86,10 @@ struct CommandBuffer {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  CommandBufferInterface *interface;
+  CommandBufferInterface *interface[0];
 
   /**
    * @brief The underlying SDL command buffer.

@@ -362,7 +362,6 @@ Class *_CommandBuffer(void) {
       .name            = "CommandBuffer",
       .superclass      = _Object(),
       .instanceSize    = sizeof(CommandBuffer),
-      .interfaceOffset = offsetof(CommandBuffer, interface),
       .interfaceSize   = sizeof(CommandBufferInterface),
       .initialize      = initialize,
     });

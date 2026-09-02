@@ -92,7 +92,6 @@ Class *_Sampler(void) {
       .name            = "Sampler",
       .superclass      = _Object(),
       .instanceSize    = sizeof(Sampler),
-      .interfaceOffset = offsetof(Sampler, interface),
       .interfaceSize   = sizeof(SamplerInterface),
       .initialize      = initialize,
     });

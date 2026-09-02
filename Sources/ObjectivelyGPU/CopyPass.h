@@ -60,10 +60,10 @@ struct CopyPass {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  CopyPassInterface *interface;
+  CopyPassInterface *interface[0];
 
   /**
    * @brief The CommandBuffer this pass was begun from.

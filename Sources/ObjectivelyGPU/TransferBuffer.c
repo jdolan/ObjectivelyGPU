@@ -133,7 +133,6 @@ Class *_TransferBuffer(void) {
       .name            = "TransferBuffer",
       .superclass      = _Object(),
       .instanceSize    = sizeof(TransferBuffer),
-      .interfaceOffset = offsetof(TransferBuffer, interface),
       .interfaceSize   = sizeof(TransferBufferInterface),
       .initialize      = initialize,
     });

@@ -321,7 +321,6 @@ Class *_Framebuffer(void) {
       .name            = "Framebuffer",
       .superclass      = _Object(),
       .instanceSize    = sizeof(Framebuffer),
-      .interfaceOffset = offsetof(Framebuffer, interface),
       .interfaceSize   = sizeof(FramebufferInterface),
       .initialize      = initialize,
     });

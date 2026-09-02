@@ -180,7 +180,6 @@ Class *_Buffer(void) {
       .name            = "Buffer",
       .superclass      = _Object(),
       .instanceSize    = sizeof(Buffer),
-      .interfaceOffset = offsetof(Buffer, interface),
       .interfaceSize   = sizeof(BufferInterface),
       .initialize      = initialize,
     });

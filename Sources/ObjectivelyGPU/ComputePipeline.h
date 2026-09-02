@@ -55,10 +55,10 @@ struct ComputePipeline {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  ComputePipelineInterface *interface;
+  ComputePipelineInterface *interface[0];
 
   /**
    * @brief The underlying SDL compute pipeline.

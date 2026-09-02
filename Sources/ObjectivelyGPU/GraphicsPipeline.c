@@ -165,7 +165,6 @@ Class *_GraphicsPipeline(void) {
       .name            = "GraphicsPipeline",
       .superclass      = _Object(),
       .instanceSize    = sizeof(GraphicsPipeline),
-      .interfaceOffset = offsetof(GraphicsPipeline, interface),
       .interfaceSize   = sizeof(GraphicsPipelineInterface),
       .initialize      = initialize,
     });

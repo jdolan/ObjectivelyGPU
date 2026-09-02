@@ -91,10 +91,10 @@ struct QueryPool {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  QueryPoolInterface *interface;
+  QueryPoolInterface *interface[0];
 
   /**
    * @brief The underlying SDL query pool, or `NULL` if occlusion queries are

@@ -56,10 +56,10 @@ struct Shader {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  ShaderInterface *interface;
+  ShaderInterface *interface[0];
 
   /**
    * @brief The RenderDevice that owns this shader.

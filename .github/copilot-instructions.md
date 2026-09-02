@@ -45,7 +45,7 @@ typedef struct FooInterface FooInterface;
  */
 struct Foo {
     Bar bar;                   // superclass is always first
-    FooInterface *interface;   // @protected
+    FooInterface *interface[0];   // @protected
     int publicField;
     SomeType *privateField;    // @private
 };
@@ -130,7 +130,6 @@ Class *_Foo(void) {
             .name = "Foo",
             .superclass = _Bar(),
             .instanceSize = sizeof(Foo),
-            .interfaceOffset = offsetof(Foo, interface),
             .interfaceSize = sizeof(FooInterface),
             .initialize = initialize,
         });

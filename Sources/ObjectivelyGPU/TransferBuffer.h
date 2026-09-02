@@ -64,10 +64,10 @@ struct TransferBuffer {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  TransferBufferInterface *interface;
+  TransferBufferInterface *interface[0];
 
   /**
    * @brief The underlying SDL transfer buffer.

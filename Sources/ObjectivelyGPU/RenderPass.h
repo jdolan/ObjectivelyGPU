@@ -62,10 +62,10 @@ struct RenderPass {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  RenderPassInterface *interface;
+  RenderPassInterface *interface[0];
 
   /**
    * @brief The current blend constants.

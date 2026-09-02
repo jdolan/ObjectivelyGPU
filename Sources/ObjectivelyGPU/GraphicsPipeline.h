@@ -56,10 +56,10 @@ struct GraphicsPipeline {
   Object object;
 
   /**
-   * @brief The interface.
+   * @brief The interface type.
    * @protected
    */
-  GraphicsPipelineInterface *interface;
+  GraphicsPipelineInterface *interface[0];
 
   /**
    * @brief The underlying SDL graphics pipeline.

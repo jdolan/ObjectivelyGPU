@@ -97,7 +97,6 @@ Class *_ComputePipeline(void) {
       .name            = "ComputePipeline",
       .superclass      = _Object(),
       .instanceSize    = sizeof(ComputePipeline),
-      .interfaceOffset = offsetof(ComputePipeline, interface),
       .interfaceSize   = sizeof(ComputePipelineInterface),
       .initialize      = initialize,
     });

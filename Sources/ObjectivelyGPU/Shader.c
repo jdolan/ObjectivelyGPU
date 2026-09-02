@@ -94,7 +94,6 @@ Class *_Shader(void) {
       .name            = "Shader",
       .superclass      = _Object(),
       .instanceSize    = sizeof(Shader),
-      .interfaceOffset = offsetof(Shader, interface),
       .interfaceSize   = sizeof(ShaderInterface),
       .initialize      = initialize,
     });
