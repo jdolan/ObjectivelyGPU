@@ -7,6 +7,20 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		CED40A7E3049CEB10090C57A /* ObjectivelyGPU-Examples */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = CED40A813049CEB10090C57A /* Build configuration list for PBXAggregateTarget "ObjectivelyGPU-Examples" */;
+			buildPhases = (
+			);
+			dependencies = (
+				CED40A833049CEBD0090C57A /* PBXTargetDependency */,
+				CED40A853049CEBE0090C57A /* PBXTargetDependency */,
+			);
+			name = "ObjectivelyGPU-Examples";
+			packageProductDependencies = (
+			);
+			productName = "ObjectivelyGPU-Examples";
+		};
 		SC00000000000000000000A0 /* ObjectivelyGPU-shadercross */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = SC00400000000000000000A0 /* Build configuration list for PBXAggregateTarget "ObjectivelyGPU-shadercross" */;
@@ -86,6 +100,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		CED40A823049CEBD0090C57A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EE00B00000000000000000B1;
+			remoteInfo = "ObjectivelyGPU-Hello";
+		};
+		CED40A843049CEBE0090C57A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EE00C00000000000000000B1;
+			remoteInfo = "ObjectivelyGPU-HelloCompute";
+		};
 		EE00700000000000000000B1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
@@ -516,6 +544,9 @@
 				LastUpgradeCheck = 2660;
 				ORGANIZATIONNAME = "https://github.com/jdolan";
 				TargetAttributes = {
+					CED40A7E3049CEB10090C57A = {
+						CreatedOnToolsVersion = 26.6;
+					};
 					EA25F2CECA5EE87704453CE2 = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -539,6 +570,7 @@
 				EE00B00000000000000000B1 /* ObjectivelyGPU-Hello */,
 				EE00C00000000000000000B1 /* ObjectivelyGPU-HelloCompute */,
 				EI00F00000000000000000B1 /* ObjectivelyGPU-Hello-iOS */,
+				CED40A7E3049CEB10090C57A /* ObjectivelyGPU-Examples */,
 			);
 		};
 /* End PBXProject section */
@@ -642,6 +674,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		CED40A833049CEBD0090C57A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EE00B00000000000000000B1 /* ObjectivelyGPU-Hello */;
+			targetProxy = CED40A823049CEBD0090C57A /* PBXContainerItemProxy */;
+		};
+		CED40A853049CEBE0090C57A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EE00C00000000000000000B1 /* ObjectivelyGPU-HelloCompute */;
+			targetProxy = CED40A843049CEBE0090C57A /* PBXContainerItemProxy */;
+		};
 		EE00800000000000000000B1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = EA25F2CECA5EE87704453CE2 /* ObjectivelyGPU */;
@@ -662,6 +704,7 @@
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -698,6 +741,7 @@
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -737,11 +781,28 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CED40A7F3049CEB10090C57A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CED40A803049CEB10090C57A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -760,6 +821,7 @@
 					"$(inherited)",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				ONLY_ACTIVE_ARCH = YES;
@@ -782,11 +844,6 @@
 					"$(WORKSPACE_PREFIX)/Objectively/Sources",
 					"$(SRCROOT)/Frameworks/SDL3.xcframework/macos-arm64_x86_64/SDL3.framework/Headers",
 				);
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/Frameworks",
-					"$(BUILT_PRODUCTS_DIR)",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -804,11 +861,6 @@
 					"$(SRCROOT)/Sources",
 					"$(WORKSPACE_PREFIX)/Objectively/Sources",
 					"$(SRCROOT)/Frameworks/SDL3.xcframework/macos-arm64_x86_64/SDL3.framework/Headers",
-				);
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/Frameworks",
-					"$(BUILT_PRODUCTS_DIR)",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -828,11 +880,6 @@
 					"$(WORKSPACE_PREFIX)/Objectively/Sources",
 					"$(SRCROOT)/Frameworks/SDL3.xcframework/macos-arm64_x86_64/SDL3.framework/Headers",
 				);
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/Frameworks",
-					"$(BUILT_PRODUCTS_DIR)",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -850,11 +897,6 @@
 					"$(SRCROOT)/Sources",
 					"$(WORKSPACE_PREFIX)/Objectively/Sources",
 					"$(SRCROOT)/Frameworks/SDL3.xcframework/macos-arm64_x86_64/SDL3.framework/Headers",
-				);
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/Frameworks",
-					"$(BUILT_PRODUCTS_DIR)",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -940,6 +982,15 @@
 			buildConfigurations = (
 				E9B05C51385583BE376E321C /* Debug */,
 				B7DC821DF56771B677CD9D20 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CED40A813049CEB10090C57A /* Build configuration list for PBXAggregateTarget "ObjectivelyGPU-Examples" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CED40A7F3049CEB10090C57A /* Debug */,
+				CED40A803049CEB10090C57A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
