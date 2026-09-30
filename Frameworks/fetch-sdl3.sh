@@ -5,7 +5,9 @@
 #
 # The whole stack (ObjectivelyGPU, ObjectivelyMVC, Quetoo) pins SDL3 to one tag in jdolan/SDL, which
 # carries the SDL_gpu query API. The tag's commit SHA is stored next to the cache, so moving the tag
-# causes a new download. This mirrors ObjectivelyGPU.vs15/sdl3.targets on Windows.
+# causes a new download. The release notes name the commit its assets were built from; if that is
+# not the tag's commit, the publish workflow has not run for the moved tag yet, and this script
+# fails. This mirrors ObjectivelyGPU.vs15/sdl3.targets on Windows.
 #
 set -euo pipefail
 
@@ -16,7 +18,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 XCFRAMEWORK="$SCRIPT_DIR/SDL3.xcframework"
 STAMP="$SCRIPT_DIR/SDL3.xcframework.sha"
 
-sha="$(git ls-remote "https://github.com/$SDL3_REPO.git" "refs/tags/$SDL3_TAG" | cut -f1)"
+sha="$(git ls-remote "https://github.com/$SDL3_REPO.git" "refs/tags/$SDL3_TAG" "refs/tags/$SDL3_TAG^{}" | tail -1 | cut -f1)"
 if [ -z "$sha" ]; then
     echo "error: tag $SDL3_TAG not found in $SDL3_REPO" >&2
     exit 1
@@ -28,6 +30,13 @@ cached() {
 
 if cached; then
     exit 0
+fi
+
+released="$(curl -fsSL "https://api.github.com/repos/$SDL3_REPO/releases/tags/$SDL3_TAG" | grep -Eo 'at [0-9a-f]{40}' | head -1 | cut -c4- || true)"
+if [ "$released" != "$sha" ]; then
+    echo "error: the $SDL3_TAG release of $SDL3_REPO was built from ${released:-an unknown commit}, not $sha" >&2
+    echo "error: run: gh workflow run objectivelygpu.yml -R $SDL3_REPO" >&2
+    exit 1
 fi
 
 # Serialize concurrent invocations (parallel target builds) on a lock dir,
@@ -69,6 +78,7 @@ fi
 
 # Replace the cache, and the .stable/.local directories of the former use-sdl3.sh layout.
 echo "==> Caching SDL3.xcframework"
+rm -f "$STAMP"
 rm -rf "$XCFRAMEWORK" "$SCRIPT_DIR/SDL3.xcframework.stable" "$SCRIPT_DIR/SDL3.xcframework.local"
 cp -R "$src" "$XCFRAMEWORK"
 echo "$sha" > "$STAMP"
