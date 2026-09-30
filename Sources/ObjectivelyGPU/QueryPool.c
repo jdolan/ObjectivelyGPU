@@ -26,6 +26,14 @@
 #include "QueryPool.h"
 #include "RenderDevice.h"
 
+#ifndef SDL_GPU_QUERY_API
+ #if defined(_MSC_VER)
+  #pragma message("SDL3 lacks SDL_GPU_QUERY_API: occlusion queries are disabled")
+ #else
+  #warning "SDL3 lacks SDL_GPU_QUERY_API: occlusion queries are disabled"
+ #endif
+#endif
+
 #define _Class _QueryPool
 
 #pragma mark - Object
