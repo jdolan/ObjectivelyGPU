@@ -23,14 +23,15 @@ ObjectivelyMVC and Quetoo MUST build against that tag. Against any other SDL3, O
 
 * Linux and macOS (autotools): build SDL from source with
   `git clone --branch ObjectivelyGPU https://github.com/jdolan/SDL.git`.
-* macOS and iOS (Xcode): `Frameworks/fetch-sdl3.sh` downloads `SDL3.xcframework` from the tag's release. It
-  records the tag's commit, and downloads again if the tag moves.
+* macOS and iOS (Xcode): `ObjectivelyGPU.xcworkspace` builds `SDL3.framework` from SDL's own
+  `Xcode/SDL/SDL.xcodeproj`, in a sibling checkout named `SDL3`:
+  `git clone --branch ObjectivelyGPU https://github.com/jdolan/SDL.git ../SDL3`. After the tag moves, run
+  `git -C ../SDL3 fetch --force --tags && git -C ../SDL3 checkout ObjectivelyGPU`.
 * Windows (Visual Studio): `ObjectivelyGPU.vs15/sdl3.targets` downloads `SDL3-devel-VC.zip` from the tag's
   release on first build. Delete `ObjectivelyGPU.vs15/libs/` to pick up a moved tag.
 
-To change the SDL3 revision for the whole stack, move the tag, then publish its artifacts. The publish run
-MUST finish before any consumer builds, because until then the release still serves the previous assets.
-`fetch-sdl3.sh` refuses a release that was built from another commit.
+To change the SDL3 revision for the whole stack, move the tag, then publish the Windows artifacts. The publish
+run MUST finish before any Windows build, because until then the release still serves the previous assets.
 
 ```sh
 git tag -f ObjectivelyGPU <rev> && git push -f origin ObjectivelyGPU
