@@ -50,7 +50,7 @@
 		8D678937240347D29F529D34 /* TransferBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F20F19F296684FA89413FFC0 /* TransferBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		90C29A39257729BE8D4FDDF8 /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = 38F069D0DBE26C7E00B5B5EE /* Types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A09AD953AC672E0DE9D1E26D /* ObjectivelyGPU.h in Headers */ = {isa = PBXBuildFile; fileRef = C16D60B0E94469E649953EC5 /* ObjectivelyGPU.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
+		AA000000000000000000FF01 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.framework */; };
 		CCCB11DB70E4A962360A2119 /* CopyPass.c in Sources */ = {isa = PBXBuildFile; fileRef = C862954A9DD435C1FF7CD31D /* CopyPass.c */; };
 		CE1643392FF413C000863996 /* HelloCompute.comp.metal in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AB2FEF712F00CB0CCA /* HelloCompute.comp.metal */; };
 		CE16433A2FF413C000863996 /* HelloCompute.comp.spv in CopyFiles */ = {isa = PBXBuildFile; fileRef = CECF83AC2FEF712F00CB0CCA /* HelloCompute.comp.spv */; };
@@ -85,16 +85,16 @@
 		EE00100000000000000000B1 /* Hello.c in Sources */ = {isa = PBXBuildFile; fileRef = EE00010000000000000000B1 /* Hello.c */; };
 		EE00110000000000000000B2 /* HelloCompute.c in Sources */ = {isa = PBXBuildFile; fileRef = EE00020000000000000000B2 /* HelloCompute.c */; };
 		EE00120000000000000000B3 /* ObjectivelyGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6251F22589273797656C269E /* ObjectivelyGPU.framework */; };
-		EE00130000000000000000B4 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
+		EE00130000000000000000B4 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.framework */; };
 		EE00140000000000000000B5 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
 		EE00150000000000000000B6 /* ObjectivelyGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6251F22589273797656C269E /* ObjectivelyGPU.framework */; };
-		EE00160000000000000000B7 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
+		EE00160000000000000000B7 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.framework */; };
 		EE00170000000000000000B8 /* Objectively.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEA0030000000000000000F0 /* Objectively.framework */; };
 		EI00100000000000000000B1 /* Hello.c in Sources */ = {isa = PBXBuildFile; fileRef = EE00010000000000000000B1 /* Hello.c */; };
 		EI00200000000000000000B1 /* Hello.frag.metal in Resources */ = {isa = PBXBuildFile; fileRef = CECF83A52FEF712F00CB0CCA /* Hello.frag.metal */; };
 		EI00300000000000000000B1 /* Hello.vert.metal in Resources */ = {isa = PBXBuildFile; fileRef = CECF83A82FEF712F00CB0CCA /* Hello.vert.metal */; };
-		EI00400000000000000000B4 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; };
-		EI00700000000000000000B7 /* SDL3.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EI00400000000000000000B4 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.framework */; };
+		EI00700000000000000000B7 /* SDL3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AA000000000000000000EE01 /* SDL3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F73340493879CD8034F99D51 /* ComputePass.c in Sources */ = {isa = PBXBuildFile; fileRef = ED8024CA4186E352C1EC4CA1 /* ComputePass.c */; };
 		FF30FF2D56F9E4EA3C492CBB /* RenderPass.c in Sources */ = {isa = PBXBuildFile; fileRef = 669BE73362E651792735CB1C /* RenderPass.c */; };
 /* End PBXBuildFile section */
@@ -174,7 +174,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				EI00700000000000000000B7 /* SDL3.xcframework in Embed Frameworks */,
+				EI00700000000000000000B7 /* SDL3.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -195,7 +195,7 @@
 		872CC6C6CBA08F1A36626F57 /* QueryPool.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = QueryPool.c; sourceTree = "<group>"; };
 		9220C57BBAA3C951D8083799 /* RenderDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderDevice.h; sourceTree = "<group>"; };
 		989E64805790578A941CB5B9 /* QueryPool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QueryPool.h; sourceTree = "<group>"; };
-		AA000000000000000000EE01 /* SDL3.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL3.xcframework; path = Frameworks/SDL3.xcframework; sourceTree = "<group>"; };
+		AA000000000000000000EE01 /* SDL3.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SDL3.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B89C52ADCD12486D934D4F78 /* Fence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fence.h; sourceTree = "<group>"; };
 		C16D60B0E94469E649953EC5 /* ObjectivelyGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectivelyGPU.h; sourceTree = "<group>"; };
 		C862954A9DD435C1FF7CD31D /* CopyPass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CopyPass.c; sourceTree = "<group>"; };
@@ -215,7 +215,6 @@
 		CEBA3F692FF3211F00758CA6 /* Shader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
 		CEBA3F6A2FF3211F00758CA6 /* Shader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Shader.c; sourceTree = "<group>"; };
 		CEBA3F742FF330A700758CA6 /* ComputePipeline.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComputePipeline.c; sourceTree = "<group>"; };
-		CEBA3F7C2FF36E2300758CA6 /* fetch-sdl3.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "fetch-sdl3.sh"; path = "Frameworks/fetch-sdl3.sh"; sourceTree = "<group>"; };
 		CECF83942FEF65EB00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83952FEF65FF00CB0CCA /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		CECF83962FEF65FF00CB0CCA /* ObjectivelyGPU.pc.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ObjectivelyGPU.pc.in; sourceTree = "<group>"; };
@@ -263,7 +262,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CEA0030000000000000000F1 /* Objectively.framework in Frameworks */,
-				AA000000000000000000FF01 /* SDL3.xcframework in Frameworks */,
+				AA000000000000000000FF01 /* SDL3.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,7 +270,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE00130000000000000000B4 /* SDL3.xcframework in Frameworks */,
+				EE00130000000000000000B4 /* SDL3.framework in Frameworks */,
 				EE00140000000000000000B5 /* Objectively.framework in Frameworks */,
 				EE00120000000000000000B3 /* ObjectivelyGPU.framework in Frameworks */,
 			);
@@ -281,7 +280,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE00160000000000000000B7 /* SDL3.xcframework in Frameworks */,
+				EE00160000000000000000B7 /* SDL3.framework in Frameworks */,
 				EE00170000000000000000B8 /* Objectively.framework in Frameworks */,
 				EE00150000000000000000B6 /* ObjectivelyGPU.framework in Frameworks */,
 			);
@@ -291,7 +290,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EI00400000000000000000B4 /* SDL3.xcframework in Frameworks */,
+				EI00400000000000000000B4 /* SDL3.framework in Frameworks */,
 				CEBA3F772FF3418E00758CA6 /* Objectively.framework in Frameworks */,
 				CEBA3F782FF3419100758CA6 /* ObjectivelyGPU.framework in Frameworks */,
 			);
@@ -383,8 +382,7 @@
 			isa = PBXGroup;
 			children = (
 				CEA0030000000000000000F0 /* Objectively.framework */,
-				AA000000000000000000EE01 /* SDL3.xcframework */,
-				CEBA3F7C2FF36E2300758CA6 /* fetch-sdl3.sh */,
+				AA000000000000000000EE01 /* SDL3.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -712,7 +710,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/Sources",
 					"$(WORKSPACE_PREFIX)/Objectively/Sources",
-					"$(SRCROOT)/Frameworks/SDL3.xcframework/macos-arm64_x86_64/SDL3.framework/Headers",
+					"$(SRCROOT)/../SDL3/include",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -749,7 +747,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/Sources",
 					"$(WORKSPACE_PREFIX)/Objectively/Sources",
-					"$(SRCROOT)/Frameworks/SDL3.xcframework/macos-arm64_x86_64/SDL3.framework/Headers",
+					"$(SRCROOT)/../SDL3/include",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -838,7 +836,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/Sources",
 					"$(WORKSPACE_PREFIX)/Objectively/Sources",
-					"$(SRCROOT)/Frameworks/SDL3.xcframework/macos-arm64_x86_64/SDL3.framework/Headers",
+					"$(SRCROOT)/../SDL3/include",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -856,7 +854,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/Sources",
 					"$(WORKSPACE_PREFIX)/Objectively/Sources",
-					"$(SRCROOT)/Frameworks/SDL3.xcframework/macos-arm64_x86_64/SDL3.framework/Headers",
+					"$(SRCROOT)/../SDL3/include",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -874,7 +872,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/Sources",
 					"$(WORKSPACE_PREFIX)/Objectively/Sources",
-					"$(SRCROOT)/Frameworks/SDL3.xcframework/macos-arm64_x86_64/SDL3.framework/Headers",
+					"$(SRCROOT)/../SDL3/include",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -892,7 +890,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/Sources",
 					"$(WORKSPACE_PREFIX)/Objectively/Sources",
-					"$(SRCROOT)/Frameworks/SDL3.xcframework/macos-arm64_x86_64/SDL3.framework/Headers",
+					"$(SRCROOT)/../SDL3/include",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -910,7 +908,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/Sources",
-					"$(SRCROOT)/Frameworks/SDL3.xcframework/ios-arm64/SDL3.framework/Headers",
+					"$(SRCROOT)/../SDL3/include",
 					"$(SRCROOT)/Frameworks/Objectively.xcframework/ios-arm64/Objectively.framework/Headers",
 					"$(inherited)",
 				);
@@ -939,7 +937,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/Sources",
-					"$(SRCROOT)/Frameworks/SDL3.xcframework/ios-arm64/SDL3.framework/Headers",
+					"$(SRCROOT)/../SDL3/include",
 					"$(SRCROOT)/Frameworks/Objectively.xcframework/ios-arm64/Objectively.framework/Headers",
 					"$(inherited)",
 				);
