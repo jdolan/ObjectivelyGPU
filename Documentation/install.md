@@ -28,11 +28,14 @@ ObjectivelyMVC and Quetoo MUST build against that tag. Against any other SDL3, O
 * Windows (Visual Studio): `ObjectivelyGPU.vs15/sdl3.targets` downloads `SDL3-devel-VC.zip` from the tag's
   release on first build. Delete `ObjectivelyGPU.vs15/libs/` to pick up a moved tag.
 
-To change the SDL3 revision for the whole stack, move the tag, then publish its artifacts:
+To change the SDL3 revision for the whole stack, move the tag, then publish its artifacts. The publish run
+MUST finish before any consumer builds, because until then the release still serves the previous assets.
+`fetch-sdl3.sh` refuses a release that was built from another commit.
 
 ```sh
 git tag -f ObjectivelyGPU <rev> && git push -f origin ObjectivelyGPU
 gh workflow run objectivelygpu.yml -R jdolan/SDL
+gh run watch -R jdolan/SDL --exit-status "$(gh run list -R jdolan/SDL -w objectivelygpu.yml -L 1 --json databaseId -q '.[0].databaseId')"
 ```
 
 ## Building
