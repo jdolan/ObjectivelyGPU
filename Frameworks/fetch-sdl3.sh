@@ -1,37 +1,32 @@
 #!/usr/bin/env bash
 #
-# fetch-sdl3.sh — downloads the official SDL3 Apple xcframework from libsdl.org
-# on demand and caches it under Frameworks/.
+# fetch-sdl3.sh — downloads SDL3.xcframework from the jdolan/SDL release for SDL3_TAG and caches it
+# under Frameworks/.
 #
-# This mirrors the Windows VS build (ObjectivelyGPU.vs15/sdl3.targets): CI and
-# local developers share a single code path. The download is cached at
-# Frameworks/SDL3.xcframework.stable, and Frameworks/SDL3.xcframework is a
-# symlink to it. This indirection lets link-sdl3-local.sh (and use-sdl3.sh)
-# repoint that same symlink at a locally-built SDL3 checkout without disturbing
-# this cache. Bump SDL3_VERSION to upgrade; delete
-# Frameworks/SDL3.xcframework.stable to force a re-download.
+# The whole stack (ObjectivelyGPU, ObjectivelyMVC, Quetoo) pins SDL3 to one tag in jdolan/SDL, which
+# carries the SDL_gpu query API. The tag's commit SHA is stored next to the cache, so moving the tag
+# causes a new download. This mirrors ObjectivelyGPU.vs15/sdl3.targets on Windows.
 #
 set -euo pipefail
 
-SDL3_VERSION="${SDL3_VERSION:-3.4.2}"
+SDL3_REPO="${SDL3_REPO:-jdolan/SDL}"
+SDL3_TAG="${SDL3_TAG:-ObjectivelyGPU}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-STABLE="$SCRIPT_DIR/SDL3.xcframework.stable"
 XCFRAMEWORK="$SCRIPT_DIR/SDL3.xcframework"
+STAMP="$SCRIPT_DIR/SDL3.xcframework.sha"
 
-# Migrate a pre-existing plain directory (from before the .stable split) in place.
-if [ -d "$XCFRAMEWORK" ] && [ ! -L "$XCFRAMEWORK" ]; then
-    mv "$XCFRAMEWORK" "$STABLE"
+sha="$(git ls-remote "https://github.com/$SDL3_REPO.git" "refs/tags/$SDL3_TAG" | cut -f1)"
+if [ -z "$sha" ]; then
+    echo "error: tag $SDL3_TAG not found in $SDL3_REPO" >&2
+    exit 1
 fi
 
-# Point the symlink at the stable cache, creating/replacing it as needed.
-relink() {
-    ln -sfn "$(basename "$STABLE")" "$XCFRAMEWORK"
+cached() {
+    [ -d "$XCFRAMEWORK" ] && [ ! -L "$XCFRAMEWORK" ] && [ "$(cat "$STAMP" 2>/dev/null)" = "$sha" ]
 }
 
-# Already cached? Just make sure the symlink points at it and we're done.
-if [ -d "$STABLE" ]; then
-    relink
+if cached; then
     exit 0
 fi
 
@@ -53,17 +48,16 @@ cleanup() {
 trap cleanup EXIT
 
 # Re-check after acquiring the lock; another build may have just finished.
-if [ -d "$STABLE" ]; then
-    relink
+if cached; then
     exit 0
 fi
 
-DMG_URL="https://github.com/libsdl-org/SDL/releases/download/release-$SDL3_VERSION/SDL3-$SDL3_VERSION.dmg"
+DMG_URL="https://github.com/$SDL3_REPO/releases/download/$SDL3_TAG/SDL3.dmg"
 
-echo "==> Downloading SDL3 $SDL3_VERSION"
+echo "==> Downloading SDL3 $SDL3_REPO@$SDL3_TAG ($sha)"
 curl -fL --retry 3 "$DMG_URL" -o "$TMP/SDL3.dmg"
 
-echo "==> Mounting SDL3 $SDL3_VERSION"
+echo "==> Mounting SDL3.dmg"
 mkdir -p "$MNT"
 hdiutil attach "$TMP/SDL3.dmg" -nobrowse -quiet -mountpoint "$MNT"
 
@@ -73,8 +67,10 @@ if [ -z "$src" ]; then
     exit 1
 fi
 
+# Replace the cache, and the .stable/.local directories of the former use-sdl3.sh layout.
 echo "==> Caching SDL3.xcframework"
-cp -R "$src" "$STABLE"
-relink
+rm -rf "$XCFRAMEWORK" "$SCRIPT_DIR/SDL3.xcframework.stable" "$SCRIPT_DIR/SDL3.xcframework.local"
+cp -R "$src" "$XCFRAMEWORK"
+echo "$sha" > "$STAMP"
 
-echo "==> SDL3.xcframework $SDL3_VERSION ready at Frameworks/SDL3.xcframework"
+echo "==> SDL3.xcframework $SDL3_TAG ready at Frameworks/SDL3.xcframework"

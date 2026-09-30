@@ -2,15 +2,16 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!--
-    Fetches the official SDL3 VC development libraries from libsdl.org and wires
-    them into the compiler and linker search paths.  This mirrors what CI does,
-    so local developers and CI share a single code path: the libraries are
-    downloaded once, on demand, and cached under libs/ (which is .gitignored).
-    Bump SDL3Version to upgrade; delete libs/ to force a re-download.
+    Fetches the SDL3 VC development libraries from the jdolan/SDL release for
+    SDL3Tag and wires them into the compiler and linker search paths.  The
+    whole stack pins SDL3 to this tag, which carries the SDL_gpu query API.
+    This mirrors what CI does, so local developers and CI share a single code
+    path: the libraries are downloaded once, on demand, and cached under libs/
+    (which is .gitignored).  Delete libs/ to pick up a moved tag.
   -->
   <PropertyGroup>
-    <SDL3Version>3.4.12</SDL3Version>
-    <SDL3Dir>$(MSBuildThisFileDirectory)libs\SDL3-$(SDL3Version)\</SDL3Dir>
+    <SDL3Tag>ObjectivelyGPU</SDL3Tag>
+    <SDL3Dir>$(MSBuildThisFileDirectory)libs\SDL3-$(SDL3Tag)\</SDL3Dir>
     <SDL3LibArch Condition="'$(Platform)' == 'Win32'">x86</SDL3LibArch>
     <SDL3LibArch Condition="'$(SDL3LibArch)' == ''">x64</SDL3LibArch>
   </PropertyGroup>
@@ -23,9 +24,9 @@
   <Target Name="DownloadSDL3"
           BeforeTargets="ClCompile"
           Condition="!Exists('$(SDL3Dir)include\SDL3\SDL.h')">
-    <Message Importance="high" Text="Downloading SDL3 $(SDL3Version) development libraries..." />
+    <Message Importance="high" Text="Downloading SDL3 $(SDL3Tag) development libraries..." />
     <Exec WorkingDirectory="$(MSBuildThisFileDirectory)"
-          Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;$ErrorActionPreference = 'Stop'; $m = New-Object System.Threading.Mutex($false, 'Global\ObjectivelySDL3'); [void]$m.WaitOne(); try { if (-not (Test-Path '$(SDL3Dir)include\SDL3\SDL.h')) { New-Item -ItemType Directory -Force libs | Out-Null; Invoke-WebRequest -Uri 'https://github.com/libsdl-org/SDL/releases/download/release-$(SDL3Version)/SDL3-devel-$(SDL3Version)-VC.zip' -OutFile 'libs\sdl3.zip'; Expand-Archive -Force 'libs\sdl3.zip' 'libs'; Remove-Item 'libs\sdl3.zip' } } finally { $m.ReleaseMutex() }&quot;" />
+          Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;$ErrorActionPreference = 'Stop'; $m = New-Object System.Threading.Mutex($false, 'Global\ObjectivelySDL3'); [void]$m.WaitOne(); try { if (-not (Test-Path '$(SDL3Dir)include\SDL3\SDL.h')) { New-Item -ItemType Directory -Force libs | Out-Null; Invoke-WebRequest -Uri 'https://github.com/jdolan/SDL/releases/download/$(SDL3Tag)/SDL3-devel-VC.zip' -OutFile 'libs\sdl3.zip'; Remove-Item -Recurse -Force -ErrorAction SilentlyContinue 'libs\sdl3'; Expand-Archive -Force 'libs\sdl3.zip' 'libs\sdl3'; $d = %40(Get-ChildItem -Directory 'libs\sdl3'); if ($d.Count -ne 1) { throw 'SDL3-devel-VC.zip: expected one top-level directory' }; Move-Item $d[0].FullName '$(SDL3Dir.TrimEnd('\'))'; Remove-Item -Recurse 'libs\sdl3', 'libs\sdl3.zip' } } finally { $m.ReleaseMutex() }&quot;" />
   </Target>
 
 </Project>

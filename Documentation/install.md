@@ -14,6 +14,27 @@ Tagged releases are published on the [GitHub releases page](https://github.com/j
 * [Objectively](https://github.com/jdolan/Objectively) >= 2.0.0
 * [SDL3](https://github.com/libsdl-org/SDL) >= 3.2.0
 
+### SDL3 and occlusion queries
+
+`QueryPool` requires the SDL_gpu query API (`SDL_GPU_QUERY_API`), which upstream SDL does not ship yet. The
+`ObjectivelyGPU` tag in [jdolan/SDL](https://github.com/jdolan/SDL) carries it, and CI for ObjectivelyGPU,
+ObjectivelyMVC and Quetoo MUST build against that tag. Against any other SDL3, ObjectivelyGPU still builds, but
+`QueryPool.c` emits a compiler warning and occlusion queries are disabled.
+
+* Linux and macOS (autotools): build SDL from source with
+  `git clone --branch ObjectivelyGPU https://github.com/jdolan/SDL.git`.
+* macOS and iOS (Xcode): `Frameworks/fetch-sdl3.sh` downloads `SDL3.xcframework` from the tag's release. It
+  records the tag's commit, and downloads again if the tag moves.
+* Windows (Visual Studio): `ObjectivelyGPU.vs15/sdl3.targets` downloads `SDL3-devel-VC.zip` from the tag's
+  release on first build. Delete `ObjectivelyGPU.vs15/libs/` to pick up a moved tag.
+
+To change the SDL3 revision for the whole stack, move the tag, then publish its artifacts:
+
+```sh
+git tag -f ObjectivelyGPU <rev> && git push -f origin ObjectivelyGPU
+gh workflow run objectivelygpu.yml -R jdolan/SDL
+```
+
 ## Building
 
 ```sh
