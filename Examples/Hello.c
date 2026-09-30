@@ -68,7 +68,6 @@ typedef struct {
  * @brief SDL application state passed via pointer to callbacks.
  */
 typedef struct {
-
   /**
    * @brief The @c SDL_Window.
    */
