@@ -25,8 +25,8 @@ ObjectivelyMVC and Quetoo MUST build against that tag. Against any other SDL3, O
   `git clone --branch ObjectivelyGPU https://github.com/jdolan/SDL.git`.
 * macOS and iOS (Xcode): `ObjectivelyGPU.xcworkspace` builds `SDL3.framework` from SDL's own
   `Xcode/SDL/SDL.xcodeproj`, in a sibling checkout named `SDL3`:
-  `git clone --branch ObjectivelyGPU https://github.com/jdolan/SDL.git ../SDL3`. After the tag moves, run
-  `git -C ../SDL3 fetch --force --tags && git -C ../SDL3 checkout ObjectivelyGPU`.
+  `git clone --branch ObjectivelyGPU https://github.com/jdolan/SDL.git ../SDL`. After the tag moves, run
+  `git -C ../SDL fetch --force --tags && git -C ../SDL checkout ObjectivelyGPU`.
 * Windows (Visual Studio): `ObjectivelyGPU.vs15/sdl3.targets` downloads `SDL3-devel-VC.zip` from the tag's
   release on first build. Delete `ObjectivelyGPU.vs15/libs/` to pick up a moved tag.
 

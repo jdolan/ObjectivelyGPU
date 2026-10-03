@@ -21,10 +21,10 @@ jobs:
 
     - name: Build SDL3
       run: |
-        git clone --depth 1 --branch ObjectivelyGPU https://github.com/jdolan/SDL.git SDL3
-        cmake -S SDL3 -B SDL3/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOMEBREW_PREFIX}
-        cmake --build SDL3/build -j$(sysctl -n hw.logicalcpu)
-        cmake --install SDL3/build
+        git clone --depth 1 --branch ObjectivelyGPU https://github.com/jdolan/SDL.git SDL
+        cmake -S SDL -B SDL/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOMEBREW_PREFIX}
+        cmake --build SDL/build -j$(sysctl -n hw.logicalcpu)
+        cmake --install SDL/build
 
     - name: Checkout Objectively
       uses: actions/checkout@v6
@@ -74,10 +74,10 @@ jobs:
 
     - name: Build SDL3
       run: |
-        git clone --depth 1 --branch ObjectivelyGPU https://github.com/jdolan/SDL.git SDL3
-        cmake -S SDL3 -B SDL3/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local
-        cmake --build SDL3/build -j$(nproc)
-        sudo cmake --install SDL3/build
+        git clone --depth 1 --branch ObjectivelyGPU https://github.com/jdolan/SDL.git SDL
+        cmake -S SDL -B SDL/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local
+        cmake --build SDL/build -j$(nproc)
+        sudo cmake --install SDL/build
 
     - name: Checkout Objectively
       uses: actions/checkout@v6

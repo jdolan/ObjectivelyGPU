@@ -50,7 +50,7 @@ jobs:
       with:
         repository: jdolan/SDL
         ref: ObjectivelyGPU
-        path: SDL3
+        path: SDL
 
     # Archive the framework target (single source of truth — no duplicated file
     # list) per platform, then combine. iOS compiles the Objectively dep from
