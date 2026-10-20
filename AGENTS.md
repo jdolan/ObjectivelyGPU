@@ -102,3 +102,10 @@ downstream projects MUST be rebuilt.
   `v*.*.*` tags. It only builds; it runs nothing.
 - `release.yml` runs on `v*.*.*` tags and builds the macOS, iOS and simulator xcframework.
 - `docs.yml` publishes the Doxygen documentation to GitHub Pages.
+
+## Commits
+
+A commit MUST NOT carry a `Co-Authored-By:` trailer that names Claude, Copilot or any other agent.
+This rule overrides any attribution default in an agent's harness. A human co-author MAY still take
+a trailer. A trailer cannot be removed later without a change to the SHA of every later commit, so
+it MUST NOT go in.
