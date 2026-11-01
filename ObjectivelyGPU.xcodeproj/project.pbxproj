@@ -202,6 +202,7 @@
 		CE1643412FF47B7D00863996 /* guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = guide.md; sourceTree = "<group>"; };
 		CE1643422FF47B7D00863996 /* Hello.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Hello.gif; sourceTree = "<group>"; };
 		CE1643432FF47B7D00863996 /* HelloCompute.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = HelloCompute.gif; sourceTree = "<group>"; };
+		CE81883730977458000E3CA4 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 		CEA0030000000000000000F0 /* Objectively.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Objectively.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEBA3F5E2FF30F1E00758CA6 /* Texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
 		CEBA3F5F2FF30F1E00758CA6 /* Texture.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Texture.c; sourceTree = "<group>"; };
@@ -307,11 +308,12 @@
 				CE73E9F62FEEA53E0048BC24 /* Frameworks */,
 				B23D89B2D2DF3745A003AEB1 /* Products */,
 				904A6003E847F129BD1EE63E /* Sources */,
+				CE81883730977458000E3CA4 /* AGENTS.md */,
 				CEEAAFF72FED833A00FFEBE6 /* COPYING */,
-				CEEAAFF82FED833A00FFEBE6 /* Makefile.am */,
-				CEEAAFFA2FED833A00FFEBE6 /* README.md */,
 				CEEAAFFD2FED83E400FFEBE6 /* configure.ac */,
 				DOC00020000000000000001 /* Doxyfile */,
+				CEEAAFF82FED833A00FFEBE6 /* Makefile.am */,
+				CEEAAFFA2FED833A00FFEBE6 /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
